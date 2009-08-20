@@ -1,0 +1,90 @@
+/**
+@mainpage
+
+@htmlinclude manifest.html
+
+Here are the gazebo plugins which are currently implemented:
+ \li \ref gazebo::GazeboMechanismControl "ROS Mechanism Controls Plugin for MechanismControl"
+ \li \ref gazebo::Ros_Time "ROS Time Plugin"
+ \li \ref gazebo::Ros_Camera "ROS Camera Plugin"
+ \li \ref gazebo::Ros_Laser "ROS Laser Scanner Plugin"
+ \li \ref gazebo::P3D "ROS Ground Truth Broadcaster"
+
+
+@section usage PR2 Simulation Quick Start Guide
+\li If you have successfully \e rosmake \e 2dnav_gazebo, you have everything needed to run all PR2 2dnav-stack demos in 3D simulation. Otherwise, to compile a minimum set of packages for running Gazebo:
+  @verbatim
+  $ rosmake gazebo
+  $ rosmake gazebo_plugin
+  $ rosmake gazebo_worlds
+  @endverbatim
+
+\li Here is a simple launch script that starts Gazebo:
+  @verbatim
+  <launch>
+    <!-- start gazebo -->
+    <include file="$(find gazebo)/launch/empty_world.launch"/>
+
+    <!-- send pr2.xacro.xml to param server -->
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_defs)/robots/pr2.xacro.xml'" />
+
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" /> <!-- load default arm controller -->
+
+  </launch>
+  @endverbatim
+
+\li Alternative ways of starting up Gazebo and more examples are explained in the <a href="http://pr.willowgarage.com/wiki/Simulator/Tutorials">3D simulator tutorial</a> page.
+
+@section parameters Robot Descriptions
+\li PR2 Robot Description
+  Robot descriptions are explained in the <a href="http://pr.willowgarage.com/wiki/RobotDescriptionFormat">Robot Description Format</a> page.
+  For example, you can find the complete PR2 description file in \b ros-pkg/.../pr2_defs/robots/pr2.xacro.xml.
+  - To manually convert \b pr2.xacro.xml into Gazebo xml format run the following commands:
+    @verbatim
+    $ rosmake gazebo_plugin
+    $ rosmake pr2_defs
+    $ rosrun gazebo_tools urdf2file `rospack find pr2_defs`/robots/pr2.expanded.xml `rospack find pr2_defs`/robots/pr2.model
+    @endverbatim
+    thus generating \b ros-pkg/.../pr2_defs/robots/pr2.model in Gazebo xml format.
+
+@section topic PR2 ROS topics
+Various dynamically loaded plugins have been outfitted for PR2.
+ROS topics and services used by PR2 simulation can be listed by typing \b rostopic list
+
+ - Sample ROS topics published directly by the simulator plugins
+     <table border="1">
+     <tr><th>  Topic Name                          </th> <th> Message Type                         </th>  <th> Plugin Name             </th> <th>  Description                                               </th>  </tr>
+     <tr><td> \b narrow_stereo/raw_stereo             </td> <td>  sensor_msgs::RawStereo.msg       </td>  <td>  Ros_Camera.hh          </td> <td>  Images from left stereo camera.                           </td>  </tr>
+
+     <tr><td> \b base_scan                            </td> <td>  sensor_msgs::LaserScan.msg       </td>  <td>  Ros_Laser.hh           </td> <td>  Laser scans from Hokuyo at the base.                      </td>  </tr>
+     <tr><td> \b tilt_scan                            </td> <td>  sensor_msgs::LaserScan.msg       </td>  <td>  Ros_Laser.hh           </td> <td>  Laser scans from tilting Hokuyo.                          </td>  </tr>
+
+     <tr><td> \b battery_state                        </td> <td>  pr2_msgs::BatteryStzte            </td>  <td>  gazebo_battery.h       </td> <td> Simulated battery state.                                   </td>  </tr>
+     <tr><td> \b diagnostic                           </td> <td>  diagnostic_msgs::DiagnosticArray       </td>  <td>  gazebo_battery.h       </td> <td> Simulated battery diagnostic messages.                     </td>  </tr>
+
+     <tr><td> \b base_pose_ground_truth               </td> <td>  nav_msgs::Odometry      </td>  <td> P3D.hh                  </td> <td> Ground truth from the base, theoretical exact odometry.    </td>  </tr>
+     <tr><td> \b gripper_roll_right_pose_ground_truth </td> <td>  nav_msgs::Odometry      </td>  <td> P3D.hh                  </td> <td> Ground truth from center of right gripper_roll link.       </td>  </tr>
+     <tr><td> \b gripper_roll_left_pose_ground_truth  </td> <td>  nav_msgs::Odometry      </td>  <td> P3D.hh                  </td> <td> Ground truth from center of left gripper_roll link.        </td>  </tr>
+     <tr><td> \b finger_tip_l_left_ground_truth       </td> <td>  nav_msgs::Odometry      </td>  <td> P3D.hh                  </td> <td> Ground truth from center of left finger tip on left arm.   </td>  </tr>
+     <tr><td> \b finger_tip_r_left_ground_truth       </td> <td>  nav_msgs::Odometry      </td>  <td> P3D.hh                  </td> <td> Ground truth from center of right finger tip on left arm.  </td>  </tr>
+     <tr><td> \b finger_tip_l_right_ground_truth      </td> <td>  nav_msgs::Odometry      </td>  <td> P3D.hh                  </td> <td> Ground truth from center of left finger tip on right arm.  </td>  </tr>
+     <tr><td> \b finger_tip_R_right_ground_truth      </td> <td>  nav_msgs::Odometry      </td>  <td> P3D.hh                  </td> <td> Ground truth from center of right finger tip on right arm. </td>  </tr>
+     <tr><td> \b time                                 </td> <td>  roslib::Time                      </td>  <td> Ros_Time.hh             </td> <td> Simulation time.                                           </td>  </tr>
+     </table><br>
+
+@section param PR2 ROS Parameters
+ - ROS parameters set by the simulator
+     <table border="1">
+     <tr><th>  Parameter Name                      </th> <th> Message Type                         </th>  <th> Plugin Name             </th> <th>  Description                                               </th>  </tr>
+     <tr><td> \b full_charge_energy                </td> <td>  \e Float32                          </td>  <td>  gazebo_battery.h       </td> <td>  Battery state when fully charged in Joules.               </td>  </tr>
+     </table><br>
+ - ROS parameters read by the simulator
+     <table border="1">
+     <tr><th>  Parameter Name                      </th> <th> Message Type                         </th>  <th> Plugin Name             </th> <th>  Description                                               </th>  </tr>
+     <tr><td> \e timeout                           </td> <td>  \e Float32                          </td>  <td>  gazebo_battery.h       </td> <td>  Timeout in seconds. (default=10.0sec)                     </td>  </tr>
+     <tr><td> \e diagnostic_rate                   </td> <td>  \e Float32                          </td>  <td>  gazebo_battery.h       </td> <td>  Broadcast rate in Hz. (default=1.0 Hz)                    </td>  </tr>
+     <tr><td> \e battery_state_rate                </td> <td>  \e Float32                          </td>  <td>  gazebo_battery.h       </td> <td>  Broadcast rate in Hz. (default=1.0 Hz)                    </td>  </tr>
+     </table><br>
+
+**/
