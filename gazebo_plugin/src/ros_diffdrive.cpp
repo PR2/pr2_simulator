@@ -27,8 +27,10 @@
 
 #include <gazebo/gazebo.h>
 #include <gazebo/GazeboError.hh>
+#include <gazebo/Quatern.hh>
+
 #include <ros/ros.h>
-#include "tf/transform_broadcaster.h"
+//#include "tf/transform_broadcaster.h"
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 
@@ -96,14 +98,14 @@ public:
     this->rnh_ = new ros::NodeHandle();
     //this->sub_ = rnh_->subscribe<geometry_msgs::Twist>("/cmd_vel", 100, boost::bind(&DiffDrive::cmdVelCallBack,this,_1));
     this->sub_ = rnh_->subscribe<geometry_msgs::Twist>("/cmd_vel", 100, &DiffDrive::cmdVelCallBack,this);
-    this->pub_ = rnh_->advertise<nav_msgs::Odometry>("/odom", 1);
+    this->pub_ = rnh_->advertise<nav_msgs::Odometry>("/pr2_odometry/odom", 1);
    
     // spawn 2 threads by default, ///@todo: make this a parameter
     ros::MultiThreadedSpinner s(2);
     boost::thread spinner_thread( boost::bind( &ros::spin, s ) );
 
     nav_msgs::Odometry odom;
-    tf::TransformBroadcaster tfb;
+    //tf::TransformBroadcaster tfb;
 
     ros::Duration d; d.fromSec(0.01);
     
@@ -111,30 +113,36 @@ public:
       if (this->posIface) {
         this->posIface->Lock(1);
         
-        btQuaternion qt; qt.setEulerZYX(this->posIface->data->pose.yaw, this->posIface->data->pose.pitch, this->posIface->data->pose.roll);
-        btVector3 vt(this->posIface->data->pose.pos.x, this->posIface->data->pose.pos.y, this->posIface->data->pose.pos.z);
-
-        tf::Transform latest_tf(qt, vt);
-
+        /// @todo: add a p3d plugin and use fake_localization for this transform
+        //btQuaternion qt; qt.setEulerZYX(this->posIface->data->pose.yaw, this->posIface->data->pose.pitch, this->posIface->data->pose.roll);
+        //btVector3 vt(this->posIface->data->pose.pos.x, this->posIface->data->pose.pos.y, this->posIface->data->pose.pos.z);
+        //tf::Transform latest_tf(qt, vt);
         // We want to send a transform that is good up until a
         // tolerance time so that odom can be used
-        ros::Time transform_expiration = ros::Time::now();
-        tf::Stamped<tf::Transform> tmp_tf_stamped(latest_tf.inverse(),
-                                                  transform_expiration,
-                                                  "base_link", "odom");
-        tfb.sendTransform(tmp_tf_stamped);
-        
+        //ros::Time transform_expiration = ros::Time::now();
+        //tf::Stamped<tf::Transform> tmp_tf_stamped(latest_tf.inverse(),
+        //                                          transform_expiration,
+        //                                          "base_link", "odom");
+        //tfb.sendTransform(tmp_tf_stamped);
 
         odom.pose.pose.position.x = this->posIface->data->pose.pos.x;
         odom.pose.pose.position.y = this->posIface->data->pose.pos.y;
-        odom.pose.pose.orientation = tf::createQuaternionMsgFromYaw(this->posIface->data->pose.yaw);
+
+        gazebo::Quatern rot;
+        rot.SetFromEuler(gazebo::Vector3(this->posIface->data->pose.roll,this->posIface->data->pose.pitch,this->posIface->data->pose.yaw));
+
+        odom.pose.pose.orientation.x = rot.x;
+        odom.pose.pose.orientation.y = rot.y;
+        odom.pose.pose.orientation.z = rot.z;
+        odom.pose.pose.orientation.w = rot.u;
+
         odom.twist.twist.linear.x = this->posIface->data->velocity.pos.x;
         odom.twist.twist.linear.y = this->posIface->data->velocity.pos.y;
         odom.twist.twist.angular.z = this->posIface->data->velocity.yaw;
         
         odom.header.frame_id = "odom"; 
         
-        odom.header.stamp = transform_expiration;
+        odom.header.stamp = ros::Time::now();
         
         this->pub_.publish(odom); 
 
