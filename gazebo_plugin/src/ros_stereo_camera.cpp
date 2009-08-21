@@ -216,6 +216,7 @@ void RosStereoCamera::InitChild()
   if( leftCamera->GetImageFormat() == "L8" ) 
   {
       left_type = sensor_msgs::image_encodings::MONO8;
+      left_type = sensor_msgs::image_encodings::MONO8;
       left_skip = 1;
   }
   else if ( leftCamera->GetImageFormat() == "R8G8B8" ) 
@@ -430,9 +431,9 @@ void RosStereoCamera::PutCameraData()
       this->rightCameraInfoMsg->P[11] = 0.0;
 
       // fill uint8 left_type
-      this->rawStereoMsg.left_type = this->rawStereoMsg.IMAGE_RAW;
+      this->rawStereoMsg.left_type = this->rawStereoMsg.IMAGE;
       // fill uint8 right_type
-      this->rawStereoMsg.right_type = this->rawStereoMsg.IMAGE_RAW;
+      this->rawStereoMsg.right_type = this->rawStereoMsg.IMAGE;
       // fill uint8 has_disparity
       this->rawStereoMsg.has_disparity = 0;
       // publish to ros
