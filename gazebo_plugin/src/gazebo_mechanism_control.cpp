@@ -58,7 +58,7 @@ GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
     gzthrow("GazeboMechanismControl controller requires a Model as its parent");
 
   Param::Begin(&this->parameters);
-  this->robotParamP = new ParamT<std::string>("robotParam", "robot_description", 0);
+  this->robotParamP = new ParamT<std::string>("robotParam", "robot_description_new", 0);
   Param::End();
 
   if (getenv("CHECK_SPEEDUP"))
