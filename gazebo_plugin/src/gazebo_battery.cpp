@@ -68,8 +68,8 @@ namespace gazebo {
 
   void GazeboBattery::LoadChild(XMLConfigNode *node)
   {
-    this->stateTopicName_ = node->GetString("stateTopicName","battery_state",0);
-    this->pub_ = this->rosnode_->advertise<pr2_msgs::BatteryState>(this->stateTopicName_,10);
+    this->stateTopicName_ = node->GetString("stateTopicName","power_state",0);
+    this->pub_ = this->rosnode_->advertise<pr2_msgs::PowerState>(this->stateTopicName_,10);
     //this->diagnosticMessageTopicName_ = node->GetString("diagnosticMessageTopicName","diagnostic",0);
     //this->diag_pub_ = this->rosnode_->advertise<diagnostic_msgs::DiagnosticArray>(this->diagnosticMessageTopicName_,10);
 
@@ -83,7 +83,7 @@ namespace gazebo {
     /// @todo make below useful
     //this->diagnostic_rate_     = node->GetDouble("diagnostic_rate",1.0,0);
     /// @todo make below useful
-    this->battery_state_rate_  = node->GetDouble("dbattery_state_rate_",1.0,0);
+    this->power_state_rate_  = node->GetDouble("power_state_rate_",1.0,0);
   }
 
   void GazeboBattery::SetPlug(const gazebo_plugin::PlugCommandConstPtr& plug_msg)
@@ -122,18 +122,21 @@ namespace gazebo {
 
     /**********************************************************/
     /*                                                        */
-    /* publish battery state                                  */
+    /* publish power state                                    */
     /*                                                        */
     /**********************************************************/
-    //this->battery_state_.header.frame_id = ; // no frame id for battery
-    this->battery_state_.header.stamp.sec = (unsigned long)floor(this->current_time_);
-    this->battery_state_.header.stamp.nsec = (unsigned long)floor(  1e9 * (  this->current_time_ - this->battery_state_.header.stamp.sec) );
-    this->battery_state_.energy_remaining = this->charge_;
-    this->battery_state_.energy_capacity = this->full_capacity_;
-    this->battery_state_.power_consumption = this->consumption_rate_;
+    //this->power_state_.header.frame_id = ; // no frame id for battery
+    this->power_state_.header.stamp.sec = (unsigned long)floor(this->current_time_);
+    this->power_state_.header.stamp.nsec = (unsigned long)floor(  1e9 * (  this->current_time_ - this->power_state_.header.stamp.sec) );
+    if (this->consumption_rate_ > 0)
+        this->power_state_.time_remaining = this->charge_ / this->consumption_rate_;
+    else
+        this->power_state_.time_remaining = 1E16;
+    //this->power_state_.energy_capacity = this->full_capacity_;
+    this->power_state_.power_consumption = this->consumption_rate_;
 
     this->lock_.lock();
-    this->pub_.publish(this->battery_state_);
+    this->pub_.publish(this->power_state_);
     this->lock_.unlock();
     
     /**********************************************************/
@@ -144,7 +147,7 @@ namespace gazebo {
     //this->diagnostic_status_.level = 0;
     //this->diagnostic_status_.name = "battery diagnostic";
     //this->diagnostic_status_.message = "battery ok";
-    //this->diagnostic_message_.header = this->battery_state_.header;
+    //this->diagnostic_message_.header = this->power_state_.header;
     //this->diagnostic_message_.set_status_size(1);
     //this->diagnostic_message_.status[0] = this->diagnostic_status_;
     //this->lock_.lock();

@@ -35,7 +35,7 @@
 #include <gazebo/Controller.hh>
 #include <gazebo/Entity.hh>
 #include <gazebo/Model.hh>
-#include <pr2_msgs/BatteryState.h>
+#include <pr2_msgs/PowerState.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
 #include <diagnostic_msgs/DiagnosticStatus.h>
 #include <gazebo_plugin/PlugCommand.h>
@@ -74,7 +74,7 @@ class XMLConfigNode;
 /**
  * \brief Battery simulation
  *   \li starts a ROS node if none exists
- *   \li return battery state and diagnostic message over ROS topic.
+ *   \li return power state and diagnostic message over ROS topic.
  * .
  *
   \verbatim
@@ -107,8 +107,8 @@ private:
 
   Model *parent_model_;
 
-  /// \brief ros message for battery state
-  pr2_msgs::BatteryState battery_state_;
+  /// \brief ros message for power state
+  pr2_msgs::PowerState power_state_;
 
   /// \brief ros message for diagnostic messages
   diagnostic_msgs::DiagnosticArray diagnostic_message_;
@@ -119,7 +119,7 @@ private:
   private: ros::Publisher pub_;
   private: ros::Subscriber sub_;
 
-  /// \brief battery state topic name
+  /// \brief power state topic name
   private: std::string stateTopicName_;
 
   /// \brief diag. msg. topic name
@@ -137,8 +137,8 @@ private:
   /// \brief rate to broadcast diagnostic message
   private: double diagnostic_rate_;
 
-  /// \brief rate to broadcast battery states message
-  private: double battery_state_rate_;
+  /// \brief rate to broadcast power states message
+  private: double power_state_rate_;
 
   /// \brief some internal variables for keeping track of simulated battery
   ///           @todo make consumption rate vary with joint commands, motion, etc
