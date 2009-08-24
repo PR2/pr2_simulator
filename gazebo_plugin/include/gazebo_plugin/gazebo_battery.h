@@ -109,6 +109,8 @@ private:
 
   /// \brief ros message for power state
   pr2_msgs::PowerState power_state_;
+  /// \brief ros message for battery state
+  pr2_msgs::PowerState battery_state_;
 
   /// \brief ros message for diagnostic messages
   diagnostic_msgs::DiagnosticArray diagnostic_message_;

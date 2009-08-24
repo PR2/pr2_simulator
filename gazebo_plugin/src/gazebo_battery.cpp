@@ -90,9 +90,15 @@ namespace gazebo {
   {
     this->lock_.lock();
     if (plug_msg->status == "the robot is very much plugged into the wall")
+    {
       this->consumption_rate_ = this->default_charge_rate_ + this->default_consumption_rate_;
+      this->battery_state_.AC_present = 4;
+    }
     else
+    {
       this->consumption_rate_ = this->default_consumption_rate_;
+      this->battery_state_.AC_present = 0;
+    }
     this->lock_.unlock();
   }
 
@@ -131,7 +137,7 @@ namespace gazebo {
     if (this->consumption_rate_ > 0)
         this->power_state_.time_remaining = this->charge_ / this->consumption_rate_;
     else
-        this->power_state_.time_remaining = 1E16;
+        this->power_state_.time_remaining = 65535;
     //this->power_state_.energy_capacity = this->full_capacity_;
     this->power_state_.power_consumption = this->consumption_rate_;
 
