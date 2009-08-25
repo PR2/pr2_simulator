@@ -42,7 +42,7 @@
 #include <gazebo/gazebo.h>
 #include <gazebo/GazeboError.hh>
 #include <gazebo/ControllerFactory.hh>
-#include <urdf/parser.h>
+#include <urdf/model.h>
 #include <map>
 
 namespace gazebo {
@@ -260,7 +260,6 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
             urdf_string.c_str());
     abort();
   }
-  urdf::normalizeXml(doc.RootElement());
   //std::cout << *(doc.RootElement()) << std::endl;
 
   // Pulls out the list of actuators used in the robot configuration.
