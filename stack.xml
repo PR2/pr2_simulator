@@ -6,4 +6,14 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/pr2_simulator</url>
+  <depend stack="geometry" /> <!-- angles, bullet -->
+  <depend stack="common_msgs" /> <!-- diagnostic_msgs, geometry_msgs, nav_msgs, sensor_msgs -->
+  <depend stack="simulator_gazebo" /> <!-- gazebo, opende -->
+  <depend stack="mechanism" /> <!-- mechanism_control, mechanism_model, mechanism_msgs -->
+  <depend stack="opencv" /> <!-- opencv_latest -->
+  <depend stack="pr2_common" /> <!-- pr2_msgs -->
+  <depend stack="camera_drivers" /> <!-- prosilica_cam -->
+  <depend stack="stereo" /> <!-- stereo_msgs -->
+  <depend stack="common" /> <!-- tinyxml -->
+  <depend stack="robot_model" /> <!-- urdf -->
 </stack>
