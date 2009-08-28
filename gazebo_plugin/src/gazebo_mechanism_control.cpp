@@ -114,12 +114,12 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
 
   }
 
-  this->hw_.current_time_ = Simulator::Instance()->GetSimTime();
+  this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
 }
 
 void GazeboMechanismControl::InitChild()
 {
-  this->hw_.current_time_ = Simulator::Instance()->GetSimTime();
+  this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
 }
 
 void GazeboMechanismControl::UpdateChild()
@@ -173,7 +173,7 @@ void GazeboMechanismControl::UpdateChild()
   //--------------------------------------------------
   //  Runs Mechanism Control
   //--------------------------------------------------
-  this->hw_.current_time_ = Simulator::Instance()->GetSimTime();
+  this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
   try
   {
     this->mc_->update();
