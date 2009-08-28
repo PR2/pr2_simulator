@@ -10,7 +10,7 @@
   <depend package="gazebo"/>
   <depend package="opende"/>
   <depend package="roscpp"/>
-  <depend package="prosilica_cam"/>
+  <depend package="prosilica_camera"/>
   <depend package="rospy"/>  
   <depend package="std_msgs" />
   <depend package="nav_msgs" />

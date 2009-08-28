@@ -25,7 +25,7 @@
    Date: 24 Sept 2008
    SVN info: $Id$
  @htmlinclude manifest.html
- @b RosProsilica plugin mimics after prosilica_cam package
+ @b RosProsilica plugin mimics after prosilica_camera package
  */
 
 #include <algorithm>
@@ -170,8 +170,8 @@ void RosProsilica::LoadChild(XMLConfigNode *node)
 
 ////////////////////////////////////////////////////////////////////////////////
 // service call to return camera info
-bool RosProsilica::camInfoService(prosilica_cam::CameraInfo::Request &req,
-                                  prosilica_cam::CameraInfo::Response &res)
+bool RosProsilica::camInfoService(prosilica_camera::CameraInfo::Request &req,
+                                  prosilica_camera::CameraInfo::Response &res)
 {
   // should return the cam info for the entire camera frame
   this->camInfoMsg = &res.cam_info;
@@ -225,8 +225,8 @@ bool RosProsilica::camInfoService(prosilica_cam::CameraInfo::Request &req,
 
 ////////////////////////////////////////////////////////////////////////////////
 // service call to grab an image
-bool RosProsilica::triggeredGrab(prosilica_cam::PolledImage::Request &req,
-                                 prosilica_cam::PolledImage::Response &res)
+bool RosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &req,
+                                 prosilica_camera::PolledImage::Response &res)
 {
 
   if (req.region_x <= 0 || req.region_y <= 0 || req.width <= 0 || req.height <= 0)

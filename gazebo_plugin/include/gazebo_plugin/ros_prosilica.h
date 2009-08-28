@@ -39,8 +39,8 @@
 
 // prosilica components
 #include "prosilica/prosilica.h"
-#include "prosilica_cam/CameraInfo.h"
-#include "prosilica_cam/PolledImage.h"
+#include "prosilica_camera/CameraInfo.h"
+#include "prosilica_camera/PolledImage.h"
 
 
 namespace gazebo
@@ -128,10 +128,10 @@ class RosProsilica : public Controller
   private: static void mouse_cb(int event, int x, int y, int flags, void* param) { };
 
   /// \brief Service call to publish images, cam info
-  private: bool camInfoService(prosilica_cam::CameraInfo::Request &req,
-                               prosilica_cam::CameraInfo::Response &res);
-  private: bool triggeredGrab(prosilica_cam::PolledImage::Request &req,
-                              prosilica_cam::PolledImage::Response &res);
+  private: bool camInfoService(prosilica_camera::CameraInfo::Request &req,
+                               prosilica_camera::CameraInfo::Response &res);
+  private: bool triggeredGrab(prosilica_camera::PolledImage::Request &req,
+                              prosilica_camera::PolledImage::Response &res);
 
   /// \brief A pointer to the parent camera sensor
   private: MonoCameraSensor *myParent;
