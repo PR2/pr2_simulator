@@ -70,7 +70,7 @@ GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
   int argc = 0;
   char** argv = NULL;
   ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle("mechanism_control");
+  this->rosnode_ = new ros::NodeHandle("pr2_mechanism_control");
 
   this->mc_ = new controller::MechanismControl(&hw_);
 }

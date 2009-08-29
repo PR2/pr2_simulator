@@ -35,9 +35,9 @@
 #include <gazebo/Controller.hh>
 #include <gazebo/Entity.hh>
 #include <gazebo/Model.hh>
-#include "hardware_interface/hardware_interface.h"
-#include "mechanism_control/mechanism_control.h"
-#include "mechanism_model/robot.h"
+#include "pr2_hardware_interface/hardware_interface.h"
+#include "pr2_mechanism_control/mechanism_control.h"
+#include "pr2_mechanism_model/robot.h"
 #include "tinyxml/tinyxml.h"
 #include <gazebo/Param.hh>
 
