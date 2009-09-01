@@ -37,6 +37,8 @@ rospack_add_library(ros_bumper src/ros_bumper.cpp)
 rospack_link_boost(ros_bumper thread)
 rospack_add_library(ros_sim_iface src/ros_sim_iface.cpp)
 rospack_link_boost(ros_sim_iface thread)
+rospack_add_library(ros_force src/ros_force.cpp)
+rospack_link_boost(ros_force thread)
 rospack_add_library(ros_prosilica src/ros_prosilica.cpp)
 rospack_link_boost(ros_prosilica thread)
 

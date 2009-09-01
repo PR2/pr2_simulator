@@ -20,21 +20,20 @@
  */
 /*
  @mainpage
-   Desc: RosSimIface plugin for manipulating objects in Gazebo
+   Desc: RosForce plugin for manipulating objects in Gazebo
    Author: John Hsu
    Date: 24 Sept 2008
    SVN info: $Id$
  @htmlinclude manifest.html
- @b RosSimIface plugin reads ROS Odometry messages
+ @b RosForce plugin reads ROS geometry_msgs/Wrench messages
  */
 
 #include <algorithm>
 #include <assert.h>
 
-#include <gazebo_plugin/ros_sim_iface.h>
+#include <gazebo_plugin/ros_force.h>
 
 #include <gazebo/Sensor.hh>
-#include <gazebo/Model.hh>
 #include <gazebo/Global.hh>
 #include <gazebo/XMLConfig.hh>
 #include <gazebo/Simulator.hh>
@@ -45,26 +44,21 @@
 
 using namespace gazebo;
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("ros_sim_iface", RosSimIface);
+GZ_REGISTER_DYNAMIC_CONTROLLER("ros_force", RosForce);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-RosSimIface::RosSimIface(Entity *parent)
+RosForce::RosForce(Entity *parent)
     : Controller(parent)
 {
-  this->myParent = parent;
+  this->myParent = dynamic_cast<Model*>(this->parent);
 
   if (!this->myParent)
-    gzthrow("RosSimIface controller requires an Entity as its parent");
+    gzthrow("RosForce controller requires an Model as its parent");
 
   Param::Begin(&this->parameters);
-  this->topicNameP = new ParamT<std::string>("topicName","simiface_pose", 0);
-  this->frameNameP = new ParamT<std::string>("frameName","map", 0);
-  this->modelNameP = new ParamT<std::string>("modelName","pr2_model", 1);
-  this->xyzP  = new ParamT<Vector3>("xyz" ,Vector3(0,0,0), 0);
-  this->rpyP  = new ParamT<Vector3>("rpy" ,Vector3(0,0,0), 0);
-  this->velP  = new ParamT<Vector3>("vel" ,Vector3(0,0,0), 0);
-  this->angVelP  = new ParamT<Vector3>("angVel" ,Vector3(0,0,0), 0);
+  this->topicNameP = new ParamT<std::string>("topicName","sim_force", 0);
+  this->bodyNameP = new ParamT<std::string>("bodyName","link", 1);
   Param::End();
 
   int argc = 0;
@@ -75,71 +69,62 @@ RosSimIface::RosSimIface(Entity *parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
-RosSimIface::~RosSimIface()
+RosForce::~RosForce()
 {
   delete this->rosnode_;
 
   delete this->topicNameP;
-  delete this->frameNameP;
-  delete this->modelNameP;
-  delete this->xyzP;
-  delete this->rpyP;
-  delete this->velP;
-  delete this->angVelP;
+  delete this->bodyNameP;
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void RosSimIface::LoadChild(XMLConfigNode *node)
+void RosForce::LoadChild(XMLConfigNode *node)
 {
   this->topicNameP->Load(node);
-  this->frameNameP->Load(node);
-  this->modelNameP->Load(node);
-  this->xyzP->Load(node);
-  this->rpyP->Load(node);
-  this->velP->Load(node);
-  this->angVelP->Load(node);
+  this->bodyNameP->Load(node);
 
   this->topicName = this->topicNameP->GetValue();
-  this->frameName = this->frameNameP->GetValue();
-  this->modelName = this->modelNameP->GetValue();
-  this->xyz = this->xyzP->GetValue();
-  this->rpy = this->rpyP->GetValue();
-  this->vel = this->velP->GetValue();
-  this->angVel = this->angVelP->GetValue();
+  this->bodyName = this->bodyNameP->GetValue();
+
+
+  // assert that the body by bodyName exists
+  if (dynamic_cast<Body*>(this->myParent->GetBody(bodyName)) == NULL)
+    ROS_FATAL("ros_force plugin error: bodyName: %s does not exist\n",bodyName.c_str());
+
+  this->myBody = dynamic_cast<Body*>(this->myParent->GetBody(bodyName));
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize the controller
-void RosSimIface::InitChild()
+void RosForce::InitChild()
 {
 
-  ROS_DEBUG("ros simiface subscribing to %s", this->topicName.c_str());
-  this->sub_ = this->rosnode_->subscribe(this->topicName.c_str(), 10, &RosSimIface::UpdateObjectPose,this);
+  ROS_DEBUG("ros force: subscribing to %s", this->topicName.c_str());
+  this->sub_ = this->rosnode_->subscribe(this->topicName.c_str(), 10, &RosForce::UpdateObjectForce,this);
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update the controller
-void RosSimIface::UpdateObjectPose(const nav_msgs::Odometry::ConstPtr& poseMsg)
+void RosForce::UpdateObjectForce(const geometry_msgs::Wrench::ConstPtr& wrenchMsg)
 {
 
   this->lock.lock();
 
-  Model* model = gazebo::World::Instance()->GetModelByName(this->modelName);
-  Vector3 pos(poseMsg->pose.pose.position.x,poseMsg->pose.pose.position.y,poseMsg->pose.pose.position.z);
-  Quatern rot(poseMsg->pose.pose.orientation.w,poseMsg->pose.pose.orientation.x,poseMsg->pose.pose.orientation.y,poseMsg->pose.pose.orientation.z);
-  Pose3d modelPose(pos,rot);
-  model->SetPose(modelPose);
+  Vector3 force(wrenchMsg->force.x,wrenchMsg->force.y,wrenchMsg->force.z);
+  Vector3 torque(wrenchMsg->torque.x,wrenchMsg->torque.y,wrenchMsg->torque.z);
+  this->myBody->SetForce(force);
+  this->myBody->SetTorque(torque);
 
   this->lock.unlock();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update the controller
-void RosSimIface::UpdateChild()
+void RosForce::UpdateChild()
 {
 
 
@@ -148,7 +133,7 @@ void RosSimIface::UpdateChild()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Finalize the controller
-void RosSimIface::FiniChild()
+void RosForce::FiniChild()
 {
 }
 
