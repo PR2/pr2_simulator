@@ -135,13 +135,13 @@ protected:
 private:
 
   Model *parent_model_;
-  HardwareInterface hw_;
-  controller::MechanismControl *mc_;
+  pr2_mechanism::HardwareInterface hw_;
+  pr2_mechanism::MechanismControl *mc_;
 
   /// @todo The fake state helps Gazebo run the transmissions backwards, so
   ///       that it can figure out what its joints should do based on the
   ///       actuator values.
-  mechanism::RobotState *fake_state_;
+  pr2_mechanism::RobotState *fake_state_;
   std::vector<gazebo::Joint*>  joints_;
 
   /*
