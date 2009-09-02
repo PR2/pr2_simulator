@@ -1,0 +1,18 @@
+<launch>
+  <include file="$(find gazebo)/launch/slide_world.launch" />
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+  <!-- send single_link.xml to param server -->
+  <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
+
+  <!-- push robot_description_new to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new 0 6 18 0 -75 90 pr2_model" respawn="false" output="screen" />
+
+  <!-- test -->
+  <test test-name="pr2_test_slide" pkg="test_pr2_collision_gazebo" type="test_slide.py" time-limit="120" />
+</launch>

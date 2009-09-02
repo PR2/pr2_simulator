@@ -1,0 +1,32 @@
+<launch>
+  <include file="$(find pr2_alpha)/sim.machine" />
+
+  <include file="$(find gazebo)/launch/camera_world.launch" />
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+  <!-- send single_link.xml to param server -->
+  <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
+
+  <!-- push robot_description_new to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new -3 0 0" respawn="false" output="screen" /> <!-- load default arm controller -->
+
+  <!-- load controllers -->
+  <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
+  <include file="$(find pr2_default_controllers)/head_position_controller.launch"/>
+
+  <!-- starting up stereos -->
+  <include file="$(find stereo_image_proc)/narrow_stereoproc.launch" />
+  <include file="$(find stereo_image_proc)/wide_stereoproc.launch" />
+
+  <!-- send head a pointing command -->
+  <node pkg="pr2_mechanism_controllers" type="pointhead.py" args="10 0 1 /base_link" output="screen"/>
+  <node pkg="pr2_experimental_controllers" type="tuckarm.py" args="b" output="screen"/>
+
+  <!-- test -->
+  <test test-name="test_pr2_sensors_gazebo_test_camera" pkg="test_pr2_sensors_gazebo" type="test_camera.py" time-limit="110" />
+</launch>

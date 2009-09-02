@@ -18,4 +18,9 @@
   <depend stack="robot_model" /> <!-- urdf, convex_decomposition, ivcon -->
   <depend stack="ros" /> <!-- std_msgs, roscpp, rospy -->
   <depend stack="visualization_common"/> <!-- ogre_tools --> 
+
+  <!-- added for tests -->
+  <!--depend stack="semantic_mapping"/--> <!-- semantic_point_annotator, causes circular dependency --> 
+  <depend stack="laser_pipeline"/> <!-- laser_filters --> 
+  <depend stack="image_pipeline"/> <!-- stereo_image_proc --> 
 </stack>

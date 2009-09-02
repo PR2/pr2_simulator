@@ -1,0 +1,25 @@
+<launch>
+  <include file="$(find pr2_alpha)/sim.machine" />
+
+  <include file="$(find gazebo)/launch/scan_world.launch" />
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+  <!-- send single_link.xml to param server -->
+  <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
+
+  <!-- push robot_description_new to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new" respawn="false" output="screen" /> <!-- load default arm controller -->
+
+  <!-- load controllers -->
+  <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
+  <include file="$(find pr2_default_controllers)/head_position_controller.launch"/>
+  <include file="$(find 2dnav_pr2)/config/lasers_and_filters.xml" />
+
+  <test test-name="test_pr2_sensors_gazebo_test_scan" pkg="test_pr2_sensors_gazebo" type="test_scan.py" />
+
+</launch>
