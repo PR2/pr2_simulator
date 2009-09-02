@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<!-- Object2: The small box -->
+<model:physical name="small_box_model">
+  <xyz>   0.835  -0.55   0.5</xyz>
+  <rpy>   0.0    0.0    30.0</rpy>
+  <static>true</static>
+  <body:box name="small_box_body">
+    <geom:box name="small_box_geom">
+      <kp>100000000.0</kp>
+      <kd>0.1</kd>
+      <mesh>default</mesh>
+      <size>0.1 0.03 0.03</size>
+      <mass> 0.05</mass>
+      <visual>
+        <size> 0.1 0.030 0.03</size>
+        <material>Gazebo/PioneerBody</material>
+        <mesh>unit_box</mesh>
+      </visual>
+    </geom:box>
+  </body:box>
+  <controller:ros_p3d name="p3d_object_controller" plugin="libros_p3d.so">
+    <alwaysOn>true</alwaysOn>
+    <updateRate>100.0</updateRate>
+    <bodyName>small_box_body</bodyName>
+    <topicName>small_box_pose_ground_truty</topicName>
+    <frameName>map</frameName>
+    <interface:position name="p3d_object_position"/>
+  </controller:ros_p3d>
+</model:physical>

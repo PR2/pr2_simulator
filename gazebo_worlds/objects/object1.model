@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<model:physical xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint" xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering" xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics" name="object1_model">
+
+ <!-- The small box "cup" -->
+  <xyz>   0.835  -0.55   1.95</xyz>
+  <rpy>   0.0    0.0    30.0</rpy>
+  <body:box name="object1_body">
+    <geom:box name="object1_geom">
+      <kp>100000000.0</kp>
+      <kd>0.1</kd>
+      <mesh>default</mesh>
+      <size>0.1 0.03 0.03</size>
+      <mass> 0.05</mass>
+      <visual>
+        <size> 0.1 0.030 0.03</size>
+        <material>Gazebo/PioneerBody</material>
+        <mesh>unit_box</mesh>
+      </visual>
+    </geom:box>
+  </body:box>
+
+  <controller:ros_p3d name="p3d_object_controller" plugin="libros_p3d.so">
+    <updateRate>100.0</updateRate>
+    <bodyName>object1_body</bodyName>
+    <topicName>object1_body_ground_truth</topicName>
+    <frameName>object1_body_ground_truth_frame</frameName>
+    <interface:position name="p3d_object_position"/>
+  </controller:ros_p3d>
+
+</model:physical>
+
+
+

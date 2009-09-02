@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<model:physical name="001_327_79">
+  <xyz>   0      0      0</xyz>
+  <rpy>   0.0    0.0    0.0</rpy>
+  <static>false</static>
+  <body:trimesh name="001_327_79_body">
+
+    <massMatrix>true</massMatrix> 
+    <mass>1.0</mass>
+    <ixx>0.1</ixx>
+    <ixy>0.0</ixy>
+    <ixz>0.0</ixz>
+    <iyy>0.1</iyy>
+    <iyz>0.0</iyz>
+    <izz>0.1</izz>
+    <cx>0.0</cx>
+    <cy>0.0</cy>
+    <cz>0.05</cz>
+
+    <geom:trimesh name="001_327_79_geom">
+      <xyz>0 0 0</xyz>
+      <laserRetro>2000.0</laserRetro>
+      <kp>1000000.0</kp>
+      <kd>1.0</kd>
+      <scale>0.001 0.001 0.001</scale>
+      <mesh>ikea_objects/001.327.79.obj.stlb.mesh</mesh>
+      <visual>
+        <xyz>0 0 0.0</xyz>
+        <size>0.0816 0.0816 0.113</size>
+        <material>PR2/Green</material>
+        <mesh>ikea_objects/001.327.79.obj.stlb.mesh</mesh>
+      </visual>
+    </geom:trimesh>
+  </body:trimesh>
+</model:physical>
+
+
+

@@ -1,0 +1,10 @@
+<launch>
+  <param name="/use_sim_time" value="true" />
+  <!-- send pr2.xml to param server -->
+  <param name="checker"      textfile="$(find gazebo_worlds)/objects/checker.model" />
+
+  <!-- push robotdesc/pr2 to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_plugin" type="xml2factory" args="checker 1.0 0 1.5 0 0 0 checker_model" respawn="false" output="screen" />
+  
+</launch>
+
