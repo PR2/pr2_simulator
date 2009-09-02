@@ -20,7 +20,7 @@
   <depend stack="visualization_common"/> <!-- ogre_tools --> 
 
   <!-- added for tests -->
-  <!--depend stack="semantic_mapping"/--> <!-- semantic_point_annotator, causes circular dependency --> 
+  <depend stack="semantic_mapping"/> <!-- semantic_point_annotator --> 
   <depend stack="laser_pipeline"/> <!-- laser_filters --> 
   <depend stack="image_pipeline"/> <!-- stereo_image_proc --> 
 </stack>
