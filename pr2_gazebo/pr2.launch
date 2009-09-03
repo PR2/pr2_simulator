@@ -3,8 +3,8 @@
   <!-- send pr2 urdf to param server -->
   <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
 
-  <!-- push robot_description_new to factory and spawn robot in gazebo -->
-  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new" respawn="false" output="screen" />
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" />
  
   <!-- Robot state publisher -->
   <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen">

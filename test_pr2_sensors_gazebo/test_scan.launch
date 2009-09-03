@@ -12,8 +12,8 @@
   <!-- send single_link.xml to param server -->
   <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
 
-  <!-- push robot_description_new to factory and spawn robot in gazebo -->
-  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new" respawn="false" output="screen" /> <!-- load default arm controller -->
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" /> <!-- load default arm controller -->
 
   <!-- load controllers -->
   <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
