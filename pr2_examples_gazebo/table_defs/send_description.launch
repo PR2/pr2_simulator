@@ -1,5 +1,0 @@
-<launch>
-
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find wg_robot_description)/table_defs/table.xml'" />
-
-</launch>
