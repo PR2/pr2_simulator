@@ -13,14 +13,12 @@
   <depend stack="opencv" /> <!-- opencv_latest -->
   <depend stack="pr2_common" /> <!-- pr2_msgs -->
   <depend stack="camera_drivers" /> <!-- prosilica_cam -->
-  <depend stack="image_pipeline" /> <!-- stereo_msgs -->
+  <depend stack="image_pipeline" /> <!-- stereo_msgs, stereo_image_proc -->
   <depend stack="common" /> <!-- tinyxml, xacro -->
   <depend stack="robot_model" /> <!-- urdf, convex_decomposition, ivcon -->
   <depend stack="ros" /> <!-- std_msgs, roscpp, rospy -->
   <depend stack="visualization_common"/> <!-- ogre_tools --> 
 
   <!-- added for tests -->
-  <depend stack="semantic_mapping"/> <!-- semantic_point_annotator --> 
   <depend stack="laser_pipeline"/> <!-- laser_filters --> 
-  <depend stack="image_pipeline"/> <!-- stereo_image_proc --> 
 </stack>
