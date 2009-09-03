@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot name="pr2"><!-- name of the robot-->
+  <group name="multi_link" flags="planning kinematic">
+    link1
+    link2
+    link3
+    link4
+    link5
+    link6
+    link7
+  </group>
+</robot>

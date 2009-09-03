@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<controllers>
+  <!-- ========================================= -->
+  <!-- right arm array -->
+  <controller name="test_controller" type="ArmDynamicsControllerNode">
+    <listen_topic name="multi_link_commands" />
+    <kinematics>
+      <elem key="kdl_chain_name">multi_link</elem>
+    </kinematics>
+    <map name="controller_param">
+      <elem key="kdl_chain_name">multi_link</elem>
+    </map>
+    <controller name="link1_controller" topic="link1_controller" type="JointEffortController">
+      <joint name="link1_joint" >
+        <pid p="500" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+    <controller name="link2_controller" topic="link2_controller" type="JointEffortController">
+      <joint name="link2_joint" >
+        <pid p="300" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+    <controller name="link3_controller" topic="link3_controller" type="JointEffortController">
+      <joint name="link3_joint" >
+        <pid p="200" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+    <controller name="link4_controller" topic="link4_controller" type="JointEffortController">
+      <joint name="link4_joint" >
+        <pid p="100" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+    <controller name="link5_controller" topic="link5_controller" type="JointEffortController">
+      <joint name="link5_joint" >
+        <pid p="100" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+    <controller name="link6_controller" topic="link6_controller" type="JointEffortController">
+      <joint name="link6_joint" >
+        <pid p="100" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+    <controller name="link7_controller" topic="link7_controller" type="JointEffortController">
+      <joint name="link7_joint" >
+        <pid p="100" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+  </controller>
+</controllers>

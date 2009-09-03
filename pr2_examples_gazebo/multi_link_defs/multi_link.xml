@@ -1,0 +1,321 @@
+<?xml version="1.0"?>
+
+<robot name="pr2"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <!-- joint blocks -->
+  <joint name="base_block_joint" type="fixed" > 
+    <parent link="world" />
+    <origin xyz="0 0 0.002 " rpy="0 0 0" />
+    <child link="base_block" />
+  </joint>
+  <link name="base_block">
+    <inertial>
+      <mass value="1000" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="1000"  ixy="0"  ixz="0" iyy="1000" iyz="0" izz="1000" />
+    </inertial> 
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry name="base_block_visual_geom">
+        <box size="0.001 0.001 0.001" />
+      </geometry>
+    </visual> 
+    <collision>
+      <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+      <geometry name="base_block_collision_geom">
+        <box size="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="base_block">
+    <material>Gazebo/GrassFloor</material>
+  </gazebo>
+  
+  <!-- joint blocks -->
+  <joint name="link1_joint" type="revolute" >
+    <axis xyz="0 0 1" />
+    <limit lower="-.5" upper="0.5" effort="10" velocity="50" />
+    <safety_controller safety_lower_limit="-.5" safety_upper_limit="0.5" k_position="100.0" k_velocity="100.0" />
+    <dynamics damping="1000.0" />
+    <parent link="base_block" />
+    <origin xyz="0 0 10" rpy="0 0 0" />
+    <child link="link1" />
+  </joint>
+  <link name="link1">
+    <inertial >
+      <mass value="100.0" />
+      <origin xyz="0 0 -0.5" /> 
+      <inertia  ixx="200.00" ixy="0.0"  ixz="0.0"  iyy="200.0"  iyz="0.0"  izz="100.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0 0 -0.5" rpy="0 0 0" />
+      <geometry name="link1_visual_geom">
+        <box size="0.1 0.1 1.0" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0 0 -0.5" rpy="0.0 0.0 0.0 " />
+      <geometry name="link1_collision_geom">
+        <box size="0.1 0.1 1.0" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link1">
+    <material>Gazebo/Red</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <!-- joint blocks -->
+  <joint name="link2_joint" type="revolute" >
+    <axis xyz="0 1 0" />
+    <limit lower="-1" upper="2" effort="5000" velocity="50" />
+    <safety_controller safety_lower_limit="-1" safety_upper_limit="2" k_position="100.0" k_velocity="100.0" />
+    <dynamics damping="1000.0" />
+    <parent link="link1" />
+    <origin xyz="0.0 0 0" rpy="0 0 0" />
+    <child link="link2" />
+  </joint>
+  <link name="link2">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0.5 0 0" /> 
+      <inertia  ixx="1.00" ixy="0.0"  ixz="0.0"  iyy="2.0"  iyz="0.0"  izz="2.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry name="link2_visual_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
+      <geometry name="link2_collision_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link2">
+    <material>Gazebo/Blue</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <!-- joint blocks -->
+  <joint name="link3_joint" type="revolute" >
+    <axis xyz="0 1 0" />
+    <limit lower="-1" upper="2" effort="5000" velocity="50" />
+    <safety_controller safety_lower_limit="-1" safety_upper_limit="2" k_position="100.0" k_velocity="100.0" />
+    <dynamics damping="1000.0" />
+    <parent link="link2" />
+    <origin xyz="1.0 0 0" rpy="0 0 0" />
+    <child link="link3" />
+  </joint>
+  <link name="link3">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0.5 0 0" /> 
+      <inertia  ixx="1.00" ixy="0.0"  ixz="0.0"  iyy="2.0"  iyz="0.0"  izz="2.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry name="link3_visual_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
+      <geometry name="link3_collision_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link3">
+    <material>Gazebo/Green</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <!-- joint blocks -->
+  <joint name="link4_joint" type="revolute" >
+    <axis xyz="0 1 0" />
+    <limit lower="-1" upper="2" effort="2000" velocity="50" />
+    <safety_controller safety_lower_limit="-1" safety_upper_limit="2" k_position="100.0" k_velocity="100.0" />
+    <dynamics damping="1000.0" />
+    <parent link="link3" />
+    <origin xyz="1.0 0 0" rpy="0 0 0" />
+    <child link="link4" />
+  </joint>
+  <link name="link4">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0.5 0 0" /> 
+      <inertia  ixx="1.00" ixy="0.0"  ixz="0.0"  iyy="2.0"  iyz="0.0"  izz="2.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry name="link4_visual_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
+      <geometry name="link4_collision_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link4">
+    <material>Gazebo/Red</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <!-- joint blocks -->
+  <joint name="link5_joint" type="revolute" >
+    <axis xyz="0 1 0" />
+    <limit lower="-1" upper="2" effort="500" velocity="50" />
+    <safety_controller safety_lower_limit="-1" safety_upper_limit="2" k_position="100.0" k_velocity="100.0" />
+    <dynamics damping="100.0" />
+    <parent link="link4" />
+    <origin xyz="1.0 0 0" rpy="0 0 0" />
+    <child link="link5" />
+  </joint>
+  <link name="link5">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0.5 0 0" /> 
+      <inertia  ixx="1.00" ixy="0.0"  ixz="0.0"  iyy="2.0"  iyz="0.0"  izz="2.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry name="link5_visual_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
+      <geometry name="link5_collision_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link5">
+    <material>Gazebo/Blue</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <!-- joint blocks -->
+  <joint name="link6_joint" type="revolute" >
+    <axis xyz="0 1 0" />
+    <limit lower="-1" upper="2" effort="100" velocity="50" />
+    <safety_controller safety_lower_limit="-1" safety_upper_limit="2" k_position="100.0" k_velocity="100.0" />
+    <dynamics damping="100.0" />
+    <parent link="link5" />
+    <origin xyz="1.0 0 0" rpy="0 0 0" />
+    <child link="link6" />
+  </joint>
+  <link name="link6">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0.5 0 0" /> 
+      <inertia  ixx="1.00" ixy="0.0"  ixz="0.0"  iyy="2.0"  iyz="0.0"  izz="2.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry name="link6_visual_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
+      <geometry name="link6_collision_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link6">
+    <material>Gazebo/Green</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <!-- joint blocks -->
+  <joint name="link7_joint" type="revolute" >
+    <axis xyz="0 1 0" />
+    <limit lower="-1" upper="2" effort="100" velocity="50" />
+    <safety_controller safety_lower_limit="-1" safety_upper_limit="2" k_position="100.0" k_velocity="100.0" />
+    <dynamics damping="10.0" />
+    <parent link="link6" />
+    <origin xyz="1.0 0 0" rpy="0 0 0" />
+    <child link="link7" />
+  </joint>
+  <link name="link7">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0.5 0 0" /> 
+      <inertia  ixx="1.00" ixy="0.0"  ixz="0.0"  iyy="2.0"  iyz="0.0"  izz="2.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry name="link7_visual_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
+      <geometry name="link7_collision_geom">
+        <box size="1.0 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link7">
+    <material>Gazebo/Red</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <!-- Define groups of links; a link may be part of multiple groups -->
+  <include filename="./groups_multi_link.xml" />
+  <!-- mechanism controls -->
+  <include filename="./transmissions_multi_link.xml" />
+
+  <gazebo>
+      <controller:ros_time name="ros_time" plugin="libros_time.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1000.0</updateRate>
+        <interface:audio name="dummy_ros_time_iface_should_not_be_here"/>
+      </controller:ros_time>
+
+      <!-- PR2_ACTARRAY -->
+      <controller:gazebo_mechanism_control name="gazebo_mechanism_control" plugin="libgazebo_mechanism_control.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1000.0</updateRate>
+
+        <interface:audio name="gazebo_mechanism_control_dummy_iface" />
+      </controller:gazebo_mechanism_control>
+
+      <!-- ros_p3d for position groundtruth -->
+      <controller:ros_p3d name="p3d_link3_controller" plugin="libros_p3d.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>1000.0</updateRate>
+          <bodyName>link3</bodyName>
+          <topicName>link3_pose</topicName>
+          <frameName>map</frameName>
+          <interface:position name="p3d_link3_position"/>
+      </controller:ros_p3d>
+  </gazebo>
+  
+</robot>

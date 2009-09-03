@@ -1,0 +1,10 @@
+<launch>
+  <!-- start up robot with 2dnav-stack -->
+  <include file="$(find pr2_2dnav_gazebo)/2dnav-gazebo-prototype1-wg-fake_localization.xml"/>
+
+  <!-- start up trex -->
+  <param name="/trex/input_file" value="pr2.cfg"/>
+  <param name="/trex/path" value="$(find pr2_2dnav_gazebo)/trex:$(find trex_ros)/miles_gazebo.3:$(find pr2_2dnav_gazebo)/trex/logs:$(find trex_ros)"/>
+  <param name="/trex/log_dir" value="$(find pr2_2dnav_gazebo)/trex/logs"/>
+  <node pkg="trex_pr2" type="trexfast" output="screen" />
+</launch>

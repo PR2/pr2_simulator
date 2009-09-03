@@ -1,0 +1,23 @@
+<launch>
+
+  <!-- send pr2_r_arm urdf to param server -->
+  <include file="$(find pr2_defs)/launch/upload_r_arm.launch" />
+
+  <!-- push robot_description_new to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new" respawn="false" output="screen"/>
+
+
+  <!-- for visualization -->
+  <!--
+  <node pkg="rviz" type="rviz" respawn="false" output="screen" />
+  <include file="$(find pr2_arm_gazebo)/tests/debug_plot.launch"/>
+  -->
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+</launch>
+

@@ -1,0 +1,16 @@
+<launch>
+  <param name="axis_vx" value="0" type="int"/>
+  <param name="axis_vy" value="1" type="int"/>
+  <param name="axis_vw" value="5" type="int"/>
+  <param name="pan" value="-1" type="int"/>
+  <param name="tilt" value="-1" type="int"/>
+  <param name="max_vw" value="1.0" />
+  <param name="max_vx" value="0.6" />
+  <param name="max_vy" value="0.6" />
+  <param name="deadman_button" value="-1" type="int"/>
+  <remap from="joy" to="spacenav/joy"/>
+  <node pkg="teleop_base" type="teleop_base" args="--deadman_no_publish" output="screen"/>
+
+  <node pkg="spacenav_node" type="spacenav_node" args="" respawn="false" output="screen" />
+</launch>
+

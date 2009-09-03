@@ -1,0 +1,8 @@
+
+<launch>
+  <include file="$(find gazebo)/launch/empty_world.launch" />
+
+  <include file="$(find pr2_examples_gazebo)/dual_link.launch" />
+
+  <test test-name="test_pr2_gazebo_plugins_test_pendulum" pkg="test_pr2_gazebo_plugins" type="test_pendulum.py" />
+</launch>

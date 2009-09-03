@@ -1,0 +1,12 @@
+<launch>
+  <!-- send single_link.xml to param server -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/single_link_defs/single_link.xml'" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" />
+
+  <node pkg="pr2_mechanism_control" type="spawner.py" args="$(find pr2_examples_gazebo)/single_link_defs/controllers_single_link.xml" respawn="false" output="screen" />
+
+  <node pkg="robot_mechanism_controllers" type="control.py" args="set test_controller 0.5" respawn="false" output="screen" />
+</launch>
+

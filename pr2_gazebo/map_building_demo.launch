@@ -1,0 +1,29 @@
+<launch>
+
+  <!-- start up empty world -->
+  <include file="$(find gazebo)/launch/office_world.launch"/>
+
+  <!-- start prototype1 robot (pr2 - arms) -->
+  <include file="$(find pr2_gazebo)/prototype1.launch"/>
+
+  <!-- load head and base controllers -->
+  <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
+  <include file="$(find pr2_default_controllers)/head_position_controller.launch"/>
+
+  <!-- for visualization -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pr2_gazebo)/rviz/map.vcg"/>
+
+  <!-- dynamic map generation -->
+  <node pkg="gmapping" type="slam_gmapping" respawn="false" >
+    <remap to="base_scan" from="scan"/>
+  </node>
+
+  <!-- nav-stack:
+       NOTE:  not working with amcl in loop, need to fix how amcl updates dynamic map
+       NOTE:  for now, rosrun teleop_base teleop_base_keyboard to drive robot around
+        -->
+  <!--include file="$(find pr2_2dnav_gazebo)/2dnav-stack-amcl.launch"/-->
+  <!--node pkg="map_server" type="map_server" args="$(find gazebo_worlds)/Media/materials/textures/map_blank.png 0.1" respawn="true" /-->
+
+</launch>
+

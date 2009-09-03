@@ -1,0 +1,24 @@
+<package>
+  <description>A clone of  2-D navigation stack \b rosstage using a 3D simulation environment.</description>
+  <author>John Hsu</author>
+  <license>BSD</license>
+  <review status="NA" notes=""/>
+  <url>http://pr.willowgarage.com/wiki/Simulator</url>
+  <depend package="std_msgs"/>
+  <depend package="nav_view"/>
+  <depend package="move_base"/>
+  <depend package="move_base_client"/>
+  <depend package="map_server"/>
+  <depend package="amcl"/>
+  <depend package="fake_localization"/>
+  <depend package="pr2_gazebo"/>
+  <depend package="pr2_gazebo_plugins"/>
+  <depend package="gazebo_tools"/>
+  <depend package="rviz"/>
+  <depend package="teleop_base"/>
+  <depend package="3dnav_pr2"/>
+  <depend package="2dnav_pr2"/>
+
+  <!-- Adding experimental controllers as a dependency b/c of tuckarm move -->
+  <depend package="experimental_controllers"/>
+</package>

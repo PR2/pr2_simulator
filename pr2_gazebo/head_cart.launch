@@ -1,0 +1,14 @@
+<launch>
+  <!-- send head_cart.xml to param server -->
+  <include file="$(find pr2_defs)/launch/upload_hca.launch" />
+
+  <!-- push robot_description_new to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new" respawn="false" output="screen" />
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+</launch>
+

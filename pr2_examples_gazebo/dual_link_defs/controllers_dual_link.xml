@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<controllers>
+  <!-- ========================================= -->
+  <!-- right arm array -->
+  <controller name="test_controller" type="ArmDynamicsControllerNode">
+    <listen_topic name="right_arm_commands" />
+    <kinematics>
+      <elem key="kdl_chain_name">right_arm</elem>
+    </kinematics>
+    <map name="controller_param">
+      <elem key="kdl_chain_name">right_arm</elem>
+    </map>
+    <controller name="link1_controller" topic="link1_controller" type="JointEffortController">
+      <joint name="link1_joint" >
+        <pid p="100" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+    <controller name="link2_controller" topic="link2_controller" type="JointEffortController">
+      <joint name="link2_joint" >
+        <pid p="100" d="2" i="0.1" iClamp="20" />
+      </joint>
+    </controller>
+</controllers>

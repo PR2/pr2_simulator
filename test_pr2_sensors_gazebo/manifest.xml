@@ -9,8 +9,8 @@
 
   <depend package="rospy"/>
   <depend package="rostest"/>
-  <depend package="gazebo_plugin"/>
-  <depend package="arm_gazebo" />
+  <depend package="pr2_gazebo_plugins"/>
+  <depend package="pr2_arm_gazebo" />
   <depend package="pr2_gazebo" />
   <depend package="pr2_ogre" />
   <depend package="gazebo_worlds" />

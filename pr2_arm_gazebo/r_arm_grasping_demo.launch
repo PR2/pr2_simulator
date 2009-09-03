@@ -1,0 +1,34 @@
+<launch>
+  <!-- start up empty world -->
+  <include file="$(find gazebo)/launch/empty_world.launch"/>
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+  <!-- send pr2_r_arm.xml to param server -->
+  <include file="$(find pr2_defs)/launch/upload_r_arm.launch" />
+
+  <!-- push robot_description_new to factory and spawn robot in gazebo -->
+  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description_new" respawn="false" output="screen"/>
+
+  <!-- start arm controller -->
+  <include file="$(find pr2_arm_gazebo)/controllers/r_arm_position_controller.launch"/>
+
+  <!-- some hand waving -->
+  <node pkg="pr2_arm_gazebo" type="grasp_preprogrammed.py" output="screen"/>
+
+  <!-- for visualization -->
+  <!--
+  <node pkg="rviz" type="rviz" respawn="false" output="screen" />
+  -->
+  <!--include file="$(find pr2_arm_gazebo)/tests/debug_plot.launch"/-->
+
+  <param name="table_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/table_defs.xml'" />
+  <node pkg="gazebo_tools" type="urdf2factory" args="table_description 0 0 0.01 0 0 0 table_model" respawn="false" output="screen" />
+
+  <include file="$(find pr2_examples_gazebo)/coffee_cup.launch" />
+</launch>
+

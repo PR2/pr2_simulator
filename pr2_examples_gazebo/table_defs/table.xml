@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="table"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+
+  <include filename="$(find pr2_examples_gazebo)/table_defs/table_defs.xml" />
+
+  <map name="sensor" flag="gazebo">
+    <verbatim key="mechanism_control_simulation">
+
+      <controller:ros_time name="ros_time" plugin="libros_time.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1000.0</updateRate>
+        <interface:audio name="dummy_ros_time_iface_should_not_be_here"/>
+      </controller:ros_time>
+
+    </verbatim>
+  </map>
+
+</robot>
