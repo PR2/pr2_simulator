@@ -22,11 +22,11 @@ rosbuild_init(test_pr2_2dnav_gazebo)
 #
 #if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
 #
-#rospack_add_rostest(test_2dnav_wg.launch)
-#rospack_add_rostest(test_2dnav_empty_rotation.launch)
-#rospack_add_rostest(test_2dnav_empty_odom.launch)
-#rospack_add_rostest(test_2dnav_empty_diagonal.launch)
-#rospack_add_rostest(test_2dnav_empty_axis.launch)
-#rospack_add_rostest(test_2dnav_empty_amcl_axis.launch)
+#rospack_add_rostest(test_pr2_2dnav_wg.launch)
+#rospack_add_rostest(test_pr2_2dnav_empty_rotation.launch)
+#rospack_add_rostest(test_pr2_2dnav_empty_odom.launch)
+#rospack_add_rostest(test_pr2_2dnav_empty_diagonal.launch)
+#rospack_add_rostest(test_pr2_2dnav_empty_axis.launch)
+#rospack_add_rostest(test_pr2_2dnav_empty_amcl_axis.launch)
 #
 #endif(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
