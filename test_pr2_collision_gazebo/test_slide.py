@@ -42,7 +42,7 @@ roslib.load_manifest(PKG)
 import unittest, sys, os, math
 import time
 import rospy, rostest
-from nav_msgs.msg import *
+from nav_msgs.msg import Odometry
 
 TEST_DURATION = 90.0
 TARGET_X = -6.0 + 25.65 #contains offset specified in P3D for base, alternatively, use the gripper roll ground truths
