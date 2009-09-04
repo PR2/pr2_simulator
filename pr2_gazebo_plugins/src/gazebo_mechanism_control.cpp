@@ -93,7 +93,7 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   ReadPr2Xml(node);
 
   // Initializes the fake state (for running the transmissions backwards).
-  this->fake_state_ = new pr2_mechanism::RobotState(&this->mc_->model_, &this->hw_);
+  this->fake_state_ = new pr2_mechanism::RobotState(&this->mc_->model_);
 
   // The gazebo joints and mechanism joints should match up.
   for (unsigned int i = 0; i < this->mc_->model_.joints_.size(); ++i)
