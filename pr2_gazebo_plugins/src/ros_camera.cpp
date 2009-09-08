@@ -154,7 +154,7 @@ void RosCamera::PutCameraData()
 {
   const unsigned char *src;
 
-  boost::recursive_mutex::scoped_lock mr_lock(*Simulator::Instance()->GetMRMutex());
+  //boost::recursive_mutex::scoped_lock mr_lock(*Simulator::Instance()->GetMRMutex());
 
   // Get a pointer to image data
   src = this->myParent->GetImageData(0);

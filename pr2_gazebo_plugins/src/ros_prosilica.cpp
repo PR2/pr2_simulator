@@ -236,7 +236,7 @@ bool RosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &req,
     req.width = this->width;
     req.height = this->height;
   }
-  boost::recursive_mutex::scoped_lock lock(*Simulator::Instance()->GetMRMutex());
+  //boost::recursive_mutex::scoped_lock lock(*Simulator::Instance()->GetMRMutex());
 
   const unsigned char *src;
 
