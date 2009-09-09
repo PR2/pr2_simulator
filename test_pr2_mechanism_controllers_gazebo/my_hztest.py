@@ -83,7 +83,7 @@ class MyHzTest(unittest.TestCase):
 
     def test_hz(self):
         print "LNK\n"
-        #rospy.Subscriber("/tf_message", tfMessage, self.Input)
+        #rospy.Subscriber("/tf", tfMessage, self.Input)
         rospy.Subscriber("/mechanism_state", MechanismState, self.Input)
         rospy.init_node(NAME, anonymous=True)
         timeout_t = time.time() + TEST_TIMEOUT

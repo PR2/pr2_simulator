@@ -42,11 +42,11 @@
     <param name="test_duration" value="10.0" />
     <param name="check_intervals" value="false" />
   </test>
-  <!-- Test for publication of 'tf_message' topic. -->
+  <!-- Test for publication of '/tf' topic. -->
   <test test-name="hztest_test_tf_message" pkg="test_pr2_mechanism_controllers_gazebo" type="hztest" time-limit="50" name="tf_message_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (tf_message_test vs. scan_test). -->
-    <param name="topic" value="/tf_message" />
+    <param name="topic" value="/tf" />
     <param name="hz" value="100.0" />
     <param name="hzerror" value="30.0" />
     <param name="test_duration" value="10.0" />
