@@ -284,7 +284,9 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
   for (it = get_actuators.actuators.begin(); it != get_actuators.actuators.end(); ++it)
   {
     //std::cout << " adding actuator " << (*it) << std::endl;
-    this->hw_.actuators_.push_back(new pr2_mechanism::Actuator(*it));
+    pr2_mechanism::Actuator* pr2_actuator = new pr2_mechanism::Actuator(*it);
+    pr2_actuator->state_.is_enabled_ = true;
+    this->hw_.actuators_.push_back(pr2_actuator);
   }
 
   // Setup mechanism control node
