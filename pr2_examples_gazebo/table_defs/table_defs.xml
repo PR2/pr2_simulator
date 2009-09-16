@@ -17,7 +17,7 @@
   <property name="table_width" value="1.0" />
   <property name="table_depth" value="1.0" />
   <property name="leg_radius" value="0.02" />
-  <property name="table_x" value="0.98" />
+  <property name="table_x" value="9.98" />
   <property name="table_y" value="0.0" />
   <property name="table_z" value="0.0" />
 
@@ -42,13 +42,13 @@
     <visual>
       <origin xyz="0 0 0.0" rpy="0 0 0" />
       <geometry name="floor_visual_geom">
-        <box size="1 1 0.05" />
+        <box size="${table_width} ${table_depth} 0.05" />
       </geometry>
     </visual> 
     <collision>
       <origin xyz="0 0 0.0" rpy="0.0 0.0 0.0" />
       <geometry name="floor_collision_geom">
-        <box size="1 1 0.05" />
+        <box size="${table_width} ${table_depth} 0.05" />
       </geometry>
     </collision>
   </link>
@@ -97,7 +97,7 @@
 
   <joint name="leg2_joint" type="fixed" >
     <parent link="table_top_link" />
-    <origin xyz="${-table_depth/2} ${table_depth/2} 0" rpy="0 0 0" />
+    <origin xyz="${-table_width/2} ${table_depth/2} 0" rpy="0 0 0" />
     <child link="leg2_link" />
   </joint> 
   <link name="leg2_link">
@@ -132,7 +132,7 @@
 
   <joint name="leg3_joint" type="fixed" >
     <parent link="table_top_link" />
-    <origin xyz="${table_depth/2} ${-table_depth/2} 0" rpy="0 0 0" />
+    <origin xyz="${table_width/2} ${-table_depth/2} 0" rpy="0 0 0" />
     <child link="leg3_link" />
   </joint> 
   <link name="leg3_link">
@@ -167,7 +167,7 @@
 
   <joint name="leg4_joint" type="fixed" >
     <parent link="table_top_link" />
-    <origin xyz="${-table_depth/2} ${-table_depth/2} 0" rpy="0 0 0" />
+    <origin xyz="${-table_width/2} ${-table_depth/2} 0" rpy="0 0 0" />
     <child link="leg4_link" />
   </joint> 
   <link name="leg4_link">
