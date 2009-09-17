@@ -108,7 +108,7 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
     }
     else
     {
-      ROS_WARN("A joint named \"%s\" is not part of Mechanism Controlled joints.\n", joint_name.c_str());
+      //ROS_WARN("A joint named \"%s\" is not part of Mechanism Controlled joints.\n", joint_name.c_str());
       this->joints_.push_back(NULL);
     }
 
