@@ -50,7 +50,7 @@ namespace gazebo {
 GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_mechanism_control", GazeboMechanismControl);
 
 GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
-  : Controller(parent), hw_(0), mc_(0), fake_state_(NULL)
+  : Controller(parent), hw_(), mc_(0), fake_state_(NULL)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
@@ -225,7 +225,9 @@ void GazeboMechanismControl::FiniChild()
 {
   ROS_DEBUG("Calling FiniChild in GazeboMechanismControl");
 
-  this->hw_.~HardwareInterface();
+  pr2_mechanism::ActuatorMap::const_iterator it;
+  for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
+    delete it->second;
   this->mc_->~MechanismControl();
 
   pr2_mechanism::deleteElements(&this->joints_);
@@ -286,7 +288,7 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
     //std::cout << " adding actuator " << (*it) << std::endl;
     pr2_mechanism::Actuator* pr2_actuator = new pr2_mechanism::Actuator(*it);
     pr2_actuator->state_.is_enabled_ = true;
-    this->hw_.actuators_.push_back(pr2_actuator);
+    this->hw_.addActuator(pr2_actuator);
   }
 
   // Setup mechanism control node
