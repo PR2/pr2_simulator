@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-rosbuild_init(test_pr2_2dnav_gazebo)
+rosbuild_init()
 
 # Tests are disabled because of spurious failures, pending move to new
 # machine dedicated to running Gazebo tests.
@@ -22,11 +22,16 @@ rosbuild_init(test_pr2_2dnav_gazebo)
 #
 #if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
 #
-rospack_add_rostest(test_pr2_2dnav_wg.launch)
-rospack_add_rostest(test_pr2_2dnav_empty_rotation.launch)
-rospack_add_rostest(test_pr2_2dnav_empty_odom.launch)
-rospack_add_rostest(test_pr2_2dnav_empty_diagonal.launch)
-rospack_add_rostest(test_pr2_2dnav_empty_axis.launch)
-rospack_add_rostest(test_pr2_2dnav_empty_amcl_axis.launch)
+
+# Temporary gating until ROS 0.9, which will provide support for labeled
+# builds
+if("$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "" OR "$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "gazebo")
+  rosbuild_add_rostest(test_pr2_2dnav_wg.launch)
+  rosbuild_add_rostest(test_pr2_2dnav_empty_rotation.launch)
+  rosbuild_add_rostest(test_pr2_2dnav_empty_odom.launch)
+  rosbuild_add_rostest(test_pr2_2dnav_empty_diagonal.launch)
+  rosbuild_add_rostest(test_pr2_2dnav_empty_axis.launch)
+  rosbuild_add_rostest(test_pr2_2dnav_empty_amcl_axis.launch)
+endif("$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "" OR "$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "gazebo")
 #
 #endif(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
