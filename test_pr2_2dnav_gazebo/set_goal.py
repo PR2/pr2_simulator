@@ -379,6 +379,11 @@ class NavStackTest(unittest.TestCase):
 
             print "summary:"
             self.success = True
+            # check initialization state
+            if self.odom_initialized == False:
+                print "waiting for first /pr2_base_odom/odom message to initialize test"
+            if self.p3d_initialized == False:
+                print "waiting for first /base_pose_ground_truth message to initialize test"
             # check to see if collision happened
             if self.bumped == True:
                 self.success = False
