@@ -220,11 +220,11 @@ class NavStackTest(unittest.TestCase):
 
         #pub_base = rospy.Publisher("cmd_vel", BaseVel)
         pub_goal = rospy.Publisher("/move_base_old/activate", PoseStamped)
-        pub_pose = rospy.Publisher("initialpose" , PoseWithCovarianceStamped)
-        rospy.Subscriber("base_pose_ground_truth", Odometry                   , self.p3dInput)
-        rospy.Subscriber("pr2_odometry/odom"     , Odometry                   , self.odomInput)
-        rospy.Subscriber("base_bumper/info"      , String                     , self.bumpedInput)
-        rospy.Subscriber("torso_lift_bumper/info", String                     , self.bumpedInput)
+        pub_pose = rospy.Publisher("/initialpose" , PoseWithCovarianceStamped)
+        rospy.Subscriber("/base_pose_ground_truth", Odometry                   , self.p3dInput)
+        rospy.Subscriber("/pr2_base_odometry/odom"     , Odometry                   , self.odomInput)
+        rospy.Subscriber("/base_bumper/info"      , String                     , self.bumpedInput)
+        rospy.Subscriber("/torso_lift_bumper/info", String                     , self.bumpedInput)
         rospy.Subscriber("/move_base_old/feedback"   , MoveBaseState              , self.stateInput)
         rospy.Subscriber("/amcl_pose"            , PoseWithCovarianceStamped  , self.amclInput)
 
