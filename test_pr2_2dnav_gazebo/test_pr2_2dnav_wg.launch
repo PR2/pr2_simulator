@@ -8,23 +8,23 @@
     <include file="$(find pr2_gazebo)/prototype1.launch"/>
 
     <!-- load map -->
-    <node pkg="map_server" type="map_server" args="$(find gazebo_worlds)/Media/materials/textures/willowMap25mm.png 0.025" respawn="false" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find gazebo_worlds)/Media/materials/textures/willowMap25mm.png 0.025" respawn="false" />
     <!--
-    <node pkg="map_server" type="map_server" args="$(find gazebo_worlds)/Media/materials/textures/willowMap.png 0.1" respawn="false" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find gazebo_worlds)/Media/materials/textures/willowMap.png 0.1" respawn="false" />
     -->
 
     <!-- nav-stack -->
     <include file="$(find pr2_2dnav_gazebo)/2dnav-stack-fake_localization.launch"/>
 
     <include file="$(find 2dnav_pr2)/rviz/rviz_move_base.launch"/>
-    <node pkg="rxtools" type="rxconsole" respawn="false" />
+    <node name="rxtools" pkg="rxtools" type="rxconsole" respawn="false" />
     <!--
     <param name="/trex/ping_frequency" value="1"/>
-    <node pkg="highlevel_controllers" type="recharge_controller" args="" respawn="false" />
-    <node pkg="kinematic_planning" type="kinematic_planning" args="robot_description"/>
-    <node pkg="highlevel_controllers" type="move_arm" args="right" respawn="false"/>
-    <node pkg="highlevel_controllers" type="move_arm" args="left" respawn="false" />
-    <node pkg="highlevel_controllers" type="move_end_effector" args="right" respawn="false"/>
+    <node name="highlevel_controllers" pkg="highlevel_controllers" type="recharge_controller" args="" respawn="false" />
+    <node name="kinematic_planning" pkg="kinematic_planning" type="kinematic_planning" args="robot_description"/>
+    <node name="highlevel_controllers" pkg="highlevel_controllers" type="move_arm" args="right" respawn="false"/>
+    <node name="highlevel_controllers" pkg="highlevel_controllers" type="move_arm" args="left" respawn="false" />
+    <node name="highlevel_controllers" pkg="highlevel_controllers" type="move_end_effector" args="right" respawn="false"/>
     -->
 
     <!-- test -->
