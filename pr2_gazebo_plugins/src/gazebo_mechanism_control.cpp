@@ -50,7 +50,7 @@ namespace gazebo {
 GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_mechanism_control", GazeboMechanismControl);
 
 GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
-  : Controller(parent), hw_(), mc_(0), fake_state_(NULL)
+  : Controller(parent), hw_(), fake_state_(NULL)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
@@ -59,6 +59,7 @@ GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
 
   Param::Begin(&this->parameters);
   this->robotParamP = new ParamT<std::string>("robotParam", "robot_description", 0);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
   Param::End();
 
   if (getenv("CHECK_SPEEDUP"))
@@ -67,17 +68,12 @@ GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
     sim_start  = Simulator::Instance()->GetSimTime();
   }
 
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle("pr2_mechanism_control");
-
-  this->mc_ = new pr2_mechanism::MechanismControl(&hw_);
 }
 
 GazeboMechanismControl::~GazeboMechanismControl()
 {
   delete this->robotParamP;
+  delete this->robotNamespaceP;
   delete this->mc_; 
   delete this->rosnode_;
 }
@@ -87,6 +83,16 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   // get parameter name
   this->robotParamP->Load(node);
   this->robotParam = this->robotParamP->GetValue();
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_urdf
+  ROS_ERROR("starting gazebo_mechanism_control plugin in ns: %s",this->robotNamespace.c_str());
+
+  this->mc_ = new pr2_mechanism::MechanismControl(&hw_,*this->rosnode_);
 
   // read pr2.xml (pr2_gazebo_mechanism_control.xml)
   // setup actuators, then setup mechanism control node
@@ -238,18 +244,25 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
 {
 
   std::string urdf_param_name;
-  this->rosnode_->searchParam(this->robotParam,urdf_param_name);
   std::string urdf_string;
-  this->rosnode_->getParam(urdf_param_name,urdf_string);
-
-
-  // wait for robot_description on param server
+  // search and wait for robot_description on param server
   while(urdf_string.empty())
   {
-    ROS_WARN("gazebo mechanism control plugin is waiting for %s in param server.  run merge/roslaunch send.xml or similar.", this->robotParam.c_str());
-    this->rosnode_->getParam(this->robotParam,urdf_string);
+    ROS_WARN("gazebo mechanism control plugin is waiting for urdf: %s on the param server.", this->robotParam.c_str());
+    if (this->rosnode_->searchParam(this->robotParam,urdf_param_name))
+    {
+      this->rosnode_->getParam(urdf_param_name,urdf_string);
+      ROS_DEBUG("found upstream\n%s\n------\n%s\n------\n%s",this->robotParam.c_str(),urdf_param_name.c_str(),urdf_string.c_str());
+    }
+    else
+    {
+      this->rosnode_->getParam(this->robotParam,urdf_string);
+      ROS_DEBUG("found in node namespace\n%s\n------\n%s\n------\n%s",this->robotParam.c_str(),urdf_param_name.c_str(),urdf_string.c_str());
+    }
     usleep(100000);
   }
+
+
 
   ROS_INFO("gazebo mechanism control got pr2.xml from param server, parsing it...");
   //std::cout << urdf_string << std::endl;

@@ -54,16 +54,22 @@ RosF3D::RosF3D(Entity *parent )
   if (!this->myParent)
     gzthrow("RosF3D controller requires a Model as its parent");
 
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
+  Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  this->bodyNameP = new ParamT<std::string>("bodyName", "", 0);
+  this->topicNameP = new ParamT<std::string>("topicName", "default_f3d_topic", 0);
+  this->frameNameP = new ParamT<std::string>("frameName", "default_f3d_frame", 0);
+  Param::End();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosF3D::~RosF3D()
 {
+  delete this->robotNamespaceP;
+  delete this->bodyNameP;
+  delete this->topicNameP;
+  delete this->frameNameP;
   delete this->rosnode_;
 }
 
@@ -71,14 +77,25 @@ RosF3D::~RosF3D()
 // Load the controller
 void RosF3D::LoadChild(XMLConfigNode *node)
 {
-  std::string bodyName = node->GetString("bodyName", "", 1);
+
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
+  this->bodyNameP->Load(node);
+  this->bodyName = this->bodyNameP->GetValue();
   this->myBody = dynamic_cast<Body*>(this->myParent->GetBody(bodyName));
-//  this->myBody = dynamic_cast<Body*>(this->myParent->GetBody(bodyName));
+  if (!this->myBody)
+    ROS_FATAL("ros_f3d plugin error: bodyName: %s does not exist\n",bodyName.c_str());
 
-  this->topicName = node->GetString("topicName", "", 1);
-  this->frameName = node->GetString("frameName", "", 1);
+  this->topicNameP->Load(node);
+  this->topicName = this->topicNameP->GetValue();
+  this->frameNameP->Load(node);
+  this->frameName = this->frameNameP->GetValue();
 
-  ROS_DEBUG("==== topic name for RosF3D ======== %s", this->topicName.c_str());
   this->pub_ = this->rosnode_->advertise<geometry_msgs::Vector3Stamped>(this->topicName,10);
 }
 

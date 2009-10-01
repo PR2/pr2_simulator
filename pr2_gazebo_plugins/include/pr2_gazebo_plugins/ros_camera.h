@@ -114,6 +114,11 @@ class RosCamera : public Controller
   /// \brief Put camera data to the ROS topic
   private: void PutCameraData();
 
+  /// \brief Keep track of number of connctions
+  private: int imageConnectCount;
+  private: void ImageConnect();
+  private: void ImageDisconnect();
+
   /// \brief A pointer to the parent camera sensor
   private: MonoCameraSensor *myParent;
 
@@ -127,6 +132,10 @@ class RosCamera : public Controller
   /// \brief Parameters
   private: ParamT<std::string> *topicNameP;
   private: ParamT<std::string> *frameNameP;
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 
   /// \brief ROS image topic name
   private: std::string topicName;

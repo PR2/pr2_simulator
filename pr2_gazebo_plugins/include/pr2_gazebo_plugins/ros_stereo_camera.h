@@ -139,6 +139,10 @@ class RosStereoCamera : public Controller
   private: ParamT<double> *distortion_t2P; // tangential distortion
   private: ParamT<double> *baselineP;      // shift from left camera to right camera.  we treat LEFT camera as origin
 
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
+
   /// \brief Pointer to Mono Left and Right Cameras
   private: MonoCameraSensor *leftCamera;
   private: MonoCameraSensor *rightCamera;

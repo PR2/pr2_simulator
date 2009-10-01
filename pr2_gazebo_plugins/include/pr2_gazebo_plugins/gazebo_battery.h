@@ -41,6 +41,7 @@
 #include <pr2_gazebo_plugins/PlugCommand.h>
 #include <ros/ros.h>
 #include <boost/thread/mutex.hpp>
+#include <gazebo/Param.hh>
 
 namespace gazebo
 {
@@ -122,9 +123,11 @@ private:
   private: ros::Subscriber sub_;
 
   /// \brief power state topic name
+  private: ParamT<std::string> *stateTopicNameP;
   private: std::string stateTopicName_;
 
   /// \brief diag. msg. topic name
+  private: ParamT<std::string> *diagnosticMessageTopicNameP;
   private: std::string diagnosticMessageTopicName_;
 
   /// \brief A mutex to lock access to fields that are used in message callbacks
@@ -140,27 +143,34 @@ private:
   private: double diagnostic_rate_;
 
   /// \brief rate to broadcast power states message
+  private: ParamT<double> *power_state_rateP;
   private: double power_state_rate_;
 
   /// \brief some internal variables for keeping track of simulated battery
   ///           @todo make consumption rate vary with joint commands, motion, etc
 
   /// \brief full capacity of battery
+  private: ParamT<double> *full_capacityP;
   private: double full_capacity_;
 
   /// \brief charge state;
   private: double charge_;
 
   /// \brief default charge rate when plugged in
+  private: ParamT<double> *default_charge_rateP;
   private: double default_charge_rate_;
 
   /// \brief power drain, if this is negative, we are charging the battery.
   private: double consumption_rate_;
+  private: ParamT<double> *default_consumption_rateP;
   private: double default_consumption_rate_;
 
   /// \brief listen to ROS to see if we are charging
   private: void SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg);
 
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 };
 
 /** \} */

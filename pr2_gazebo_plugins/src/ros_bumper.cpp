@@ -53,18 +53,16 @@ RosBumper::RosBumper(Entity *parent )
 
   Param::Begin(&this->parameters);
   this->bumperTopicNameP = new ParamT<std::string>("bumperTopicName", "bumper", 0);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
   Param::End();
 
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosBumper::~RosBumper()
 {
+  delete this->robotNamespaceP;
   delete this->bumperTopicNameP;
   delete this->rosnode_;
 }
@@ -73,6 +71,14 @@ RosBumper::~RosBumper()
 // Load the controller
 void RosBumper::LoadChild(XMLConfigNode *node)
 {
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
   this->bumperTopicNameP->Load(node);
   this->bumperTopicName = this->bumperTopicNameP->GetValue();
   ROS_DEBUG("publishing contact/collisions to topic name: %s", 

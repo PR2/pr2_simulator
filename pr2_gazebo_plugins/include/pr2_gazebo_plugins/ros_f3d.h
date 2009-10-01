@@ -31,6 +31,7 @@
 #include <gazebo/Entity.hh>
 #include <gazebo/Model.hh>
 #include <gazebo/Body.hh>
+#include <gazebo/Param.hh>
 
 #include <ros/ros.h>
 #include <boost/thread/mutex.hpp>
@@ -101,16 +102,25 @@ class RosF3D : public Controller
   /// \brief ROS Vector3Stamped message
   private: geometry_msgs::Vector3Stamped vector3Msg;
 
+  /// \brief store bodyname
+  private: ParamT<std::string> *bodyNameP;
+  private: std::string bodyName;
+
   /// \brief ROS Vector3Stamped topic name
+  private: ParamT<std::string> *topicNameP;
   private: std::string topicName;
 
   /// \brief ROS frame transform name to use in the image message header.
   ///        This should be simply map since the returned info is in Gazebo Global Frame.
+  private: ParamT<std::string> *frameNameP;
   private: std::string frameName;
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 
   /// \brief A mutex to lock access to fields that are used in message callbacks
   private: boost::mutex lock;
-
 };
 
 /** \} */

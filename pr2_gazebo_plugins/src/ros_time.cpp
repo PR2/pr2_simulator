@@ -50,12 +50,29 @@ GZ_REGISTER_DYNAMIC_CONTROLLER("ros_time", RosTime);
 RosTime::RosTime(Entity *parent)
     : Controller(parent)
 {
+  Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  Param::End();
+}
 
+////////////////////////////////////////////////////////////////////////////////
+// Destructor
+RosTime::~RosTime()
+{
+  delete this->rosnode_;
+  delete this->robotNamespaceP;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Load the controller
+void RosTime::LoadChild(XMLConfigNode *node)
+{
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
   int argc = 0;
   char** argv = NULL;
   ros::init(argc,argv,"gazebo");
-
-  this->rosnode_ = new ros::NodeHandle();
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
 
   // for rostime
   this->pub_ = this->rosnode_->advertise<roslib::Time>("time",10);
@@ -66,21 +83,6 @@ RosTime::RosTime(Entity *parent)
   // spawn 2 threads by default, ///@todo: make this a parameter
   ros::MultiThreadedSpinner s(2);
   boost::thread spinner_thread( boost::bind( &ros::spin, s ) );
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Destructor
-RosTime::~RosTime()
-{
-  delete this->rosnode_;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Load the controller
-void RosTime::LoadChild(XMLConfigNode *node)
-{
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

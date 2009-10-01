@@ -55,23 +55,27 @@ RosLaser::RosLaser(Entity *parent)
   if (!this->myParent)
     gzthrow("RosLaser controller requires a Ray Sensor as its parent");
 
+  Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  this->hokuyoMinIntensityP = new ParamT<double>("hokuyoMinIntensity", 101.0, 0);
+  this->gaussianNoiseP = new ParamT<double>("gaussianNoise", 0.0, 0);
+  this->topicNameP = new ParamT<std::string>("topicName", "default_ros_laser_topic", 0);
+  this->frameNameP = new ParamT<std::string>("frameName", "default_ros_laser_frame", 0);
+  Param::End();
   // set parent sensor to active automatically
   this->myParent->SetActive(true);
 
-  this->hokuyo_min_intensity = 101.0;
-  ROS_WARN("WARNING: ros_laser plugin artifically sets minimum intensity to %f due to cutoff in hokuyo filters."
-           , this->hokuyo_min_intensity);
-
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosLaser::~RosLaser()
 {
+  delete this->robotNamespaceP;
+  delete this->hokuyoMinIntensityP;
+  delete this->gaussianNoiseP;
+  delete this->topicNameP;
+  delete this->frameNameP;
   delete this->rosnode_;
 }
 
@@ -79,11 +83,26 @@ RosLaser::~RosLaser()
 // Load the controller
 void RosLaser::LoadChild(XMLConfigNode *node)
 {
-  this->topicName = node->GetString("topicName","default_ros_laser",0); //read from xml file
-  ROS_DEBUG("================= %s", this->topicName.c_str());
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
+  this->hokuyoMinIntensityP->Load(node);
+  this->hokuyoMinIntensity = this->hokuyoMinIntensityP->GetValue();
+  ROS_WARN("WARNING: ros_laser plugin artifically sets minimum intensity to %f due to cutoff in hokuyo filters." , this->hokuyoMinIntensity);
+
+  this->topicNameP->Load(node);
+  this->topicName = this->topicNameP->GetValue();
+  this->frameNameP->Load(node);
+  this->frameName = this->frameNameP->GetValue();
+  this->gaussianNoiseP->Load(node);
+  this->gaussianNoise = this->gaussianNoiseP->GetValue();
+
   this->pub_ = this->rosnode_->advertise<sensor_msgs::LaserScan>(this->topicName,10);
-  this->frameName = node->GetString("frameName","default_ros_laser",0); //read from xml file
-  this->gaussianNoise = node->GetDouble("gaussianNoise",0.0,0); //read from xml file
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -173,7 +192,7 @@ void RosLaser::PutLaserData()
     /*                                                             */
     /***************************************************************/
     this->laserMsg.ranges[i]      = std::min(r + minRange + this->GaussianKernel(0,this->gaussianNoise), maxRange);
-    this->laserMsg.intensities[i] = std::max(this->hokuyo_min_intensity,intensity + this->GaussianKernel(0,this->gaussianNoise));
+    this->laserMsg.intensities[i] = std::max(this->hokuyoMinIntensity,intensity + this->GaussianKernel(0,this->gaussianNoise));
   }
 
   // send data out via ros message

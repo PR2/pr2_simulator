@@ -161,7 +161,9 @@ private:
 
   /// \brief set topic name of robot description parameter
   ParamT<std::string> *robotParamP;
+  ParamT<std::string> *robotNamespaceP;
   std::string robotParam;
+  std::string robotNamespace;
 
 };
 

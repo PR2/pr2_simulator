@@ -111,6 +111,10 @@ private: void UpdateObjectPose(const nav_msgs::Odometry::ConstPtr& poseMsg);
   private: ParamT<Vector3> *xyzP,*rpyP,*velP,*angVelP;
   private: std::string topicName,frameName,modelName;
   private: Vector3 xyz,rpy,vel,angVel;
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 };
 
 /** \} */

@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <boost/thread/thread.hpp>
+#include <boost/bind.hpp>
 
 #include <pr2_gazebo_plugins/ros_camera.h>
 
@@ -61,20 +62,19 @@ RosCamera::RosCamera(Entity *parent)
     gzthrow("RosCamera controller requires a Camera Sensor as its parent");
 
   Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace","/",0);
   this->topicNameP = new ParamT<std::string>("topicName","stereo/raw_stereo", 0);
   this->frameNameP = new ParamT<std::string>("frameName","stereo_link", 0);
   Param::End();
 
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
+  this->imageConnectCount = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosCamera::~RosCamera()
 {
+  delete this->robotNamespaceP;
   delete this->rosnode_;
   delete this->topicNameP;
   delete this->frameNameP;
@@ -84,13 +84,35 @@ RosCamera::~RosCamera()
 // Load the controller
 void RosCamera::LoadChild(XMLConfigNode *node)
 {
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
   this->topicNameP->Load(node);
   this->frameNameP->Load(node);
   this->topicName = this->topicNameP->GetValue();
   this->frameName = this->frameNameP->GetValue();
 
   ROS_DEBUG("================= %s", this->topicName.c_str());
-  this->pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->topicName,1);
+  this->pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->topicName,1,
+    boost::bind( &RosCamera::ImageConnect, this),
+    boost::bind( &RosCamera::ImageDisconnect, this));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Increment count
+void RosCamera::ImageConnect()
+{
+  this->imageConnectCount++;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Decrement count
+void RosCamera::ImageDisconnect()
+{
+  this->imageConnectCount--;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -133,11 +155,18 @@ void RosCamera::InitChild()
 void RosCamera::UpdateChild()
 {
 
-  // do this first so there's chance for sensor to run 1 frame after activate
-  if (this->myParent->IsActive())
-    this->PutCameraData();
+  // as long as ros is connected, parent is active
+  //ROS_ERROR("debug image count %d",this->imageConnectCount);
+  if (this->imageConnectCount == 0)
+    this->myParent->SetActive(false);
   else
-    this->myParent->SetActive(true); // as long as this plugin is running, parent is active
+  {
+    // do this first so there's chance for sensor to run 1 frame after activate
+    if (this->myParent->IsActive())
+      this->PutCameraData();
+    else
+      this->myParent->SetActive(true);
+  }
 
 }
 

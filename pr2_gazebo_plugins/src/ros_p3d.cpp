@@ -51,16 +51,28 @@ RosP3D::RosP3D(Entity *parent )
    if (!this->myParent)
       gzthrow("RosP3D controller requires a Model as its parent");
 
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
+  Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  this->bodyNameP = new ParamT<std::string>("bodyName", "", 0);
+  this->topicNameP = new ParamT<std::string>("topicName", "default_f3d_topic", 0);
+  this->frameNameP = new ParamT<std::string>("frameName", "default_f3d_frame", 0);
+  this->xyzOffsetsP    = new ParamT<Vector3>("xyzOffsets", Vector3(0,0,0),0);
+  this->rpyOffsetsP    = new ParamT<Vector3>("rpyOffsets", Vector3(0,0,0),0);
+  this->gaussianNoiseP = new ParamT<double>("gaussianNoise",0.0,0);
+  Param::End();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosP3D::~RosP3D()
 {
+  delete this->robotNamespaceP;
+  delete this->bodyNameP;
+  delete this->topicNameP;
+  delete this->frameNameP;
+  delete this->xyzOffsetsP;
+  delete this->rpyOffsetsP;
+  delete this->gaussianNoiseP;
   delete this->rosnode_;
 }
 
@@ -68,21 +80,33 @@ RosP3D::~RosP3D()
 // Load the controller
 void RosP3D::LoadChild(XMLConfigNode *node)
 {
-  std::string bodyName = node->GetString("bodyName", "", 1);
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
+  this->bodyNameP->Load(node);
+  this->bodyName = this->bodyNameP->GetValue();
 
   // assert that the body by bodyName exists
-  if (dynamic_cast<Body*>(this->myParent->GetBody(bodyName)) == NULL)
-    ROS_FATAL("ros_p3d plugin error: bodyName: %s does not exist\n",bodyName.c_str());
+  if (dynamic_cast<Body*>(this->myParent->GetBody(this->bodyName)) == NULL)
+    ROS_FATAL("ros_p3d plugin error: bodyName: %s does not exist\n",this->bodyName.c_str());
 
-  this->myBody = dynamic_cast<Body*>(this->myParent->GetBody(bodyName));
+  this->myBody = dynamic_cast<Body*>(this->myParent->GetBody(this->bodyName));
 
-  this->topicName     = node->GetString("topicName", "ground_truth", 1);
-  this->frameName     = node->GetString("frameName", "", 1);
-  this->xyzOffsets    = node->GetVector3("xyzOffsets", Vector3(0,0,0));
-  this->rpyOffsets    = node->GetVector3("rpyOffsets", Vector3(0,0,0));
-  this->gaussianNoise = node->GetDouble("gaussianNoise",0.0,0); //read from xml file
+  this->topicNameP->Load(node);
+  this->topicName = this->topicNameP->GetValue();
+  this->frameNameP->Load(node);
+  this->frameName = this->frameNameP->GetValue();
+  this->xyzOffsetsP->Load(node);
+  this->xyzOffsets = this->xyzOffsetsP->GetValue();
+  this->rpyOffsetsP->Load(node);
+  this->rpyOffsets = this->rpyOffsetsP->GetValue();
+  this->gaussianNoiseP->Load(node);
+  this->gaussianNoise = this->gaussianNoiseP->GetValue();
 
-  ROS_DEBUG("==== topic name for RosP3D ======== %s", this->topicName.c_str());
   if (this->topicName != "")
     this->pub_ = this->rosnode_->advertise<nav_msgs::Odometry>(this->topicName,10);
 }

@@ -55,18 +55,25 @@ RosBlockLaser::RosBlockLaser(Entity *parent)
   if (!this->myParent)
     gzthrow("RosBlockLaser controller requires a Ray Sensor as its parent");
 
+  Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  this->gaussianNoiseP = new ParamT<double>("gaussianNoise", 0.0, 0);
+  this->topicNameP = new ParamT<std::string>("topicName", "default_ros_laser_topic", 0);
+  this->frameNameP = new ParamT<std::string>("frameName", "default_ros_laser_frame", 0);
+  Param::End();
+
   // set parent sensor to active automatically
   this->myParent->SetActive(true);
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosBlockLaser::~RosBlockLaser()
 {
+  delete this->robotNamespaceP;
+  delete this->gaussianNoiseP;
+  delete this->topicNameP;
+  delete this->frameNameP;
   delete this->rosnode_;
 }
 
@@ -74,12 +81,22 @@ RosBlockLaser::~RosBlockLaser()
 // Load the controller
 void RosBlockLaser::LoadChild(XMLConfigNode *node)
 {
-  this->topicName = node->GetString("topicName","default_ros_laser",0); //read from xml file
-  ROS_DEBUG("================= %s", this->topicName.c_str());
-  this->pub_ = this->rosnode_->advertise<sensor_msgs::PointCloud>(this->topicName,10);
-  this->frameName = node->GetString("frameName","default_ros_laser",0); //read from xml file
-  this->gaussianNoise = node->GetDouble("gaussianNoise",0.0,0); //read from xml file
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
 
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
+  this->topicNameP->Load(node);
+  this->topicName = this->topicNameP->GetValue();
+  this->frameNameP->Load(node);
+  this->frameName = this->frameNameP->GetValue();
+  this->gaussianNoiseP->Load(node);
+  this->gaussianNoise = this->gaussianNoiseP->GetValue();
+
+  this->pub_ = this->rosnode_->advertise<sensor_msgs::PointCloud>(this->topicName,10);
 
   // set size of cloud message, starts at 0!! FIXME: not necessary
   Angle maxAngle = this->myParent->GetMaxAngle();

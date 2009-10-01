@@ -29,6 +29,7 @@
 #define ROS_LASER_HH
 
 #include <gazebo/Controller.hh>
+#include <gazebo/Param.hh>
 
 #include <ros/ros.h>
 #include <boost/thread/mutex.hpp>
@@ -148,12 +149,15 @@ class RosLaser : public Controller
   private: sensor_msgs::LaserScan laserMsg;
  
   /// \brief topic name
+  private: ParamT<std::string> *topicNameP;
   private: std::string topicName;
 
   /// \brief frame transform name, should match link name
+  private: ParamT<std::string> *frameNameP;
   private: std::string frameName;
 
   /// \brief Gaussian noise
+  private: ParamT<double> *gaussianNoiseP;
   private: double gaussianNoise;
 
   /// \brief Gaussian noise generator
@@ -163,7 +167,12 @@ class RosLaser : public Controller
   private: boost::mutex lock;
 
   /// \brief hack to mimic hokuyo intensity cutoff of 100
-  private: double hokuyo_min_intensity;
+  private: ParamT<double> *hokuyoMinIntensityP;
+  private: double hokuyoMinIntensity;
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 };
 
 /** \} */

@@ -32,6 +32,7 @@
 #include <gazebo/Controller.hh>
 #include <gazebo/Entity.hh>
 #include <gazebo/Model.hh>
+#include <gazebo/Param.hh>
 #include <ode/ode.h>
 #include <sys/time.h>
 

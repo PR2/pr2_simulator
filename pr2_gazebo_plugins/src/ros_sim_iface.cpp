@@ -58,6 +58,7 @@ RosSimIface::RosSimIface(Entity *parent)
     gzthrow("RosSimIface controller requires an Entity as its parent");
 
   Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
   this->topicNameP = new ParamT<std::string>("topicName","simiface_pose", 0);
   this->frameNameP = new ParamT<std::string>("frameName","map", 0);
   this->modelNameP = new ParamT<std::string>("modelName","pr2_model", 1);
@@ -66,11 +67,6 @@ RosSimIface::RosSimIface(Entity *parent)
   this->velP  = new ParamT<Vector3>("vel" ,Vector3(0,0,0), 0);
   this->angVelP  = new ParamT<Vector3>("angVel" ,Vector3(0,0,0), 0);
   Param::End();
-
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +75,7 @@ RosSimIface::~RosSimIface()
 {
   delete this->rosnode_;
 
+  delete this->robotNamespaceP;
   delete this->topicNameP;
   delete this->frameNameP;
   delete this->modelNameP;
@@ -93,6 +90,13 @@ RosSimIface::~RosSimIface()
 // Load the controller
 void RosSimIface::LoadChild(XMLConfigNode *node)
 {
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
   this->topicNameP->Load(node);
   this->frameNameP->Load(node);
   this->modelNameP->Load(node);

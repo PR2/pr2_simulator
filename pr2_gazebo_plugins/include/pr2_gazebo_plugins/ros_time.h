@@ -30,6 +30,7 @@
 #include <gazebo/Controller.hh>
 #include <gazebo/Body.hh>
 #include <gazebo/World.hh>
+#include <gazebo/Param.hh>
 
 #include <ros/ros.h>
 #include "boost/thread/mutex.hpp"
@@ -127,6 +128,10 @@ class RosTime : public Controller
   private: ros::Publisher pub_;
 
   roslib::Time timeMsg;
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 
 };
 

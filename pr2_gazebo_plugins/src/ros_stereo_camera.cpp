@@ -59,6 +59,7 @@ RosStereoCamera::RosStereoCamera(Entity *parent)
     gzthrow("RosStereoCamera controller requires a Model as its parent");
 
   Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
   // camera sensor names
   this->leftCameraNameP = new ParamT<std::string>("leftCamera","", 1);
   this->rightCameraNameP = new ParamT<std::string>("rightCamera","", 1);
@@ -86,17 +87,13 @@ RosStereoCamera::RosStereoCamera(Entity *parent)
   this->rightCameraInfoMsg = &(this->rawStereoMsg.right_info);
   this->stereoInfoMsg = &(this->rawStereoMsg.stereo_info);
   ROS_DEBUG("stereo: done with constuctor");
-
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosStereoCamera::~RosStereoCamera()
 {
+  delete this->robotNamespaceP;
   delete this->rosnode_;
   delete this->leftCameraNameP;
   delete this->rightCameraNameP;
@@ -118,6 +115,14 @@ RosStereoCamera::~RosStereoCamera()
 // Load the controller
 void RosStereoCamera::LoadChild(XMLConfigNode *node)
 {
+
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
   this->leftCameraNameP->Load(node);
   this->rightCameraNameP->Load(node);
   this->topicNameP->Load(node);

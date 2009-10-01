@@ -50,40 +50,72 @@ namespace gazebo {
 
   GazeboBattery::GazeboBattery(Entity *parent): Controller(parent)
   {
-     this->parent_model_ = dynamic_cast<Model*>(this->parent);
+    this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
-     if (!this->parent_model_)
-        gzthrow("GazeboBattery controller requires a Model as its parent");
+    if (!this->parent_model_)
+       gzthrow("GazeboBattery controller requires a Model as its parent");
 
-     int argc = 0;
-     char** argv = NULL;
-     ros::init(argc,argv,"gazebo");
-     this->rosnode_ = new ros::NodeHandle();
+    Param::Begin(&this->parameters);
+    this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+    this->stateTopicNameP = new ParamT<std::string>("stateTopicName","power_state",0);
+    //this->diagnosticMessageTopicNameP = new ParamT<std::string>("diagnosticMessageTopicName","diagnostic",0);
+    this->default_consumption_rateP       = new ParamT<double>("default_consumption_rate",-10.0,0);
+    this->full_capacityP                  = new ParamT<double>("full_charge_energy",0.0,0);
+    this->default_charge_rateP            = new ParamT<double>("default_charge_rate",-10.0,0);
+    //this->diagnostic_rateP     = new ParamT<double>("diagnostic_rate",1.0,0);
+    this->power_state_rateP  = new ParamT<double>("power_state_rate_",1.0,0);
+    Param::End();
+
   }
 
   GazeboBattery::~GazeboBattery()
   {
-     delete this->rosnode_;
+    delete this->rosnode_;
+
+    delete this->robotNamespaceP;
+    delete this->stateTopicNameP;
+    //delete this->diagnosticMessageTopicNameP;
+    delete this->default_consumption_rateP;
+    delete this->full_capacityP;
+    delete this->default_charge_rateP;
+    //delete this->diagnostic_rateP;
+    delete this->power_state_rateP;
   }
 
   void GazeboBattery::LoadChild(XMLConfigNode *node)
   {
-    this->stateTopicName_ = node->GetString("stateTopicName","power_state",0);
+
+    this->robotNamespaceP->Load(node);
+    this->robotNamespace = this->robotNamespaceP->GetValue();
+    int argc = 0;
+    char** argv = NULL;
+    ros::init(argc,argv,"gazebo");
+    this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
+    this->stateTopicNameP->Load(node);
+    this->stateTopicName_ = this->stateTopicNameP->GetValue();
     this->pub_ = this->rosnode_->advertise<pr2_msgs::PowerState>(this->stateTopicName_,10);
-    //this->diagnosticMessageTopicName_ = node->GetString("diagnosticMessageTopicName","diagnostic",0);
+
+    //this->diagnosticMessageTopicNameP->Load(node);
+    //this->diagnosticMessageTopicName_ = this->diagnosticMessageTopicNameP->GetValue();
     //this->diag_pub_ = this->rosnode_->advertise<diagnostic_msgs::DiagnosticArray>(this->diagnosticMessageTopicName_,10);
 
     /// faking the plug and unplug of robot
     this->sub_ = this->rosnode_->subscribe("plugged_in",10,&GazeboBattery::SetPlug,this);
 
-    this->default_consumption_rate_       = node->GetDouble("default_consumption_rate",-10.0,0);
-    this->full_capacity_       = node->GetDouble("full_charge_energy",0.0,0);
-    this->default_charge_rate_ = node->GetDouble("default_charge_rate",-10.0,0);
+    this->default_consumption_rateP->Load(node);
+    this->default_consumption_rate_       = this->default_consumption_rateP->GetValue();
+    this->full_capacityP->Load(node);
+    this->full_capacity_       = this->full_capacityP->GetValue();
+    this->default_charge_rateP->Load(node);
+    this->default_charge_rate_ = this->default_charge_rateP->GetValue();
 
     /// @todo make below useful
-    //this->diagnostic_rate_     = node->GetDouble("diagnostic_rate",1.0,0);
+    //this->diagnostic_rateP->Load(node);
+    //this->diagnostic_rate_     = //this->diagnostic_rateP->GetValue();
     /// @todo make below useful
-    this->power_state_rate_  = node->GetDouble("power_state_rate_",1.0,0);
+    this->power_state_rateP->Load(node);
+    this->power_state_rate_  = this->power_state_rateP->GetValue();
   }
 
   void GazeboBattery::SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg)

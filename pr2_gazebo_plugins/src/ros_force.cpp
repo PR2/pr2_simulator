@@ -57,6 +57,7 @@ RosForce::RosForce(Entity *parent)
     gzthrow("RosForce controller requires an Model as its parent");
 
   Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
   this->topicNameP = new ParamT<std::string>("topicName","sim_force", 0);
   this->bodyNameP = new ParamT<std::string>("bodyName","link", 1);
   Param::End();
@@ -71,6 +72,7 @@ RosForce::RosForce(Entity *parent)
 // Destructor
 RosForce::~RosForce()
 {
+  delete this->robotNamespaceP;
   delete this->rosnode_;
 
   delete this->topicNameP;
@@ -82,6 +84,14 @@ RosForce::~RosForce()
 // Load the controller
 void RosForce::LoadChild(XMLConfigNode *node)
 {
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
   this->topicNameP->Load(node);
   this->bodyNameP->Load(node);
 

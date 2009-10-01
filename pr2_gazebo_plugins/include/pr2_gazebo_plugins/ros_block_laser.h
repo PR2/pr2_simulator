@@ -33,6 +33,7 @@
 #include <ros/ros.h>
 #include "boost/thread/mutex.hpp"
 #include <sensor_msgs/PointCloud.h>
+#include <gazebo/Param.hh>
 
 namespace gazebo
 {
@@ -166,13 +167,16 @@ class RosBlockLaser : public Controller
   private: sensor_msgs::PointCloud cloudMsg;
  
   /// \brief topic name
+  private: ParamT<std::string> *topicNameP;
   private: std::string topicName;
 
   /// \brief frame transform name, should match link name
   /// \brief FIXME: extract link name directly?
+  private: ParamT<std::string> *frameNameP;
   private: std::string frameName;
 
   /// \brief Gaussian noise
+  private: ParamT<double> *gaussianNoiseP;
   private: double gaussianNoise;
 
   /// \brief Gaussian noise generator
@@ -181,6 +185,10 @@ class RosBlockLaser : public Controller
   /// \brief A mutex to lock access to fields that are used in message callbacks
   private: boost::mutex lock;
 
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 };
 
 /** \} */

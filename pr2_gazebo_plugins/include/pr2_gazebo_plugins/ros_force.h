@@ -111,6 +111,10 @@ class RosForce : public Controller
   /// \brief inputs
   private: ParamT<std::string> *topicNameP,*bodyNameP;
   private: std::string topicName,bodyName;
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
 };
 
 /** \} */

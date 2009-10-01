@@ -168,6 +168,10 @@ class RosProsilica : public Controller
   private: ParamT<double> *distortion_t1P; // tangential distortion
   private: ParamT<double> *distortion_t2P; // tangential distortion
 
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
+
   /// \brief ROS image topic name
   private: std::string imageTopicName;
   private: std::string imageRectTopicName;

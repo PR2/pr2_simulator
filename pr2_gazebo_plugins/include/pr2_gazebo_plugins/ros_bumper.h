@@ -109,6 +109,10 @@ namespace gazebo
     /// \brief broadcast some string for now.
     private: std_msgs::String bumperMsg;
     private: geometry_msgs::Vector3Stamped forceMsg;
+
+    /// \brief for setting ROS name space
+    private: ParamT<std::string> *robotNamespaceP;
+    private: std::string robotNamespace;
   };
   
   /** \} */

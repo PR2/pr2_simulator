@@ -78,11 +78,12 @@ RosProsilica::RosProsilica(Entity *parent)
     gzthrow("RosProsilica controller requires a Camera Sensor as its parent");
 
   Param::Begin(&this->parameters);
-  this->imageTopicNameP = new ParamT<std::string>("imageTopicName","~image", 0);
-  this->imageRectTopicNameP = new ParamT<std::string>("imageRectTopicName","~image_rect", 0);
-  this->camInfoTopicNameP = new ParamT<std::string>("camInfoTopicName","~cam_info", 0);
-  this->camInfoServiceNameP = new ParamT<std::string>("camInfoServiceName","~cam_info_service", 0);
-  this->pollServiceNameP = new ParamT<std::string>("pollServiceName","~poll", 0);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  this->imageTopicNameP = new ParamT<std::string>("imageTopicName","image", 0);
+  this->imageRectTopicNameP = new ParamT<std::string>("imageRectTopicName","image_rect", 0);
+  this->camInfoTopicNameP = new ParamT<std::string>("camInfoTopicName","cam_info", 0);
+  this->camInfoServiceNameP = new ParamT<std::string>("camInfoServiceName","cam_info_service", 0);
+  this->pollServiceNameP = new ParamT<std::string>("pollServiceName","poll", 0);
   this->frameNameP = new ParamT<std::string>("frameName","prosilica_optical_frame", 0);
   // camera parameters 
   this->CxPrimeP = new ParamT<double>("CxPrime",320, 0); // for 640x480 image
@@ -95,17 +96,13 @@ RosProsilica::RosProsilica(Entity *parent)
   this->distortion_t1P  = new ParamT<double>("distortion_t1" ,0, 0);
   this->distortion_t2P  = new ParamT<double>("distortion_t2" ,0, 0);
   Param::End();
-
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosProsilica::~RosProsilica()
 {
+  delete this->robotNamespaceP;
   delete this->rosnode_;
   delete this->imageTopicNameP;
   delete this->imageRectTopicNameP;
@@ -128,6 +125,13 @@ RosProsilica::~RosProsilica()
 // Load the controller
 void RosProsilica::LoadChild(XMLConfigNode *node)
 {
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
   this->imageTopicNameP->Load(node);
   this->imageRectTopicNameP->Load(node);
   this->camInfoTopicNameP->Load(node);

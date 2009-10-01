@@ -31,6 +31,7 @@
 #include <gazebo/Entity.hh>
 #include <gazebo/Model.hh>
 #include <gazebo/Body.hh>
+#include <gazebo/Param.hh>
 
 #include <ros/ros.h>
 #include "boost/thread/mutex.hpp"
@@ -124,15 +125,23 @@ namespace gazebo
       /// \brief ros message
       private: nav_msgs::Odometry poseMsg;
 
+      /// \brief store bodyname
+      private: ParamT<std::string> *bodyNameP;
+      private: std::string bodyName;
+
       /// \brief topic name
+      private: ParamT<std::string> *topicNameP;
       private: std::string topicName;
 
       /// \brief frame transform name, should match link name
       /// FIXME: extract link name directly?
+      private: ParamT<std::string> *frameNameP;
       private: std::string frameName;
 
       /// \brief allow specifying constant xyz and rpy offsets
+      private: ParamT<Vector3> *xyzOffsetsP;
       private: Vector3 xyzOffsets;
+      private: ParamT<Vector3> *rpyOffsetsP;
       private: Vector3 rpyOffsets;
 
       /// \brief A mutex to lock access to fields that are used in message callbacks
@@ -146,11 +155,15 @@ namespace gazebo
       private: Vector3 aeul;
 
       /// \brief Gaussian noise
+      private: ParamT<double> *gaussianNoiseP;
       private: double gaussianNoise;
 
       /// \brief Gaussian noise generator
       private: double GaussianKernel(double mu,double sigma);
 
+      /// \brief for setting ROS name space
+      private: ParamT<std::string> *robotNamespaceP;
+      private: std::string robotNamespace;
    };
 
 /** \} */
