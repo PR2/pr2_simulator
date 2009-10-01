@@ -4,7 +4,7 @@
   <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" />
+  <node name="pr2_urdf2factory" pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" />
  
   <!-- Robot state publisher -->
   <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen">
