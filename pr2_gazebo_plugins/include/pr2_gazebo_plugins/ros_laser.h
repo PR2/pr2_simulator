@@ -138,6 +138,11 @@ class RosLaser : public Controller
   /// \brief Put laser data to the ROS topic
   private: void PutLaserData();
 
+  /// \brief Keep track of number of connctions
+  private: int laserConnectCount;
+  private: void LaserConnect();
+  private: void LaserDisconnect();
+
   /// \brief The parent sensor
   private: RaySensor *myParent;
 

@@ -62,9 +62,8 @@ RosLaser::RosLaser(Entity *parent)
   this->topicNameP = new ParamT<std::string>("topicName", "default_ros_laser_topic", 0);
   this->frameNameP = new ParamT<std::string>("frameName", "default_ros_laser_frame", 0);
   Param::End();
-  // set parent sensor to active automatically
-  this->myParent->SetActive(true);
 
+  this->laserConnectCount = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +101,9 @@ void RosLaser::LoadChild(XMLConfigNode *node)
   this->gaussianNoiseP->Load(node);
   this->gaussianNoise = this->gaussianNoiseP->GetValue();
 
-  this->pub_ = this->rosnode_->advertise<sensor_msgs::LaserScan>(this->topicName,10);
+  this->pub_ = this->rosnode_->advertise<sensor_msgs::LaserScan>(this->topicName,1,
+    boost::bind( &RosLaser::LaserConnect, this),
+    boost::bind( &RosLaser::LaserDisconnect, this));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -112,10 +113,34 @@ void RosLaser::InitChild()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Increment count
+void RosLaser::LaserConnect()
+{
+  this->laserConnectCount++;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Decrement count
+void RosLaser::LaserDisconnect()
+{
+  this->laserConnectCount--;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Update the controller
 void RosLaser::UpdateChild()
 {
-    this->PutLaserData();
+  // as long as ros is connected, parent is active
+  //ROS_ERROR("debug laser count %d",this->laserConnectCount);
+  if (this->laserConnectCount == 0)
+    this->myParent->SetActive(false);
+  else
+  {
+    // do this first so there's chance for sensor to run 1 frame after activate
+    if (this->myParent->IsActive())
+      this->PutLaserData();
+    else
+      this->myParent->SetActive(true);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

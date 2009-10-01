@@ -133,6 +133,14 @@ class RosProsilica : public Controller
   private: bool triggeredGrab(prosilica_camera::PolledImage::Request &req,
                               prosilica_camera::PolledImage::Response &res);
 
+  /// \brief Keep track of number of connctions
+  private: int imageConnectCount;
+  private: void ImageConnect();
+  private: void ImageDisconnect();
+  private: int infoConnectCount;
+  private: void InfoConnect();
+  private: void InfoDisconnect();
+
   /// \brief A pointer to the parent camera sensor
   private: MonoCameraSensor *myParent;
 

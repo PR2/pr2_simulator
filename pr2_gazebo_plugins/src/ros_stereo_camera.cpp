@@ -87,6 +87,8 @@ RosStereoCamera::RosStereoCamera(Entity *parent)
   this->rightCameraInfoMsg = &(this->rawStereoMsg.right_info);
   this->stereoInfoMsg = &(this->rawStereoMsg.stereo_info);
   ROS_DEBUG("stereo: done with constuctor");
+
+  this->imageConnectCount = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -173,7 +175,9 @@ void RosStereoCamera::InitChild()
 
   // advertise node topics
   ROS_DEBUG("stereo: advertise topicName %s\n",this->topicName.c_str());
-  this->pub_ = this->rosnode_->advertise<stereo_msgs::RawStereo>(this->topicName, 1);
+  this->pub_ = this->rosnode_->advertise<stereo_msgs::RawStereo>(this->topicName, 1,
+    boost::bind( &RosStereoCamera::ImageConnect, this),
+    boost::bind( &RosStereoCamera::ImageDisconnect, this));
 
   // iterate through children of the model parent to find left and right camera sensors
   std::vector<Entity*> sibling = this->myParent->GetChildren();
@@ -256,17 +260,41 @@ void RosStereoCamera::InitChild()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Increment count
+void RosStereoCamera::ImageConnect()
+{
+  this->imageConnectCount++;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Decrement count
+void RosStereoCamera::ImageDisconnect()
+{
+  this->imageConnectCount--;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Update the controller
 void RosStereoCamera::UpdateChild()
 {
+  // as long as ros is connected, parent is active
+  //ROS_ERROR("debug image count %d",this->imageConnectCount);
+  if (this->imageConnectCount == 0)
+  {
+    this->leftCamera->SetActive(false);
+    this->rightCamera->SetActive(false);
+  }
+  else
+  {
+    // do this first so there's chance for sensor to run 1 frame after activate
+    if (this->leftCamera->IsActive() && this->rightCamera->IsActive())
+      this->PutCameraData();
+    else
+    {
+      this->leftCamera->SetActive(true);
+      this->rightCamera->SetActive(true);
+    }
+  }
 
-  if (!this->leftCamera->IsActive())
-    this->leftCamera->SetActive(true);
-
-  if (!this->rightCamera->IsActive())
-    this->rightCamera->SetActive(true);
-
-  this->PutCameraData();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

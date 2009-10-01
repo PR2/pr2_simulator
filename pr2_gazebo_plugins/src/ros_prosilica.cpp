@@ -96,6 +96,9 @@ RosProsilica::RosProsilica(Entity *parent)
   this->distortion_t1P  = new ParamT<double>("distortion_t1" ,0, 0);
   this->distortion_t2P  = new ParamT<double>("distortion_t2" ,0, 0);
   Param::End();
+
+  this->imageConnectCount = 0;
+  this->infoConnectCount = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,9 +168,16 @@ void RosProsilica::LoadChild(XMLConfigNode *node)
   this->distortion_t2 = this->distortion_t2P->GetValue();
 
   ROS_DEBUG("prosilica image topic name %s", this->imageTopicName.c_str());
-  this->image_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageTopicName,1);
-  this->image_rect_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageRectTopicName,1);
-  this->cam_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->camInfoTopicName,1);
+  this->image_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageTopicName,1,
+    boost::bind( &RosProsilica::ImageConnect, this),
+    boost::bind( &RosProsilica::ImageDisconnect, this));
+  this->image_rect_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageRectTopicName,1,
+    boost::bind( &RosProsilica::ImageConnect, this),
+    boost::bind( &RosProsilica::ImageDisconnect, this));
+  /// @todo: cam info pub is not implement yet
+  this->cam_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->camInfoTopicName,1,
+    boost::bind( &RosProsilica::InfoConnect, this),
+    boost::bind( &RosProsilica::InfoDisconnect, this));
   this->cam_info_ser_ = this->rosnode_->advertiseService(this->camInfoServiceName,&RosProsilica::camInfoService, this);
   this->poll_ser_ = this->rosnode_->advertiseService(this->pollServiceName,&RosProsilica::triggeredGrab, this);
 }
@@ -223,6 +233,7 @@ bool RosProsilica::camInfoService(prosilica_camera::CameraInfo::Request &req,
   this->camInfoMsg->P[9] = 0.0;
   this->camInfoMsg->P[10] = 1.0;
   this->camInfoMsg->P[11] = 0.0;
+  this->cam_info_pub_.publish(*this->camInfoMsg);
   return true;
 }
 
@@ -314,12 +325,11 @@ bool RosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &req,
               this->width,
               this->skip*this->width,
               (void*)src );
-    // publish to ros, thumbnails and rect image?
-    /// @todo: don't bother if there are no subscribers
-    //if (this->image_pub_.getNumSubscribers() > 0)
-      this->image_pub_.publish(this->imageMsg);
-    //if (this->image_rect_pub_.getNumSubscribers() > 0)
-      this->image_rect_pub_.publish(this->imageMsg);
+
+    /// @todo: publish to ros, thumbnails and rect image in the Update call?
+
+    this->image_pub_.publish(this->imageMsg);
+    this->image_rect_pub_.publish(this->imageMsg);
 
     //sensor_msgs::CvBridge img_bridge_(&this->imageMsg);
     //IplImage* cv_image;
@@ -358,9 +368,6 @@ bool RosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &req,
 void RosProsilica::InitChild()
 {
 
-  // set parent sensor to active automatically
-  this->myParent->SetActive(true);
-
   // set buffer size
   this->width            = this->myParent->GetImageWidth();
   this->height           = this->myParent->GetImageHeight();
@@ -392,16 +399,45 @@ void RosProsilica::InitChild()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Increment count
+void RosProsilica::ImageConnect()
+{
+  this->imageConnectCount++;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Decrement count
+void RosProsilica::ImageDisconnect()
+{
+  this->imageConnectCount--;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Increment count
+void RosProsilica::InfoConnect()
+{
+  this->infoConnectCount++;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Decrement count
+void RosProsilica::InfoDisconnect()
+{
+  this->infoConnectCount--;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Update the controller
 void RosProsilica::UpdateChild()
 {
 
-  // do nothing as we are using service, maybe consider thumbnailing
+  // should do nothing except turning camera on/off, as we are using service.
+  /// @todo: consider adding thumbnailing feature here if subscribed.
 
-  // if (this->myParent->IsActive())
-  //   this->PutCameraDataWithROI();
-  // else
-  //   this->myParent->SetActive(true); // as long as this plugin is running, parent is active
+  // as long as ros is connected, parent is active
+  //ROS_ERROR("debug image count %d",this->imageConnectCount);
+  if (this->imageConnectCount == 0 && this->infoConnectCount == 0)
+    this->myParent->SetActive(false);
+  else
+    this->myParent->SetActive(true);
 
 }
 

@@ -120,6 +120,11 @@ class RosStereoCamera : public Controller
   /// \brief Finalize the controller
   protected: virtual void FiniChild();
 
+  /// \brief Keep track of number of connctions
+  private: int imageConnectCount;
+  private: void ImageConnect();
+  private: void ImageDisconnect();
+
   /// \brief The parent sensor
   private: Entity *myParent;
 
