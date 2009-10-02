@@ -188,34 +188,35 @@ void RosStereoCamera::InitChild()
 
   ROS_DEBUG("stereo: children of model parent %d\n",sibling.size());
 
-  for (iter = sibling.begin(); iter != sibling.end(); iter++)
+  while (!this->leftCamera || !this->rightCamera)
   {
-    Body* body = dynamic_cast<Body*>(*iter);
-    if (body)
+    for (iter = sibling.begin(); iter != sibling.end(); iter++)
     {
-      ROS_DEBUG("stereo: children body %s\n",(*iter)->GetName().c_str());
-      std::vector<Sensor*> sensors = body->GetSensors();
-      std::vector<Sensor*>::iterator sensorIter;
-      for (sensorIter = sensors.begin(); sensorIter != sensors.end(); sensorIter++)
+      Body* body = dynamic_cast<Body*>(*iter);
+      if (body)
       {
-        ROS_DEBUG("stereo: children sensor %s\n",(*sensorIter)->GetName().c_str());
-        MonoCameraSensor* mcs = dynamic_cast<MonoCameraSensor*>(*sensorIter);
-        if (mcs != NULL)
+        ROS_DEBUG("stereo: children body %s\n",(*iter)->GetName().c_str());
+        std::vector<Sensor*> sensors = body->GetSensors();
+        std::vector<Sensor*>::iterator sensorIter;
+        for (sensorIter = sensors.begin(); sensorIter != sensors.end(); sensorIter++)
         {
-          ROS_DEBUG("stereo: sensors %s is a MCS compare with %s and %s\n",mcs->GetName().c_str(),this->leftCameraName.c_str(),this->rightCameraName.c_str());
-          if (mcs->GetName() == this->leftCameraName)
-            this->leftCamera = mcs;
-          else if (mcs->GetName() == this->rightCameraName)
-            this->rightCamera = mcs;
+          ROS_DEBUG("stereo: children sensor %s\n",(*sensorIter)->GetName().c_str());
+          MonoCameraSensor* mcs = dynamic_cast<MonoCameraSensor*>(*sensorIter);
+          if (mcs != NULL)
+          {
+            ROS_DEBUG("stereo: sensors %s is a MCS compare with %s and %s\n",mcs->GetName().c_str(),this->leftCameraName.c_str(),this->rightCameraName.c_str());
+            if (mcs->GetName() == this->leftCameraName)
+              this->leftCamera = mcs;
+            else if (mcs->GetName() == this->rightCameraName)
+              this->rightCamera = mcs;
+          }
         }
       }
     }
-  }
 
-  if (!this->leftCamera || !this->rightCamera)
-  {
-    ROS_ERROR("RosStereoCamera controller requires 2 MonoCameraSensors");
-    gzthrow("RosStereoCamera controller requires 2 MonoCameraSensors");
+    ROS_WARN("RosStereoCamera controller requires 2 MonoCameraSensors, waiting for them to be created in simulation...");
+    //gzthrow("RosStereoCamera controller requires 2 MonoCameraSensors");
+    usleep(500000);
   }
 
   // set parent sensor to active automatically
