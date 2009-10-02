@@ -7,16 +7,20 @@
   <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
 
   <!-- spawn pr2 robots -->
-  <node name="spawn_pr2a_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y  1 -m pr2a -n pr2a" respawn="false" output="screen" />
-  <node name="spawn_pr2b_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y -1 -m pr2b -n pr2b" respawn="false" output="screen" />
+  <node name="spawn_pr2_1_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y  1 -m pr2_1 -n pr2_1" respawn="false" output="screen" />
+  <node name="spawn_pr2_2_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 2 -y  0 -m pr2_2 -n pr2_2" respawn="false" output="screen" />
+  <node name="spawn_pr2_3_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y -1 -m pr2_3 -n pr2_3" respawn="false" output="screen" />
 
   <!-- Robot state publisher -->
-  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2a" >
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2_1" >
     <param name="publish_frequency" type="double" value="50.0" />
     <param name="tf_prefix" type="string" value="" />
   </node>
-  <!-- Robot state publisher -->
-  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2b" >
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2_2" >
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2_3" >
     <param name="publish_frequency" type="double" value="50.0" />
     <param name="tf_prefix" type="string" value="" />
   </node>
