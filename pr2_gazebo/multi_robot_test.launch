@@ -1,0 +1,21 @@
+<launch>
+  <include file="$(find pr2_alpha)/sim.machine"/>
+  <!-- start up wg world -->
+  <include file="$(find gazebo)/launch/empty_world.launch"/>
+
+  <!-- start pr2 robot -->
+  <node name="spawn_pr2a_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y  1 -m pr2a -n pr2a" respawn="false" output="screen" />
+  <node name="spawn_pr2b_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y -1 -m pr2b -n pr2b" respawn="false" output="screen" />
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2a" >
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2b" >
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+</launch>
+
