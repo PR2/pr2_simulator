@@ -61,9 +61,6 @@ RosBlockLaser::RosBlockLaser(Entity *parent)
   this->topicNameP = new ParamT<std::string>("topicName", "default_ros_laser_topic", 0);
   this->frameNameP = new ParamT<std::string>("frameName", "default_ros_laser_frame", 0);
   Param::End();
-
-  // set parent sensor to active automatically
-  this->myParent->SetActive(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +93,9 @@ void RosBlockLaser::LoadChild(XMLConfigNode *node)
   this->gaussianNoiseP->Load(node);
   this->gaussianNoise = this->gaussianNoiseP->GetValue();
 
-  this->pub_ = this->rosnode_->advertise<sensor_msgs::PointCloud>(this->topicName,10);
+  this->pub_ = this->rosnode_->advertise<sensor_msgs::PointCloud>(this->topicName,1,
+    boost::bind( &RosBlockLaser::LaserConnect, this),
+    boost::bind( &RosBlockLaser::LaserDisconnect, this));
 
   // set size of cloud message, starts at 0!! FIXME: not necessary
   Angle maxAngle = this->myParent->GetMaxAngle();
@@ -114,17 +113,44 @@ void RosBlockLaser::LoadChild(XMLConfigNode *node)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Increment count
+void RosBlockLaser::LaserConnect()
+{
+  this->laserConnectCount++;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Decrement count
+void RosBlockLaser::LaserDisconnect()
+{
+  this->laserConnectCount--;
+
+  if (this->laserConnectCount == 0)
+    this->myParent->SetActive(false);
+}
+////////////////////////////////////////////////////////////////////////////////
 // Initialize the controller
 void RosBlockLaser::InitChild()
 {
-
+  // set parent sensor to inactive automatically
+  this->myParent->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update the controller
 void RosBlockLaser::UpdateChild()
 {
+  // as long as ros is connected, parent is active
+  //ROS_ERROR("debug laser count %d",this->laserConnectCount);
+  if (!this->myParent->IsActive())
+  {
+    // do this first so there's chance for sensor to run 1 frame after activate
+    if (this->laserConnectCount > 0)
+      this->myParent->SetActive(true);
+  }
+  else
+  {
     this->PutLaserData();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
