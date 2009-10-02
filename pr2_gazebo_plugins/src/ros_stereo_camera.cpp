@@ -219,9 +219,9 @@ void RosStereoCamera::InitChild()
     usleep(500000);
   }
 
-  // set parent sensor to active automatically
-  this->leftCamera->SetActive(true);
-  this->rightCamera->SetActive(true);
+  // set parent sensor to inactive automatically
+  this->leftCamera->SetActive(false);
+  this->rightCamera->SetActive(false);
 
   if( leftCamera->GetImageFormat() == "L8" ) 
   {
@@ -271,6 +271,11 @@ void RosStereoCamera::ImageConnect()
 void RosStereoCamera::ImageDisconnect()
 {
   this->imageConnectCount--;
+  if (this->imageConnectCount == 0)
+  {
+    this->leftCamera->SetActive(false);
+    this->rightCamera->SetActive(false);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -279,21 +284,18 @@ void RosStereoCamera::UpdateChild()
 {
   // as long as ros is connected, parent is active
   //ROS_ERROR("debug image count %d",this->imageConnectCount);
-  if (this->imageConnectCount == 0)
-  {
-    this->leftCamera->SetActive(false);
-    this->rightCamera->SetActive(false);
-  }
-  else
+  if (!this->leftCamera->IsActive() || !this->rightCamera->IsActive())
   {
     // do this first so there's chance for sensor to run 1 frame after activate
-    if (this->leftCamera->IsActive() && this->rightCamera->IsActive())
-      this->PutCameraData();
-    else
+    if (this->imageConnectCount > 0)
     {
       this->leftCamera->SetActive(true);
       this->rightCamera->SetActive(true);
     }
+  }
+  else
+  {
+    this->PutCameraData();
   }
 
 }

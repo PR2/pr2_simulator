@@ -113,14 +113,17 @@ void RosCamera::ImageConnect()
 void RosCamera::ImageDisconnect()
 {
   this->imageConnectCount--;
+
+  if (this->imageConnectCount == 0)
+    this->myParent->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize the controller
 void RosCamera::InitChild()
 {
-  // set parent sensor to active automatically
-  this->myParent->SetActive(true);
+  // sensor generation off by default
+  this->myParent->SetActive(false);
 
   // set buffer size
   this->width            = this->myParent->GetImageWidth();
@@ -157,15 +160,15 @@ void RosCamera::UpdateChild()
 
   // as long as ros is connected, parent is active
   //ROS_ERROR("debug image count %d",this->imageConnectCount);
-  if (this->imageConnectCount == 0)
-    this->myParent->SetActive(false);
+  if (!this->myParent->IsActive())
+  {
+    if (this->imageConnectCount > 0)
+      // do this first so there's chance for sensor to run 1 frame after activate
+      this->myParent->SetActive(true);
+  }
   else
   {
-    // do this first so there's chance for sensor to run 1 frame after activate
-    if (this->myParent->IsActive())
-      this->PutCameraData();
-    else
-      this->myParent->SetActive(true);
+    this->PutCameraData();
   }
 
 }

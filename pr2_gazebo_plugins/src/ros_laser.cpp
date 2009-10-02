@@ -110,6 +110,8 @@ void RosLaser::LoadChild(XMLConfigNode *node)
 // Initialize the controller
 void RosLaser::InitChild()
 {
+  // sensor generation off by default
+  this->myParent->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,6 +125,9 @@ void RosLaser::LaserConnect()
 void RosLaser::LaserDisconnect()
 {
   this->laserConnectCount--;
+
+  if (this->laserConnectCount == 0)
+    this->myParent->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,15 +136,15 @@ void RosLaser::UpdateChild()
 {
   // as long as ros is connected, parent is active
   //ROS_ERROR("debug laser count %d",this->laserConnectCount);
-  if (this->laserConnectCount == 0)
-    this->myParent->SetActive(false);
-  else
+  if (!this->myParent->IsActive())
   {
     // do this first so there's chance for sensor to run 1 frame after activate
-    if (this->myParent->IsActive())
-      this->PutLaserData();
-    else
+    if (this->laserConnectCount > 0)
       this->myParent->SetActive(true);
+  }
+  else
+  {
+    this->PutLaserData();
   }
 }
 

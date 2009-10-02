@@ -367,6 +367,8 @@ bool RosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &req,
 // Initialize the controller
 void RosProsilica::InitChild()
 {
+  // sensor generation off by default
+  this->myParent->SetActive(false);
 
   // set buffer size
   this->width            = this->myParent->GetImageWidth();
@@ -409,6 +411,9 @@ void RosProsilica::ImageConnect()
 void RosProsilica::ImageDisconnect()
 {
   this->imageConnectCount--;
+
+  if ((this->infoConnectCount == 0) && (this->imageConnectCount == 0))
+    this->myParent->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -422,6 +427,9 @@ void RosProsilica::InfoConnect()
 void RosProsilica::InfoDisconnect()
 {
   this->infoConnectCount--;
+
+  if ((this->infoConnectCount == 0) && (this->imageConnectCount == 0))
+    this->myParent->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -434,9 +442,7 @@ void RosProsilica::UpdateChild()
 
   // as long as ros is connected, parent is active
   //ROS_ERROR("debug image count %d",this->imageConnectCount);
-  if (this->imageConnectCount == 0 && this->infoConnectCount == 0)
-    this->myParent->SetActive(false);
-  else
+  if (this->imageConnectCount > 0 || this->infoConnectCount > 0)
     this->myParent->SetActive(true);
 
 }
