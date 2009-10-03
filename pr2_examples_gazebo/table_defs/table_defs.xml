@@ -13,7 +13,7 @@
        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
        xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
 
-  <property name="table_height" value="0.75" />
+  <property name="table_height" value="0.55" />
   <property name="table_width" value="1.0" />
   <property name="table_depth" value="1.0" />
   <property name="leg_radius" value="0.02" />

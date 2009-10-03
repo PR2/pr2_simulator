@@ -9,10 +9,10 @@
   </node>
 
   <!-- send pr2_r_arm.xml to param server -->
-  <include file="$(find pr2_defs)/launch/upload_r_arm.launch" />
+  <include file="$(find pr2_defs)/launch/upload_prg.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="spawn_arm" pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen"/>
+  <node name="spawn_pr2" pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen"/>
 
   <!-- start arm controller -->
   <include file="$(find pr2_arm_gazebo)/controllers/r_arm_position_controller.launch"/>
@@ -26,8 +26,9 @@
   -->
   <!--include file="$(find pr2_arm_gazebo)/tests/debug_plot.launch"/-->
 
+  <param name="table_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/table_defs.xml'" />
+  <node name="spawn_table" pkg="gazebo_tools" type="spawn_urdf" args="table_description -z 0.01 -m table_1" respawn="false" output="screen" />
   <param name="object_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/cylinder_object_defs.xml'" />
-  <node name="spawn_object" pkg="gazebo_tools" type="spawn_urdf" args="object_description -z 0.2 -m object_1" respawn="false" output="screen" /> 
-  <include file="$(find pr2_examples_gazebo)/coffee_cup.launch" />
+  <node name="spawn_object" pkg="gazebo_tools" type="spawn_urdf" args="object_description -x -0.02 -y -0.195 -z 0.0 -m object_1" respawn="false" output="screen" /> 
 </launch>
 
