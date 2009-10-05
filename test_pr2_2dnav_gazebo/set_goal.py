@@ -58,7 +58,7 @@ AMCL_TOL  = 0.5
 COV = [float64(0.5*0.5                  ),float64(0),float64(0),float64(0),float64(0),float64(0), \
        float64(0),float64(0.5*0.5                  ),float64(0),float64(0),float64(0),float64(0), \
        float64(0                        ),float64(0),float64(0),float64(0),float64(0),float64(0), \
-       float64(0),float64(0),float64(0),float64(math.pi/23.0*math.pi/12.0),float64(0),float64(0), \
+       float64(0),float64(0),float64(0),float64(math.pi/12.0*math.pi/12.0),float64(0),float64(0), \
        float64(0                        ),float64(0),float64(0),float64(0),float64(0),float64(0), \
        float64(0                        ),float64(0),float64(0),float64(0),float64(0),float64(0)  ]
 
