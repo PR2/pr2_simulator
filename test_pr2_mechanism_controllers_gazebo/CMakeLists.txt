@@ -22,11 +22,12 @@ rospack(test_pr2_mechanism_controllers_gazebo)
 #
 #if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
 #
-#rospack_add_rostest(test_base.launch)
-#rospack_add_rostest(test_arm.launch)
-#
-#rospack_add_rostest(hztest_pr2_mechanism.launch)
-#rospack_add_rostest(hztest_rostime.launch)
-#rospack_add_rostest(hztest_pr2_odom.launch)
+if("$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "" OR "$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "gazebo")
+  rospack_add_rostest(test_base.launch)
+  rospack_add_rostest(test_arm.launch)
+  rospack_add_rostest(hztest_pr2_mechanism.launch)
+  rospack_add_rostest(hztest_rostime.launch)
+  rospack_add_rostest(hztest_pr2_odom.launch)
+endif("$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "" OR "$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "gazebo")
 #
 #endif(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)

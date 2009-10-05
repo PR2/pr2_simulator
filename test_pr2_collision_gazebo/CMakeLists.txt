@@ -17,7 +17,9 @@ endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i686" OR
       CMAKE_SYSTEM_PROCESSOR MATCHES "i386" OR
       CMAKE_SYSTEM_PROCESSOR MATCHES "unknown")
 
-if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
-rospack_add_rostest(test_slide.launch)
-endif(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
+#if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
+if("$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "" OR "$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "gazebo")
+  rospack_add_rostest(test_slide.launch)
+endif("$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "" OR "$ENV{ROS_BUILD_TEST_LABEL}" STREQUAL "gazebo")
+#endif(CMAKE_SYSTEM_NAME MATCHES "Linux" AND _is32bit)
 
