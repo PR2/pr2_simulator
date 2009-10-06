@@ -190,6 +190,22 @@ void RosP3D::UpdateChild()
     this->poseMsg.twist.twist.angular.y    = veul.y + this->GaussianKernel(0,this->gaussianNoise) ;
     this->poseMsg.twist.twist.angular.z    = veul.z + this->GaussianKernel(0,this->gaussianNoise) ;
 
+    // fill in covariance matrix
+    /// @todo: let user set separate linear and angular covariance values.
+    this->poseMsg.pose.covariance[0] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.pose.covariance[7] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.pose.covariance[14] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.pose.covariance[21] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.pose.covariance[28] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.pose.covariance[35] = this->gaussianNoise*this->gaussianNoise;
+
+    this->poseMsg.twist.covariance[0] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.twist.covariance[7] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.twist.covariance[14] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.twist.covariance[21] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.twist.covariance[28] = this->gaussianNoise*this->gaussianNoise;
+    this->poseMsg.twist.covariance[35] = this->gaussianNoise*this->gaussianNoise;
+
     // publish to ros
     this->pub_.publish(this->poseMsg);
   }
