@@ -1,0 +1,5 @@
+/.rosgcov_files
+/bin
+/.build_version
+/urdf2file
+/urdf2factory
