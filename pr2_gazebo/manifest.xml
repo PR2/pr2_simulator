@@ -8,7 +8,6 @@
   <depend package="gazebo_tools"/>
   <depend package="teleop_arm_keyboard"/>
   <depend package="pr2_ogre" />
-  <depend package="ikea_ogre" />
   <depend package="gazebo_worlds"/>
   <depend package="pr2_defs"/>
   <depend package="pr2_default_controllers"/>
