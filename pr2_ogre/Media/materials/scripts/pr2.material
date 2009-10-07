@@ -270,6 +270,20 @@ material PR2/Face
   }
 }
 
+material PR2/Face2
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture face2_texture.jpg
+      }
+    }
+  }
+}
+
 material PR2/Jack
 {
   technique
