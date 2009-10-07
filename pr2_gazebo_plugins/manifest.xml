@@ -16,7 +16,6 @@
   <depend package="nav_msgs" />
   <depend package="sensor_msgs" />
   <depend package="opencv_latest" />
-  <depend package="sensor_msgs" />
   <depend package="stereo_msgs"/>
   <depend package="pr2_msgs" />
   <depend package="geometry_msgs" />
