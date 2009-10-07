@@ -27,8 +27,8 @@
   <!--include file="$(find pr2_arm_gazebo)/tests/debug_plot.launch"/-->
 
   <param name="table_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/table_defs.xml'" />
-  <node name="spawn_table" pkg="gazebo_tools" type="spawn_urdf" args="table_description -z 0.01 -m table_1" respawn="false" output="screen" />
+  <node name="spawn_table" pkg="gazebo_tools" type="urdf2factory" args="table_description -z 0.01 -m table_1" respawn="false" output="screen" />
   <param name="object_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/cylinder_object_defs.xml'" />
-  <node name="spawn_object" pkg="gazebo_tools" type="spawn_urdf" args="object_description -x -0.02 -y -0.195 -z 0.0 -m object_1" respawn="false" output="screen" /> 
+  <node name="spawn_object" pkg="gazebo_tools" type="urdf2factory" args="object_description -x -0.02 -y -0.195 -z 0.0 -m object_1" respawn="false" output="screen" /> 
 </launch>
 

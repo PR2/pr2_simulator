@@ -7,9 +7,9 @@
   <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
 
   <!-- spawn pr2 robots -->
-  <node name="spawn_pr2_1_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y  1 -m pr2_1 -n pr2_1" respawn="false" output="screen" />
-  <node name="spawn_pr2_2_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 2 -y  0 -m pr2_2 -n pr2_2" respawn="false" output="screen" />
-  <node name="spawn_pr2_3_urdf" pkg="gazebo_tools" type="spawn_urdf" args="robot_description -x 0 -y -1 -m pr2_3 -n pr2_3" respawn="false" output="screen" />
+  <node name="spawn_pr2_1_urdf" pkg="gazebo_tools" type="urdf2factory" args="robot_description -x 0 -y  1 -m pr2_1 -n pr2_1" respawn="false" output="screen" />
+  <node name="spawn_pr2_2_urdf" pkg="gazebo_tools" type="urdf2factory" args="robot_description -x 2 -y  0 -m pr2_2 -n pr2_2" respawn="false" output="screen" />
+  <node name="spawn_pr2_3_urdf" pkg="gazebo_tools" type="urdf2factory" args="robot_description -x 0 -y -1 -m pr2_3 -n pr2_3" respawn="false" output="screen" />
 
   <!-- Robot state publisher -->
   <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2_1" >
