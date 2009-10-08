@@ -16,7 +16,6 @@
   <depend package="gazebo_tools"/>
   <depend package="rviz"/>
   <depend package="teleop_base"/>
-  <depend package="3dnav_pr2"/>
   <depend package="2dnav_pr2"/>
 
   <!-- Adding experimental controllers as a dependency b/c of tuckarm move -->
