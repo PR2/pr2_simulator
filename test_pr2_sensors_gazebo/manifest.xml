@@ -23,6 +23,5 @@
   <depend package="semantic_point_annotator"/> <!-- in semantic_mapping -->
   <depend package="laser_filters"/> <!-- in laser_pipeline -->
   <depend package="robot_self_filter"/> <!-- in motion_planning/non-stack -->
-  <depend package="mux"/> <!-- deprecated, udpate 2dnav_pr2 launch scripts? -->
 
 </package>
