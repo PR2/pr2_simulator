@@ -177,6 +177,6 @@ class BaseTest(unittest.TestCase):
     def init_ros(self, name):
         print "LNK\n"
         self.pub = rospy.Publisher("/cmd_vel", Twist)
-        rospy.Subscriber("/base_pose_ground_truth", Odometry, self.p3dInput)
-        rospy.Subscriber("pr2_odometry/odom",                   Odometry, self.odomInput)
+        rospy.Subscriber("base_pose_ground_truth", Odometry, self.p3dInput)
+        rospy.Subscriber("pr2_base_odometry/odom",                   Odometry, self.odomInput)
         rospy.init_node(name, anonymous=True)
