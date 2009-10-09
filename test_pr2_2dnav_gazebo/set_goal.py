@@ -331,7 +331,7 @@ class NavStackTest(unittest.TestCase):
             tmpoqi = tft.quaternion_inverse(self.odom_q_initial)
             odom_q_delta = tft.quaternion_multiply(tmpoqi,self.odom_q)
             #if self.odom_initialized == False:
-            #  print "pr2_odometry/odom not received"
+            #  print "pr2 odometry/odom not received"
             #else:
             #  print "euler: odom delta:" , tft.euler_from_quaternion(odom_q_delta)
 
