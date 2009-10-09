@@ -11,7 +11,7 @@
   <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="spawn_gazebo_model" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description 0 6 17 0 -75 90 pr2_model" respawn="false" output="screen" />
+  <node name="spawn_gazebo_model" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description -y 6 -z 17 -p -75 -w 90 -m pr2_model" respawn="false" output="screen" />
 
   <!-- test -->
   <test test-name="pr2_test_slide" pkg="test_pr2_collision_gazebo" type="test_slide.py" time-limit="120" />
