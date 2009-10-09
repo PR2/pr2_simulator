@@ -23,7 +23,7 @@
     <!-- The expected publication rate [Hz].  Set to 0.0 to only check that at least one message is received. -->
     <param name="hz" value="20.0" />
     <!-- Acceptable error in the publication rate [Hz].  Ignored if hz is set to 0.0. -->
-    <param name="hzerror" value="1.0" />
+    <param name="hzerror" value="2.0" />
     <!-- Time to listen for [seconds] -->
     <param name="test_duration" value="2.0" />
     <!-- Whether each inter-message time interval should be checked against
