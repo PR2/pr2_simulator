@@ -3,8 +3,8 @@
   <param name="desk1_model" textfile="$(find gazebo_worlds)/objects/desk1.model" />
   <param name="desk2_model" textfile="$(find gazebo_worlds)/objects/desk2.model" />
   <param name="desk3_model" textfile="$(find gazebo_worlds)/objects/desk3.model" />
-  <node pkg="gazebo_tools" type="xml2factory" args="desk1_model  -2.0 -12.0 0.0  0 0 0 desk1_model" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="desk2_model -11.0   2.5 0.0  0 0 0 desk2_model" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="desk3_model  -4.0 -12.0 0.0  0 0 0 desk3_model" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="desk1_model  -2.0 -12.0 0.0  0 0 0 desk1_model" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="desk2_model -11.0   2.5 0.0  0 0 0 desk2_model" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="desk3_model  -4.0 -12.0 0.0  0 0 0 desk3_model" respawn="false" output="screen" />
 </launch>
 

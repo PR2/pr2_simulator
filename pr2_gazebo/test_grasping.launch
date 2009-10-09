@@ -8,15 +8,15 @@
 
   <!-- table -->
   <param name="desk3" textfile="$(find gazebo_worlds)/objects/desk3.model" />
-  <node pkg="gazebo_tools" type="xml2factory" args="desk3 1.0 0.0 0.0 0 0 0 desk3" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="desk3 1.0 0.0 0.0 0 0 0 desk3" respawn="false" output="screen" />
 
   <!-- cups
   <param name="000_580_67"      textfile="$(find gazebo_worlds)/objects/000.580.67.model" />
   <param name="001_327_79"      textfile="$(find gazebo_worlds)/objects/001.327.79.model" />
   <param name="701_330_68"      textfile="$(find gazebo_worlds)/objects/701.330.68.model" />
-  <node pkg="gazebo_tools" type="xml2factory" args="000_580_67 1.0  0.0 0.56 0 0 0 000_580_67" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="001_327_79 1.0 -0.5 0.56 0 0 0 001_327_79" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="701_330_68 1.0  0.5 0.56 0 0 0 701_330_68" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="000_580_67 1.0  0.0 0.56 0 0 0 000_580_67" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="001_327_79 1.0 -0.5 0.56 0 0 0 001_327_79" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="701_330_68 1.0  0.5 0.56 0 0 0 701_330_68" respawn="false" output="screen" />
   -->
   <!-- things -->
   <param name="object101"      textfile="$(find gazebo_worlds)/objects/object101.model" />
@@ -24,11 +24,11 @@
   <param name="object103"      textfile="$(find gazebo_worlds)/objects/object103.model" />
   <param name="object104"      textfile="$(find gazebo_worlds)/objects/object104.model" />
   <param name="object105"      textfile="$(find gazebo_worlds)/objects/object105.model" />
-  <node pkg="gazebo_tools" type="xml2factory" args="object101 1.0  0.0 0.369 0 0 0 object101" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="object102 1.0  0.2 0.369 0 0 0 object102" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="object103 1.0 -0.2 0.369 0 0 0 object103" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="object104 1.0  0.4 0.369 0 0 0 object104" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="xml2factory" args="object105 2.0  0.0 1.500 0 0 0 face1"     respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object101 1.0  0.0 0.369 0 0 0 object101" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object102 1.0  0.2 0.369 0 0 0 object102" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object103 1.0 -0.2 0.369 0 0 0 object103" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object104 1.0  0.4 0.369 0 0 0 object104" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object105 2.0  0.0 1.500 0 0 0 face1"     respawn="false" output="screen" />
 
 </launch>
 

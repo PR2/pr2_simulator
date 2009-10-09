@@ -89,7 +89,7 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   int argc = 0;
   char** argv = NULL;
   ros::init(argc,argv,"gazebo");
-  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from urdf2factory
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_gazebo_model
   ROS_INFO("starting gazebo_mechanism_control plugin in ns: %s",this->robotNamespace.c_str());
 
   this->mc_ = new pr2_mechanism::MechanismControl(&hw_,*this->rosnode_);

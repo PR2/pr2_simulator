@@ -4,7 +4,7 @@
   <include file="$(find pr2_defs)/launch/upload_prototype1.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="prototype1_urdf" pkg="gazebo_tools" type="urdf2factory" args="robot_description 0 0 0 0 0 0 prototype1_model" respawn="false" />
+  <node name="prototype1_urdf" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description 0 0 0 0 0 0 prototype1_model" respawn="false" />
 
   <!-- Joystick uncomment if you have joystick
   <param name="joy/deadzone" value="5000"/>

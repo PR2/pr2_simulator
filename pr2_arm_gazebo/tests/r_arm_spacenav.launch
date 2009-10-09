@@ -11,7 +11,7 @@
   <include file="$(find pr2_defs)/launch/upload_r_arm.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen"/>
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen"/>
 
   <!-- start arm controller -->
   <!-- tried to revive, copied into pr2_arm_gazebo from arm_life_test, but controller breaks. -->
@@ -19,6 +19,6 @@
   <node pkg="spacenav_node" type="spacenav_node" args="" respawn="false" output="screen" />
 
   <param name="table_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/table_defs.xml'" />
-  <node pkg="gazebo_tools" type="urdf2factory" args="table_description" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="table_description" respawn="false" output="screen" />
 </launch>
 

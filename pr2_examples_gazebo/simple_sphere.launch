@@ -1,6 +1,6 @@
 <launch>
   <!-- send simple_sphere.xml to param server -->
   <param name="simple_sphere" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/simple_rdf_examples/simple_sphere.xml'" />
-  <node pkg="gazebo_tools" type="urdf2factory" args="simple_sphere" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="simple_sphere" respawn="false" output="screen" />
 </launch>
 

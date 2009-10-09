@@ -16,8 +16,8 @@ echo "----------------roslaunch xml"
 `rospack find xacro`/xacro.py `rospack find pr2_defs`/robots/r_arm.xacro.xml > pr2_arm.xml
 python ./setparam.py
 
-echo "----------------urdf2factory"
-`rospack find gazebo_tools`/urdf2factory "robot_description"
+echo "----------------spawn_gazebo_model"
+`rospack find gazebo_tools`/spawn_gazebo_model "robot_description"
 
 echo "----------------spawn controller"
 `rospack find mechanism_control`/scripts/mech.py sp `rospack find pr2_arm_gazebo`/r_arm_default_controller.xml

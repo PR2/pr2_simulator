@@ -3,7 +3,7 @@
   <include file="$(find pr2_defs)/launch/upload_hca.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" />
+  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" />
 
   <!-- Robot state publisher -->
   <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">

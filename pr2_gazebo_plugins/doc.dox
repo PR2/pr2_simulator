@@ -29,7 +29,7 @@ Here are the gazebo plugins which are currently implemented:
     <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_defs)/robots/pr2.xacro.xml'" />
 
     <!-- push robot_description to factory and spawn robot in gazebo -->
-    <node pkg="gazebo_tools" type="urdf2factory" args="robot_description" respawn="false" output="screen" /> <!-- load default arm controller -->
+    <node pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" /> <!-- load default arm controller -->
 
   </launch>
   @endverbatim
