@@ -24,5 +24,16 @@
     <param name="publish_frequency" type="double" value="50.0" />
     <param name="tf_prefix" type="string" value="" />
   </node>
+
+  <!-- Diagnostics -->
+  <node pkg="pr2_mechanism_control" type="controllers_to_diagnostics.py" name="controller_diagnostics" ns="pr2_1" />
+  <node pkg="pr2_mechanism_control" type="joints_to_diagnostics.py" name="joint_diagnostics" ns="pr2_1" />
+
+  <node pkg="pr2_mechanism_control" type="controllers_to_diagnostics.py" name="controller_diagnostics" ns="pr2_2" />
+  <node pkg="pr2_mechanism_control" type="joints_to_diagnostics.py" name="joint_diagnostics" ns="pr2_2" />
+
+  <node pkg="pr2_mechanism_control" type="controllers_to_diagnostics.py" name="controller_diagnostics" ns="pr2_3" />
+  <node pkg="pr2_mechanism_control" type="joints_to_diagnostics.py" name="joint_diagnostics" ns="pr2_3" />
+
 </launch>
 

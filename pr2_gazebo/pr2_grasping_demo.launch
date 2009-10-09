@@ -8,6 +8,10 @@
     <param name="tf_prefix" type="string" value="" />
   </node>
 
+  <!-- Diagnostics -->
+  <node pkg="pr2_mechanism_control" type="controllers_to_diagnostics.py" name="controller_diagnostics" />
+  <node pkg="pr2_mechanism_control" type="joints_to_diagnostics.py" name="joint_diagnostics" />
+
   <!-- send pr2_r_arm.xml to param server -->
   <include file="$(find pr2_defs)/launch/upload_prg.launch" />
 
