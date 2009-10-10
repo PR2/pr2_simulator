@@ -1,6 +1,6 @@
 <launch>
   <!-- add tables in appropriate places for wg walls -->
   <param name="desk1_model" textfile="$(find gazebo_worlds)/objects/desk1.model" />
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="desk1_model  1.0 0.0 0.0  0 0 0 desk1_model" respawn="false" output="screen" />
+  <node name="spawn_desk1" pkg="gazebo_tools" type="spawn_gazebo_model" args="desk1_model  -x 1.0 -m desk1_model" respawn="false" output="screen" />
 </launch>
 
