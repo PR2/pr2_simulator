@@ -13,7 +13,7 @@
   <include file="$(find pr2_defs)/launch/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" /> <!-- load default arm controller -->
+  <node name="spawn_pr2" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" /> <!-- load default arm controller -->
 
   <!-- load controllers -->
   <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
