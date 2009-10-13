@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 set(ROS_BUILD_TYPE Debug)
 rospack(pr2_gazebo_plugins)
+
 genmsg()
-include_directories(msg/cpp)
-gensrv()
-include_directories(srv/cpp)
+#include_directories(msg/cpp)
+#gensrv()
+#include_directories(srv/cpp)
+
+include_directories(include)
 
 add_definitions(-fPIC)
 
@@ -21,6 +24,8 @@ rospack_add_library(ros_block_laser src/ros_block_laser.cpp)
 rospack_link_boost(ros_block_laser thread)
 rospack_add_library(ros_template src/ros_template.cpp)
 rospack_link_boost(ros_template thread)
+rospack_add_library(ros_pub_world_state src/ros_pub_world_state.cpp)
+rospack_link_boost(ros_pub_world_state thread)
 rospack_add_library(ros_time src/ros_time.cpp)
 rospack_link_boost(ros_time thread)
 rospack_add_library(ros_p3d src/ros_p3d.cpp)
@@ -44,6 +49,6 @@ rospack_link_boost(ros_force thread)
 rospack_add_library(ros_prosilica src/ros_prosilica.cpp)
 rospack_link_boost(ros_prosilica thread)
 
-rospack_add_executable(bin/ros_diffdrive src/ros_diffdrive.cpp)
+rosbuild_add_executable(bin/ros_diffdrive src/ros_diffdrive.cpp)
 rospack_link_boost(bin/ros_diffdrive thread)
 
