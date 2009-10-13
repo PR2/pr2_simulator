@@ -64,7 +64,9 @@ class W_GT(BaseTest):
         self.init_ros(NAME)
         timeout_t = time.time() + TEST_DURATION
         while not rospy.is_shutdown() and not self.success and time.time() < timeout_t:
-            self.pub.publish(Twist(Vector3(TARGET_VX,TARGET_VY, 0), Vector3(0,0,TARGET_VW)))
+            #do not start commanding base until p3d and odom are initialized
+            if self.p3d_initialized == True and self.odom_initialized == True:
+              self.pub.publish(Twist(Vector3(TARGET_VX,TARGET_VY, 0), Vector3(0,0,TARGET_VW)))
             time.sleep(0.1)
             #self.debug_e()
             # display what the odom error is
