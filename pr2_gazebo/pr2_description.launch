@@ -1,0 +1,20 @@
+<launch>
+  
+  <!-- send pr2 urdf to param server -->
+  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="pr2_spawn_gazebo_model" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" />
+ 
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+  <!-- Diagnostics -->
+  <node pkg="pr2_mechanism_control" type="controllers_to_diagnostics.py" name="controller_diagnostics" />
+  <node pkg="pr2_mechanism_control" type="joints_to_diagnostics.py" name="joint_diagnostics" />
+
+</launch>
+
