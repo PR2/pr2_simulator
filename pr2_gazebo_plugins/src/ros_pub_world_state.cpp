@@ -121,6 +121,8 @@ void RosPubWorldState::UpdateChild()
   /*  this is called at every update simulation step             */
   /*                                                             */
   /***************************************************************/
+  if (this->worldStateConnectCount == 0)
+    return;
 
   /***************************************************************/
   /*                                                             */
