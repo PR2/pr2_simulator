@@ -382,6 +382,38 @@ material PR2/Grey
   }
 }
 
+material PR2/Aluminum
+{
+  receive_shadows on
+  lighting on
+
+  technique
+  {
+    pass
+    {
+      ambient 0.3 0.3 0.3 1.0
+      diffuse 0.3 0.3 0.3 1.0
+      specular 0.0 0.0 0.0 0.0
+    }
+  }
+}
+
+material PR2/Black
+{
+  receive_shadows on
+  lighting on
+
+  technique
+  {
+    pass
+    {
+      ambient 0.1 0.1 0.1 1.0
+      diffuse 0.1 0.1 0.1 1.0
+      specular 0.0 0.0 0.0 0.0
+    }
+  }
+}
+
 material PR2/Yellow
 {
   receive_shadows on

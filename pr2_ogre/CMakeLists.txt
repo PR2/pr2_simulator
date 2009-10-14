@@ -3,49 +3,68 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 rospack(pr2_ogre)
 
 # find needed paths
-find_ros_package(pr2_defs)
-find_ros_package(pr2_ogre)
-find_ros_package(ogre)
+rosbuild_find_ros_package(pr2_defs)
+rosbuild_find_ros_package(pr2_description)
+rosbuild_find_ros_package(pr2_ogre)
+rosbuild_find_ros_package(ogre)
 
-# build the ogre mesh files from *.stl (and *.stlb from convex decomposition)
-file(GLOB pr2_stl_files ${pr2_defs_PACKAGE_PATH}/meshes/*.stl)
 set(pr2_gen_files "")
 
-set(pr2_out_path ${CMAKE_CURRENT_SOURCE_DIR}/Media/models)
+# build the ogre mesh files from *.stl (and *.stlb from convex decomposition)
+file(GLOB_RECURSE pr2_description_stl_files RELATIVE ${pr2_description_PACKAGE_PATH}/meshes ${pr2_description_PACKAGE_PATH}/meshes/*/*.stl ${pr2_description_PACKAGE_PATH}/meshes/*/convex/*.stlb)
 
-MAKE_DIRECTORY(${pr2_out_path})
+set(pr2_description_out_path ${CMAKE_CURRENT_SOURCE_DIR}/Media/models)
 
-foreach(it ${pr2_stl_files})
+MAKE_DIRECTORY(${pr2_description_out_path})
+
+foreach(it ${pr2_description_stl_files})
+  get_filename_component(relative_path ${it} PATH)
   get_filename_component(basename ${it} NAME_WE)
+
+  # create subdirectory
+  add_custom_command(
+    OUTPUT ${pr2_description_out_path}/${relative_path}
+    # CMake 2.4 doesn't offer the make_directory command.
+    #COMMAND ${CMAKE_COMMAND} -E make_directory
+    COMMAND mkdir -p
+    ARGS ${pr2_description_out_path}/${relative_path})
 
   # convert to ogre files
   add_custom_command(
-    OUTPUT ${pr2_out_path}/${basename}.mesh
+    OUTPUT ${pr2_description_out_path}/${relative_path}/${basename}.mesh
     COMMAND rosrun 
-    ARGS ogre_tools stl_to_mesh ${it} ${pr2_out_path}/${basename}.mesh
-    DEPENDS ${it})
+    ARGS ogre_tools stl_to_mesh ${pr2_description_PACKAGE_PATH}/meshes/${it} ${pr2_description_out_path}/${relative_path}/${basename}.mesh
+    DEPENDS ${pr2_description_out_path}/${relative_path} ${pr2_description_PACKAGE_PATH}/meshes/${it})
   
-  set(pr2_gen_files ${pr2_gen_files} ${pr2_out_path}/${basename}.mesh)
+  set(pr2_gen_files ${pr2_gen_files} ${pr2_description_out_path}/${relative_path}/${basename}.mesh)
 endforeach(it)
 
-# process convexified mesh files
-file(GLOB pr2_convex_stl_files ${pr2_defs_PACKAGE_PATH}/meshes/convex/*.stlb)
+# build the ogre mesh files from *.stl (and *.stlb from convex decomposition)
+file(GLOB_RECURSE pr2_defs_stl_files RELATIVE ${pr2_defs_PACKAGE_PATH}/meshes ${pr2_defs_PACKAGE_PATH}/meshes/*.stl ${pr2_defs_PACKAGE_PATH}/meshes/convex/*.stlb)
 
-set(pr2_convex_out_path ${CMAKE_CURRENT_SOURCE_DIR}/Media/models/convex)
+set(pr2_defs_out_path ${CMAKE_CURRENT_SOURCE_DIR}/Media/models)
+MAKE_DIRECTORY(${pr2_defs_out_path})
 
-MAKE_DIRECTORY(${pr2_convex_out_path})
-
-foreach(it ${pr2_convex_stl_files})
+foreach(it ${pr2_defs_stl_files})
+  get_filename_component(relative_path ${it} PATH)
   get_filename_component(basename ${it} NAME_WE)
+
+  # create subdirectory
+  add_custom_command(
+    OUTPUT ${pr2_defs_out_path}/${relative_path}
+    # CMake 2.4 doesn't offer the make_directory command.
+    #COMMAND ${CMAKE_COMMAND} -E make_directory
+    COMMAND mkdir -p
+    ARGS ${pr2_defs_out_path}/${relative_path})
 
   # convert to ogre files
   add_custom_command(
-    OUTPUT ${pr2_convex_out_path}/${basename}.mesh
+    OUTPUT ${pr2_defs_out_path}/${relative_path}/${basename}.mesh
     COMMAND rosrun 
-    ARGS ogre_tools stl_to_mesh ${it} ${pr2_convex_out_path}/${basename}.mesh
-    DEPENDS ${it})
+    ARGS ogre_tools stl_to_mesh ${pr2_defs_PACKAGE_PATH}/meshes/${it} ${pr2_defs_out_path}/${relative_path}/${basename}.mesh
+    DEPENDS ${pr2_defs_out_path}/${relative_path} ${pr2_defs_PACKAGE_PATH}/meshes/${it})
   
-  set(pr2_gen_files ${pr2_gen_files} ${pr2_convex_out_path}/${basename}.mesh)
+  set(pr2_gen_files ${pr2_gen_files} ${pr2_defs_out_path}/${relative_path}/${basename}.mesh)
 endforeach(it)
 
 add_custom_target(media_files ALL DEPENDS ${pr2_gen_files})
