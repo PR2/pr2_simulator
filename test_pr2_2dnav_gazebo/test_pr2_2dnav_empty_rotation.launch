@@ -31,7 +31,7 @@
 
     <!-- test -->
     <test test-name="pr2_2dnav_gazebo_test_pr2_2dnav_empty_tm2pi"    pkg="test_pr2_2dnav_gazebo" type="set_goal.py" args=" -x 25.70 -y 25.70 -t -6.2832 -nav_t_tol 0.1 -nav_xy_tol 0.01 -odom_t_tol 0.0 -odom_xy_tol 0.0 -timeout 50 " time-limit="60" />
-    <test test-name="pr2_2dnav_gazebo_test_pr2_2dnav_empty_tmpi"     pkg="test_pr2_2dnav_gazebo" type="set_goal.py" args=" -x 25.70 -y 25.70 -t -3.1416 -nav_t_tol 0.1 -nav_xy_tol 0.20 -odom_t_tol 0.0 -odom_xy_tol 0.0 -timeout 80 " time-limit="90" />
+    <test test-name="pr2_2dnav_gazebo_test_pr2_2dnav_empty_tmpi"     pkg="test_pr2_2dnav_gazebo" type="set_goal.py" args=" -x 25.70 -y 25.70 -t -3.1416 -nav_t_tol 0.1 -nav_xy_tol 0.20 -odom_t_tol 0.0 -odom_xy_tol 0.0 -timeout 120 " time-limit="130" />
 
     <!-- these tests do not pass, commented out for now until fixed
     <test test-name="pr2_2dnav_gazebo_test_pr2_2dnav_empty_tpi"      pkg="test_pr2_2dnav_gazebo" type="set_goal.py" args=" -x 25.70 -y 25.70 -t  3.1416 -nav_t_tol 0.1 -nav_xy_tol 0.02 -odom_t_tol 0.0 -odom_xy_tol 0.0 -timeout 50 " time-limit="60" /> 
