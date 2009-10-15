@@ -28,7 +28,7 @@
   <depend package="bullet" />
   <depend package="urdf" />
   <export>
-    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" />
+    <cpp cflags="-I${prefix}/include -I${prefix}/srv/cpp" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" />
   </export>
   <rosdep name="python-numpy"/>
 </package>

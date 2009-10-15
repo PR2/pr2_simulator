@@ -27,9 +27,14 @@
 #ifndef ROS_TIME_HH
 #define ROS_TIME_HH
 
+#include <gazebo/Param.hh>
 #include <gazebo/Controller.hh>
 #include <gazebo/Body.hh>
 #include <gazebo/World.hh>
+#include <gazebo/Model.hh>
+
+#include <ros/ros.h>
+#include "pr2_gazebo_plugins/GazeboModel.h"
 
 namespace gazebo
 {
@@ -110,6 +115,25 @@ class RosFactory : public Controller
   /// \brief Finalize the controller
   protected: virtual void FiniChild();
 
+  /// \brief controller parent, a model?
+  private: gazebo::Model* myParent;
+
+  /// \brief Service Call Name
+  private: ParamT<std::string> *spawnModelServiceNameP;
+  private: std::string spawnModelServiceName;
+
+  /// \brief for setting ROS name space
+  private: ParamT<std::string> *robotNamespaceP;
+  private: std::string robotNamespace;
+
+  /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
+  private: ros::NodeHandle* rosnode_;
+  /// \brief ros service
+  private: ros::ServiceServer spawnService;
+
+  /// \brief ros service call to spawn model via factory
+  private: bool spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
+                           pr2_gazebo_plugins::GazeboModel::Response &res);
 };
 
 /** \} */

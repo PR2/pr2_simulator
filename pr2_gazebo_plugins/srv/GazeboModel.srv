@@ -1,12 +1,10 @@
-string name
-string robot_model
-uint8 xml_type
-uint8 URDF            = 0  # robot_model contains XML string for an URDF model
-uint8 GAZEBO_XML      = 1  # robot_model contains XML string for an URDF model
-uint8 URDF_PARAM_NAME = 2  # robot_model contains parameter name containing URDF XML
-Pose initial_pose
-string model_name
-string namespace
+string robot_model              # contains either URDF or Gazebo XML robot model
+uint32 xml_type                 # specifies what the content of robot_model is
+uint32 URDF            = 0      # robot_model contains XML string for an URDF model
+uint32 GAZEBO_XML      = 1      # robot_model contains XML string for an URDF model
+uint32 URDF_PARAM_NAME = 2      # robot_model contains parameter name containing URDF XML
+string model_name               # name of the model to be spawned in Gazebo
+string robot_namespace          # ros namespace for all the ros interface of the model
+geometry_msgs/Pose initial_pose # initial pose in the gazebo world frame
 ---
-bool success
-string maybe_comment
+bool success                    # return true if spawn successful

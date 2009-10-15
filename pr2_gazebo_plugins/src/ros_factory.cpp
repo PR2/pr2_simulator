@@ -47,19 +47,48 @@ RosFactory::RosFactory(Entity *parent)
     : Controller(parent)
 {
 
+  this->myParent = dynamic_cast<Model*>(this->parent);
+
+  if (!this->myParent)
+    gzthrow("RosFactory controller requires a Model as its parent");
+
+  Param::Begin(&this->parameters);
+  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  this->spawnModelServiceNameP = new ParamT<std::string>("spawnModelServiceName","spawn_model_service", 0);
+  Param::End();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 RosFactory::~RosFactory()
 {
+  delete this->robotNamespaceP;
+  delete this->spawnModelServiceNameP;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
 void RosFactory::LoadChild(XMLConfigNode *node)
 {
+  this->robotNamespaceP->Load(node);
+  this->robotNamespace = this->robotNamespaceP->GetValue();
+  int argc = 0;
+  char** argv = NULL;
+  ros::init(argc,argv,"gazebo");
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
 
+  this->spawnModelServiceNameP->Load(node);
+  this->spawnModelServiceName = this->spawnModelServiceNameP->GetValue();
+
+  this->spawnService = this->rosnode_->advertiseService(this->spawnModelServiceName,&RosFactory::spawnModel, this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Service
+bool RosFactory::spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
+                            pr2_gazebo_plugins::GazeboModel::Response &res)
+{
+  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
