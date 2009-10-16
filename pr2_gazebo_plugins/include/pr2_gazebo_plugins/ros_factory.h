@@ -131,6 +131,9 @@ class RosFactory : public Controller
   /// \brief ros service
   private: ros::ServiceServer spawnService;
 
+  /// \brief push xml to factory, returns true if successful
+  private: bool pushToFactory(std::string gazebo_model_xml);
+
   /// \brief ros service call to spawn model via factory
   private: bool spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
                            pr2_gazebo_plugins::GazeboModel::Response &res);

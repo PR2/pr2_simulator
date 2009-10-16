@@ -201,7 +201,7 @@ class RosProsilica : public Controller
   private: std::string frameName;
 
   /// \brief A mutex to lock access to fields that are used in ROS message callbacks
-  private: boost::mutex lock;
+  //private: boost::mutex lock;
 
   /// \brief size of image buffer
   private: int height, width, depth;

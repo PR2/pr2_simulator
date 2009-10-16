@@ -168,16 +168,10 @@ void RosProsilica::LoadChild(XMLConfigNode *node)
   this->distortion_t2 = this->distortion_t2P->GetValue();
 
   ROS_DEBUG("prosilica image topic name %s", this->imageTopicName.c_str());
-  this->image_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageTopicName,1,
-    boost::bind( &RosProsilica::ImageConnect, this),
-    boost::bind( &RosProsilica::ImageDisconnect, this));
-  this->image_rect_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageRectTopicName,1,
-    boost::bind( &RosProsilica::ImageConnect, this),
-    boost::bind( &RosProsilica::ImageDisconnect, this));
+  this->image_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageTopicName,1);
+  this->image_rect_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageRectTopicName,1);
   /// @todo: cam info pub is not implement yet
-  this->cam_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->camInfoTopicName,1,
-    boost::bind( &RosProsilica::InfoConnect, this),
-    boost::bind( &RosProsilica::InfoDisconnect, this));
+  this->cam_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->camInfoTopicName,1);
   this->cam_info_ser_ = this->rosnode_->advertiseService(this->camInfoServiceName,&RosProsilica::camInfoService, this);
   this->poll_ser_ = this->rosnode_->advertiseService(this->pollServiceName,&RosProsilica::triggeredGrab, this);
 }
@@ -251,113 +245,117 @@ bool RosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &req,
     req.width = this->width;
     req.height = this->height;
   }
-  //boost::recursive_mutex::scoped_lock lock(*Simulator::Instance()->GetMRMutex());
+  const unsigned char *src = NULL;
 
-  const unsigned char *src;
-
-  // Get a pointer to image data
-  src = this->myParent->GetImageData(0);
-
-  if (src)
+  // signal sensor to start update
+  this->ImageConnect();
+  // wait until an image has been returned
+  while(!src)
   {
-    this->lock.lock();
+    {
+      boost::recursive_mutex::scoped_lock lock(*Simulator::Instance()->GetMRMutex());
+      // Get a pointer to image data
+      src = this->myParent->GetImageData(0);
 
-    // fill CameraInfo
-    this->roiCameraInfoMsg = &res.cam_info;
-    this->roiCameraInfoMsg->header.frame_id = this->frameName;
-    this->roiCameraInfoMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
-    this->roiCameraInfoMsg->width  = req.width; //this->myParent->GetImageWidth() ;
-    this->roiCameraInfoMsg->height = req.height; //this->myParent->GetImageHeight();
-    // distortion
-    this->roiCameraInfoMsg->D[0] = 0.0;
-    this->roiCameraInfoMsg->D[1] = 0.0;
-    this->roiCameraInfoMsg->D[2] = 0.0;
-    this->roiCameraInfoMsg->D[3] = 0.0;
-    this->roiCameraInfoMsg->D[4] = 0.0;
-    // original camera matrix
-    this->roiCameraInfoMsg->K[0] = this->focal_length;
-    this->roiCameraInfoMsg->K[1] = 0.0;
-    this->roiCameraInfoMsg->K[2] = this->Cx - req.region_x;
-    this->roiCameraInfoMsg->K[3] = 0.0;
-    this->roiCameraInfoMsg->K[4] = this->focal_length;
-    this->roiCameraInfoMsg->K[5] = this->Cy - req.region_y;
-    this->roiCameraInfoMsg->K[6] = 0.0;
-    this->roiCameraInfoMsg->K[7] = 0.0;
-    this->roiCameraInfoMsg->K[8] = 1.0;
-    // rectification
-    this->roiCameraInfoMsg->R[0] = 1.0;
-    this->roiCameraInfoMsg->R[1] = 0.0;
-    this->roiCameraInfoMsg->R[2] = 0.0;
-    this->roiCameraInfoMsg->R[3] = 0.0;
-    this->roiCameraInfoMsg->R[4] = 1.0;
-    this->roiCameraInfoMsg->R[5] = 0.0;
-    this->roiCameraInfoMsg->R[6] = 0.0;
-    this->roiCameraInfoMsg->R[7] = 0.0;
-    this->roiCameraInfoMsg->R[8] = 1.0;
-    // camera projection matrix (same as camera matrix due to lack of distortion/rectification) (is this generated?)
-    this->roiCameraInfoMsg->P[0] = this->focal_length;
-    this->roiCameraInfoMsg->P[1] = 0.0;
-    this->roiCameraInfoMsg->P[2] = this->Cx - req.region_x;
-    this->roiCameraInfoMsg->P[3] = 0.0;
-    this->roiCameraInfoMsg->P[4] = 0.0;
-    this->roiCameraInfoMsg->P[5] = this->focal_length;
-    this->roiCameraInfoMsg->P[6] = this->Cy - req.region_y;
-    this->roiCameraInfoMsg->P[7] = 0.0;
-    this->roiCameraInfoMsg->P[8] = 0.0;
-    this->roiCameraInfoMsg->P[9] = 0.0;
-    this->roiCameraInfoMsg->P[10] = 1.0;
-    this->roiCameraInfoMsg->P[11] = 0.0;
+      if (src)
+      {
 
-
-    // copy data into image
-    this->imageMsg.header.frame_id    = this->frameName;
-    this->imageMsg.header.stamp       = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
-
-    // copy data into ROI image
-    this->roiImageMsg = &res.image;
-    this->roiImageMsg->header.frame_id = this->frameName;
-    this->roiImageMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
-
-    // copy from src to imageMsg
-    fillImage(this->imageMsg,
-              this->type,
-              this->height,
-              this->width,
-              this->skip*this->width,
-              (void*)src );
-
-    /// @todo: publish to ros, thumbnails and rect image in the Update call?
-
-    this->image_pub_.publish(this->imageMsg);
-    this->image_rect_pub_.publish(this->imageMsg);
-
-    //sensor_msgs::CvBridge img_bridge_(&this->imageMsg);
-    //IplImage* cv_image;
-    //img_bridge_.to_cv( &cv_image );
-
-    sensor_msgs::CvBridge img_bridge_;
-    img_bridge_.fromImage(this->imageMsg);
-
-    //cvNamedWindow("showme",CV_WINDOW_AUTOSIZE);
-    //cvSetMouseCallback("showme", &RosProsilica::mouse_cb, this);
-    //cvStartWindowThread();
-
-    //cvShowImage("showme",img_bridge_.toIpl());
-
-    cvSetImageROI(img_bridge_.toIpl(),cvRect(req.region_x,req.region_y,req.width,req.height));
-    IplImage *roi = cvCreateImage(cvSize(req.width,req.height),
-                                 img_bridge_.toIpl()->depth,
-                                 img_bridge_.toIpl()->nChannels);
-    cvCopy(img_bridge_.toIpl(),roi);
-
-    img_bridge_.fromIpltoRosImage(roi,*this->roiImageMsg);
-
-    cvReleaseImage(&roi);
+        // fill CameraInfo
+        this->roiCameraInfoMsg = &res.cam_info;
+        this->roiCameraInfoMsg->header.frame_id = this->frameName;
+        this->roiCameraInfoMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+        this->roiCameraInfoMsg->width  = req.width; //this->myParent->GetImageWidth() ;
+        this->roiCameraInfoMsg->height = req.height; //this->myParent->GetImageHeight();
+        // distortion
+        this->roiCameraInfoMsg->D[0] = 0.0;
+        this->roiCameraInfoMsg->D[1] = 0.0;
+        this->roiCameraInfoMsg->D[2] = 0.0;
+        this->roiCameraInfoMsg->D[3] = 0.0;
+        this->roiCameraInfoMsg->D[4] = 0.0;
+        // original camera matrix
+        this->roiCameraInfoMsg->K[0] = this->focal_length;
+        this->roiCameraInfoMsg->K[1] = 0.0;
+        this->roiCameraInfoMsg->K[2] = this->Cx - req.region_x;
+        this->roiCameraInfoMsg->K[3] = 0.0;
+        this->roiCameraInfoMsg->K[4] = this->focal_length;
+        this->roiCameraInfoMsg->K[5] = this->Cy - req.region_y;
+        this->roiCameraInfoMsg->K[6] = 0.0;
+        this->roiCameraInfoMsg->K[7] = 0.0;
+        this->roiCameraInfoMsg->K[8] = 1.0;
+        // rectification
+        this->roiCameraInfoMsg->R[0] = 1.0;
+        this->roiCameraInfoMsg->R[1] = 0.0;
+        this->roiCameraInfoMsg->R[2] = 0.0;
+        this->roiCameraInfoMsg->R[3] = 0.0;
+        this->roiCameraInfoMsg->R[4] = 1.0;
+        this->roiCameraInfoMsg->R[5] = 0.0;
+        this->roiCameraInfoMsg->R[6] = 0.0;
+        this->roiCameraInfoMsg->R[7] = 0.0;
+        this->roiCameraInfoMsg->R[8] = 1.0;
+        // camera projection matrix (same as camera matrix due to lack of distortion/rectification) (is this generated?)
+        this->roiCameraInfoMsg->P[0] = this->focal_length;
+        this->roiCameraInfoMsg->P[1] = 0.0;
+        this->roiCameraInfoMsg->P[2] = this->Cx - req.region_x;
+        this->roiCameraInfoMsg->P[3] = 0.0;
+        this->roiCameraInfoMsg->P[4] = 0.0;
+        this->roiCameraInfoMsg->P[5] = this->focal_length;
+        this->roiCameraInfoMsg->P[6] = this->Cy - req.region_y;
+        this->roiCameraInfoMsg->P[7] = 0.0;
+        this->roiCameraInfoMsg->P[8] = 0.0;
+        this->roiCameraInfoMsg->P[9] = 0.0;
+        this->roiCameraInfoMsg->P[10] = 1.0;
+        this->roiCameraInfoMsg->P[11] = 0.0;
 
 
-    this->lock.unlock();
+        // copy data into image
+        this->imageMsg.header.frame_id    = this->frameName;
+        this->imageMsg.header.stamp       = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+
+        // copy data into ROI image
+        this->roiImageMsg = &res.image;
+        this->roiImageMsg->header.frame_id = this->frameName;
+        this->roiImageMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+
+        // copy from src to imageMsg
+        fillImage(this->imageMsg,
+                  this->type,
+                  this->height,
+                  this->width,
+                  this->skip*this->width,
+                  (void*)src );
+
+        /// @todo: publish to ros, thumbnails and rect image in the Update call?
+
+        this->image_pub_.publish(this->imageMsg);
+        this->image_rect_pub_.publish(this->imageMsg);
+
+        //sensor_msgs::CvBridge img_bridge_(&this->imageMsg);
+        //IplImage* cv_image;
+        //img_bridge_.to_cv( &cv_image );
+
+        sensor_msgs::CvBridge img_bridge_;
+        img_bridge_.fromImage(this->imageMsg);
+
+        //cvNamedWindow("showme",CV_WINDOW_AUTOSIZE);
+        //cvSetMouseCallback("showme", &RosProsilica::mouse_cb, this);
+        //cvStartWindowThread();
+
+        //cvShowImage("showme",img_bridge_.toIpl());
+
+        cvSetImageROI(img_bridge_.toIpl(),cvRect(req.region_x,req.region_y,req.width,req.height));
+        IplImage *roi = cvCreateImage(cvSize(req.width,req.height),
+                                     img_bridge_.toIpl()->depth,
+                                     img_bridge_.toIpl()->nChannels);
+        cvCopy(img_bridge_.toIpl(),roi);
+
+        img_bridge_.fromIpltoRosImage(roi,*this->roiImageMsg);
+
+        cvReleaseImage(&roi);
+      }
+    }
+    usleep(100000);
   }
-
+  this->ImageDisconnect();
   return true;
 
 

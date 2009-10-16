@@ -8,6 +8,7 @@
   <review status="API conditionally cleared" notes="Tully to code review"/>
   <url>http://pr.willowgarage.com/wiki/pr2_gazebo_plugins</url>
   <depend package="gazebo"/>
+  <depend package="gazebo_tools"/>
   <depend package="opende"/>
   <depend package="roscpp"/>
   <depend package="prosilica_camera"/>

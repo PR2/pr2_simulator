@@ -88,9 +88,82 @@ void RosFactory::LoadChild(XMLConfigNode *node)
 bool RosFactory::spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
                             pr2_gazebo_plugins::GazeboModel::Response &res)
 {
+  // extract information from request
+  std::string model_name = req.model_name;
+  // convert
+
+  // push to factory iface
+
+  // wait and verify that model is spawned
+
   return true;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Open Factory Iface and Push Model to Factory
+bool RosFactory::pushToFactory(std::string gazebo_model_xml)
+{
+  //************************************/
+  /*  Connect to Gazebo Iface Server   */
+  //************************************/
+  gazebo::Client *client = new gazebo::Client();
+  gazebo::FactoryIface *factoryIface = new gazebo::FactoryIface();
+
+  int serverId = 0;
+
+  bool connected_to_server = false;
+  /// Connect to the libgazebo server
+  while (!connected_to_server)
+  {
+    try
+    {
+      ROS_INFO("spawn_gazebo_model waiting for gazebo factory, usually launched by 'roslaunch `rospack find gazebo`/launch/empty_world.launch'");
+      client->ConnectWait(serverId, GZ_CLIENT_ID_USER_FIRST);
+      connected_to_server = true;
+    }
+    catch (gazebo::GazeboError e)
+    {
+      ROS_ERROR("Gazebo error: Unable to connect\n %s\n",e.GetErrorStr().c_str());
+      usleep(1000000);
+      connected_to_server = false;
+    }
+  }
+
+  //************************************/
+  /*    Open the Factory interface     */
+  //************************************/
+  try
+  {
+    factoryIface->Open(client, "default");
+  }
+  catch (gazebo::GazeboError e)
+  {
+    ROS_ERROR("Gazebo error: Unable to connect to the factory interface\n%s\n",e.GetErrorStr().c_str());
+    return false;
+  }
+
+  //************************************/
+  /*  Copy model to a string           */
+  //************************************/
+  std::ostringstream stream;
+  stream << gazebo_model_xml;
+  std::string gazebo_model_xml_string = stream.str();
+  ROS_DEBUG("Gazebo Model XML\n\n%s\n\n ",gazebo_model_xml_string.c_str());
+
+  bool writing_iface = true;
+  while (writing_iface)
+  {
+    factoryIface->Lock(1);
+    if (strcmp((char*)factoryIface->data->newModel,"")==0)
+    {
+      // don't overwrite data, only write if iface data is empty
+      strcpy((char*)factoryIface->data->newModel, gazebo_model_xml_string.c_str());
+      writing_iface = false;
+    }
+    factoryIface->Unlock();
+  }
+  return true;
+}
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize the controller
 void RosFactory::InitChild()
