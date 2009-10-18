@@ -53,7 +53,7 @@ from tf.msg import tfMessage
 from pr2_mechanism_msgs.msg import MechanismState
 
 MIN_MSGS        = 1
-TEST_TIMEOUT    = 90.0
+TEST_TIMEOUT    = 360.0
 
 class MyHzTest(unittest.TestCase):
     def __init__(self, *args):
@@ -112,7 +112,12 @@ class MyHzTest(unittest.TestCase):
 
         timeout_t = time.time() + self.test_duration + TEST_TIMEOUT
         while not rospy.is_shutdown() and not self.success and not self.finished and time.time() < timeout_t:
-            time.sleep(1.0)
+            # wait for first message
+            if not self.started:
+                print " waiting for first message realtime:",time.time()," simtime:",rospy.get_rostime().to_seconds()
+            else:
+                print " realtime:",time.time()," simtime:",rospy.get_rostime().to_seconds()," time elapsed:",(self.end_time - self.start_time)," msg count:",self.count
+            time.sleep(0.5)
 
         self.assert_(self.success)
 

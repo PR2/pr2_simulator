@@ -1,6 +1,6 @@
 <launch>
   <!-- load empty world -->
-  <include file="$(find gazebo)/launch/empty_world.launch"/>
+  <include file="$(find gazebo)/launch/empty_world_no_x.launch"/>
 
   <!-- Bring up the node we want to test. -->
   <include file="$(find pr2_gazebo)/pr2.launch"/>
