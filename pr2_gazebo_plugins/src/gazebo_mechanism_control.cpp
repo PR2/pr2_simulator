@@ -92,14 +92,14 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_gazebo_model
   ROS_INFO("starting gazebo_mechanism_control plugin in ns: %s",this->robotNamespace.c_str());
 
-  this->mc_ = new pr2_mechanism::MechanismControl(&hw_,*this->rosnode_);
+  this->mc_ = new pr2_mechanism_control::MechanismControl(&hw_,*this->rosnode_);
 
   // read pr2.xml (pr2_gazebo_mechanism_control.xml)
   // setup actuators, then setup mechanism control node
   ReadPr2Xml(node);
 
   // Initializes the fake state (for running the transmissions backwards).
-  this->fake_state_ = new pr2_mechanism::RobotState(&this->mc_->model_);
+  this->fake_state_ = new pr2_mechanism_model::RobotState(&this->mc_->model_);
 
   // The gazebo joints and mechanism joints should match up.
   for (unsigned int i = 0; i < this->mc_->model_.joints_.size(); ++i)
@@ -231,12 +231,12 @@ void GazeboMechanismControl::FiniChild()
 {
   ROS_DEBUG("Calling FiniChild in GazeboMechanismControl");
 
-  pr2_mechanism::ActuatorMap::const_iterator it;
+  pr2_hardware_interface::ActuatorMap::const_iterator it;
   for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
     delete it->second;
   this->mc_->~MechanismControl();
 
-  pr2_mechanism::deleteElements(&this->joints_);
+  pr2_hardware_interface::deleteElements(&this->joints_);
   delete this->fake_state_;
 }
 
@@ -299,7 +299,7 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
   for (it = get_actuators.actuators.begin(); it != get_actuators.actuators.end(); ++it)
   {
     //std::cout << " adding actuator " << (*it) << std::endl;
-    pr2_mechanism::Actuator* pr2_actuator = new pr2_mechanism::Actuator(*it);
+    pr2_hardware_interface::Actuator* pr2_actuator = new pr2_hardware_interface::Actuator(*it);
     pr2_actuator->state_.is_enabled_ = true;
     this->hw_.addActuator(pr2_actuator);
   }
