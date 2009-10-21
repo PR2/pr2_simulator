@@ -29,7 +29,10 @@
 #include <algorithm>
 #include <assert.h>
 
+#include <tinyxml/tinyxml.h>
+
 #include <pr2_gazebo_plugins/ros_factory.h>
+#include <gazebo_tools/urdf2gazebo.h>
 
 #include <gazebo/Global.hh>
 #include <gazebo/XMLConfig.hh>
@@ -84,19 +87,285 @@ void RosFactory::LoadChild(XMLConfigNode *node)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// utilites for checking incoming string
+bool RosFactory::IsURDF(std::string robot_model)
+{
+  TiXmlDocument doc_in;
+  doc_in.Parse(robot_model.c_str());
+  if (doc_in.FirstChild("robot"))
+    return true;
+  else
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// utilites for checking incoming string
+bool RosFactory::IsGazeboModelXML(std::string robot_model)
+{
+  TiXmlDocument doc_in;
+  doc_in.Parse(robot_model.c_str());
+  if (doc_in.FirstChild("model:physical"))
+    return true;
+  else
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Service
 bool RosFactory::spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
                             pr2_gazebo_plugins::GazeboModel::Response &res)
 {
-  // extract information from request
+  // check to see if model name already exist as a model
   std::string model_name = req.model_name;
-  // convert
+  if (gazebo::World::Instance()->GetModelByName(model_name))
+  {
+    ROS_ERROR("model name %s already exist.",model_name.c_str());
+    return 1;
+  }
+
+  // get name space for the corresponding model plugins
+  std::string robot_namespace = req.robot_namespace;
+
+  // get model initial pose
+  geometry_msgs::Pose initial_pose = req.initial_pose;
+
+  // get incoming string containg either an URDF or a Gazebo Model XML
+  // check type depending on the xml_type flag
+  // grab from parameter server if necessary
+  // convert to Gazebo Model XML if necessary
+  std::string robot_model = req.robot_model; // incoming robot model string
+  bool convert_urdf2gazebo = false;
+  if (req.xml_type == req.URDF)
+  {
+    if (this->IsURDF(robot_model))
+    {
+      // incoming robot model string is a string containing URDF
+      convert_urdf2gazebo = true;
+    }
+    else
+    {
+      ROS_ERROR("input xml type does not match xml_type in request: input URDF XML must begin with <robot>");
+      return 1;
+    }
+  }
+  else if (req.xml_type == req.GAZEBO_XML)
+  {
+    if (this->IsGazeboModelXML(robot_model))
+    {
+      // incoming robot model string is a string containing a Gazebo Model XML
+      convert_urdf2gazebo = false;
+    }
+    else
+    {
+      ROS_ERROR(" input Gazebo Model XML must begin with <model:physical>\n");
+      return 1;
+    }
+
+  }
+  else if (req.xml_type == req.URDF_PARAM_NAME)
+  {
+    // incoming robot model string contains the parameter server name for the URDF
+    // get the URDF off the parameter server
+    std::string full_param_name;
+    rosnode_->searchParam(robot_model,full_param_name);
+    rosnode_->getParam(full_param_name.c_str(),robot_model);
+    // incoming robot model string is a string containing URDF
+    convert_urdf2gazebo = true;
+
+    if (robot_model.c_str()==NULL)
+    {
+      ROS_ERROR("Unable to load robot model from param server robot_description\n");  
+      return 1;
+    }
+    else if (!this->IsURDF(robot_model))
+    {
+      ROS_ERROR("input xml type does not match xml_type in request: input URDF XML must begin with <robot>");
+      return 1;
+    }
+  }
+  else if (req.xml_type == req.GAZEBO_XML_PARAM_NAME)
+  {
+    // incoming robot model string contains the parameter server name for the Gazebo Model XML
+    // get the Gazebo Model XML off the parameter server
+    std::string full_param_name;
+    rosnode_->searchParam(robot_model,full_param_name);
+    rosnode_->getParam(full_param_name.c_str(),robot_model);
+    // incoming robot model string is a string containing a Gazebo Model XML
+    convert_urdf2gazebo = false;
+
+    if (robot_model.c_str()==NULL)
+    {
+      ROS_ERROR("Unable to load robot model from param server robot_description\n");  
+      return 1;
+    }
+    else if (!this->IsGazeboModelXML(robot_model))
+    {
+      ROS_ERROR(" input Gazebo Model XML must begin with <model:physical>\n");
+      return 1;
+    }
+  }
+  else if (req.xml_type == req.URDF_FILE_NAME)
+  {
+    // incoming robot model string contains the filename for the URDF
+    // get the URDF from file (or use resource retriever?)
+    ROS_WARN("spawning from resource_retriever using a URDF filename is not supported right now");
+
+    TiXmlDocument robot_model_xml(robot_model);
+    robot_model_xml.LoadFile();
+    // copy tixml to a string
+    std::ostringstream stream;
+    stream << robot_model_xml;
+    robot_model = stream.str();
+    convert_urdf2gazebo = true;
+
+    if (robot_model.c_str()==NULL)
+    {
+      ROS_ERROR("Unable to load robot model from param server robot_description\n");  
+      return 1;
+    }
+    else if (!this->IsURDF(robot_model))
+    {
+      ROS_ERROR("input xml type does not match xml_type in request: input URDF XML must begin with <robot>");
+      return 1;
+    }
+  }
+  else if (req.xml_type == req.GAZEBO_XML_FILE_NAME)
+  {
+    // incoming robot model string contains the file name for the Gazebo Model XML
+    // get the Gazebo Model XML from file (or use the resource retriever?)
+    ROS_WARN("spawning from resource_retriever using a Gazebo Model XML filename is not supported right now");
+
+    TiXmlDocument robot_model_xml(robot_model);
+    robot_model_xml.LoadFile();
+    // copy tixml to a string
+    std::ostringstream stream;
+    stream << robot_model_xml;
+    robot_model = stream.str();
+    convert_urdf2gazebo = false;
+
+    if (robot_model.c_str()==NULL)
+    {
+      ROS_ERROR("Unable to load robot model from param server robot_description\n");  
+      return 1;
+    }
+    else if (!this->IsGazeboModelXML(robot_model))
+    {
+      ROS_ERROR(" input Gazebo Model XML must begin with <model:physical>\n");
+      return 1;
+    }
+  }
+  else
+  {
+    ROS_ERROR("type of robot model to be spawned is incorrect, options are:(URDF,GAZEBO_XML,URDF_PARAM_NAME,GAZEBO_XML_PARAM_NAME)");
+    return 1;
+  }
+
+  // get options for conversions
+  // get initial xyz
+  double initial_x = req.initial_pose.position.x;
+  double initial_y = req.initial_pose.position.y;
+  double initial_z = req.initial_pose.position.z;
+  urdf::Vector3 initial_xyz(initial_x,initial_y,initial_z);
+  // get initial roll pitch yaw (fixed frame transform)
+  urdf::Rotation initial_q(req.initial_pose.orientation.x,req.initial_pose.orientation.y,req.initial_pose.orientation.z,req.initial_pose.orientation.w);
+  double initial_rx,initial_ry,initial_rz;
+  initial_q.getRPY(initial_rx,initial_ry,initial_rz);
+  urdf::Vector3 initial_rpy(initial_rx,initial_ry,initial_rz);
+  // get flag on joint limits
+  bool disable_urdf_joint_limits = req.disable_urdf_joint_limits;
+
+  // do the conversion if necessary
+  urdf2gazebo::URDF2Gazebo u2g;
+  TiXmlDocument gazebo_model_xml; // resulting Gazebo Model XML to be sent to Factory Iface
+  if (convert_urdf2gazebo)
+  {
+    //************************************/
+    /*    convert urdf to gazebo model   */
+    //************************************/
+    TiXmlDocument robot_model_xml;
+    robot_model_xml.Parse(robot_model.c_str());
+    u2g.convert(robot_model_xml, gazebo_model_xml, disable_urdf_joint_limits, initial_xyz, initial_rpy, model_name, robot_namespace);
+  }
+  else
+  {
+    //************************************/
+    /*    prepare gazebo model xml for   */
+    /*    factory                        */
+    //************************************/
+    /// STRIP DECLARATION <? ... xml version="1.0" ... ?> from robot_model
+    /// @todo: does tinyxml have functionality for this?
+    /// @todo: should gazebo take care of the declaration?
+    std::string open_bracket("<?");
+    std::string close_bracket("?>");
+    int pos1 = robot_model.find(open_bracket,0);
+    int pos2 = robot_model.find(close_bracket,0);
+    robot_model.replace(pos1,pos2-pos1+2,std::string(""));
+
+    // put string in TiXmlDocument for manipulation
+    gazebo_model_xml.Parse(robot_model.c_str());
+
+    // optional model manipulations:
+    //  * update initial pose
+    //  * replace model name
+    TiXmlElement* model;
+    model = gazebo_model_xml.FirstChildElement("model:physical");
+    if (model)
+    {
+      // replace initial pose of robot
+      // find first instance of xyz and rpy, replace with initial pose
+      TiXmlElement* xyz_key = model->FirstChildElement("xyz");
+      if (xyz_key)
+        model->RemoveChild(xyz_key);
+      TiXmlElement* rpy_key = model->FirstChildElement("rpy");
+      if (rpy_key)
+        model->RemoveChild(rpy_key);
+
+      xyz_key = new TiXmlElement("xyz");
+      rpy_key = new TiXmlElement("rpy");
+
+      std::ostringstream xyz_stream, rpy_stream;
+      xyz_stream << initial_x << " " << initial_y << " " << initial_z;
+      rpy_stream << initial_rx << " " << initial_ry << " " << initial_rz;
+
+      TiXmlText* xyz_txt = new TiXmlText(xyz_stream.str());
+      TiXmlText* rpy_txt = new TiXmlText(rpy_stream.str());
+
+      xyz_key->LinkEndChild(xyz_txt);
+      rpy_key->LinkEndChild(rpy_txt);
+
+      model->LinkEndChild(xyz_key);
+      model->LinkEndChild(rpy_key);
+
+
+      // replace model name if one is specified by the user
+      if (!model_name.empty())
+      {
+        model->RemoveAttribute("name");
+        model->SetAttribute("name",model_name);
+      }
+
+    }
+  }
 
   // push to factory iface
+  std::ostringstream stream;
+  stream << gazebo_model_xml;
+  std::string gazebo_model_xml_string = stream.str();
+  ROS_DEBUG("Gazebo Model XML\n\n%s\n\n ",gazebo_model_xml_string.c_str());
+  this->pushToFactory(gazebo_model_xml_string);
 
   // wait and verify that model is spawned
+  while (!gazebo::World::Instance()->GetModelByName(model_name))
+  {
+    ROS_DEBUG("Waiting for spawning model (%s)",model_name.c_str());
+    usleep(500000);
+  }
 
-  return true;
+  // set result
+  res.success = true;
+  res.status_message = std::string("successfully spawned robot");
+
+  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

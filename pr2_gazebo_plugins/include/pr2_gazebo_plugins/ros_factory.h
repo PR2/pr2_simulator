@@ -131,6 +131,12 @@ class RosFactory : public Controller
   /// \brief ros service
   private: ros::ServiceServer spawnService;
 
+  /// \brief check to see if string is a URDF XML
+  private: bool IsURDF(std::string robot_model);
+
+  /// \brief check to see if string is a Gazebo Model XML
+  private: bool IsGazeboModelXML(std::string robot_model);
+
   /// \brief push xml to factory, returns true if successful
   private: bool pushToFactory(std::string gazebo_model_xml);
 
