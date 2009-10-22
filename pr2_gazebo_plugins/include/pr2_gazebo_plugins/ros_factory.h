@@ -34,6 +34,7 @@
 #include <gazebo/Model.hh>
 
 #include <ros/ros.h>
+#include "pr2_gazebo_plugins/GazeboModel.h"
 #include "pr2_gazebo_plugins/SpawnModel.h"
 #include "pr2_gazebo_plugins/DeleteModel.h"
 

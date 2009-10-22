@@ -145,7 +145,7 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
                             pr2_gazebo_plugins::SpawnModel::Response &res)
 {
   // check to see if model name already exist as a model
-  std::string model_name = req.model_name;
+  std::string model_name = req.model.model_name;
   if (gazebo::World::Instance()->GetModelByName(model_name))
   {
     ROS_ERROR("model name %s already exist.",model_name.c_str());
@@ -153,18 +153,18 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
   }
 
   // get name space for the corresponding model plugins
-  std::string robot_namespace = req.robot_namespace;
+  std::string robot_namespace = req.model.robot_namespace;
 
   // get model initial pose
-  geometry_msgs::Pose initial_pose = req.initial_pose;
+  geometry_msgs::Pose initial_pose = req.model.initial_pose;
 
   // get incoming string containg either an URDF or a Gazebo Model XML
   // check type depending on the xml_type flag
   // grab from parameter server if necessary
   // convert to Gazebo Model XML if necessary
-  std::string robot_model = req.robot_model; // incoming robot model string
+  std::string robot_model = req.model.robot_model; // incoming robot model string
   bool convert_urdf2gazebo = false;
-  if (req.xml_type == req.URDF)
+  if (req.model.xml_type == req.model.URDF)
   {
     if (this->IsURDF(robot_model))
     {
@@ -177,7 +177,7 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
       return 1;
     }
   }
-  else if (req.xml_type == req.GAZEBO_XML)
+  else if (req.model.xml_type == req.model.GAZEBO_XML)
   {
     if (this->IsGazeboModelXML(robot_model))
     {
@@ -191,13 +191,15 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
     }
 
   }
-  else if (req.xml_type == req.URDF_PARAM_NAME)
+  else if (req.model.xml_type == req.model.URDF_PARAM_NAME)
   {
     // incoming robot model string contains the parameter server name for the URDF
     // get the URDF off the parameter server
     std::string full_param_name;
-    rosnode_->searchParam(robot_model,full_param_name);
-    rosnode_->getParam(full_param_name.c_str(),robot_model);
+    if (rosnode_->searchParam(robot_model,full_param_name))
+      rosnode_->getParam(full_param_name.c_str(),robot_model);
+    else
+      rosnode_->getParam(robot_model,robot_model);
     // incoming robot model string is a string containing URDF
     convert_urdf2gazebo = true;
 
@@ -208,11 +210,11 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
     }
     else if (!this->IsURDF(robot_model))
     {
-      ROS_ERROR("input xml type does not match xml_type in request: input URDF XML must begin with <robot>");
+      ROS_ERROR("input xml type does not match xml_type in request: input URDF PARAM XML must begin with <robot>");
       return 1;
     }
   }
-  else if (req.xml_type == req.GAZEBO_XML_PARAM_NAME)
+  else if (req.model.xml_type == req.model.GAZEBO_XML_PARAM_NAME)
   {
     // incoming robot model string contains the parameter server name for the Gazebo Model XML
     // get the Gazebo Model XML off the parameter server
@@ -229,11 +231,11 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
     }
     else if (!this->IsGazeboModelXML(robot_model))
     {
-      ROS_ERROR(" input Gazebo Model XML must begin with <model:physical>\n");
+      ROS_ERROR("input Gazebo Model PARAM XML must begin with <model:physical>\n");
       return 1;
     }
   }
-  else if (req.xml_type == req.URDF_FILE_NAME)
+  else if (req.model.xml_type == req.model.URDF_FILE_NAME)
   {
     // incoming robot model string contains the filename for the URDF
     // get the URDF from file (or use resource retriever?)
@@ -254,11 +256,11 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
     }
     else if (!this->IsURDF(robot_model))
     {
-      ROS_ERROR("input xml type does not match xml_type in request: input URDF XML must begin with <robot>");
+      ROS_ERROR("input xml type does not match xml_type in request: input URDF XML FILE must begin with <robot>");
       return 1;
     }
   }
-  else if (req.xml_type == req.GAZEBO_XML_FILE_NAME)
+  else if (req.model.xml_type == req.model.GAZEBO_XML_FILE_NAME)
   {
     // incoming robot model string contains the file name for the Gazebo Model XML
     // get the Gazebo Model XML from file (or use the resource retriever?)
@@ -279,7 +281,7 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
     }
     else if (!this->IsGazeboModelXML(robot_model))
     {
-      ROS_ERROR(" input Gazebo Model XML must begin with <model:physical>\n");
+      ROS_ERROR("input Gazebo Model XML FILE must begin with <model:physical>\n");
       return 1;
     }
   }
@@ -291,17 +293,17 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
 
   // get options for conversions
   // get initial xyz
-  double initial_x = req.initial_pose.position.x;
-  double initial_y = req.initial_pose.position.y;
-  double initial_z = req.initial_pose.position.z;
+  double initial_x = req.model.initial_pose.position.x;
+  double initial_y = req.model.initial_pose.position.y;
+  double initial_z = req.model.initial_pose.position.z;
   urdf::Vector3 initial_xyz(initial_x,initial_y,initial_z);
   // get initial roll pitch yaw (fixed frame transform)
-  urdf::Rotation initial_q(req.initial_pose.orientation.x,req.initial_pose.orientation.y,req.initial_pose.orientation.z,req.initial_pose.orientation.w);
+  urdf::Rotation initial_q(req.model.initial_pose.orientation.x,req.model.initial_pose.orientation.y,req.model.initial_pose.orientation.z,req.model.initial_pose.orientation.w);
   double initial_rx,initial_ry,initial_rz;
   initial_q.getRPY(initial_rx,initial_ry,initial_rz);
   urdf::Vector3 initial_rpy(initial_rx,initial_ry,initial_rz);
   // get flag on joint limits
-  bool disable_urdf_joint_limits = req.disable_urdf_joint_limits;
+  bool disable_urdf_joint_limits = req.model.disable_urdf_joint_limits;
 
   // do the conversion if necessary
   urdf2gazebo::URDF2Gazebo u2g;
