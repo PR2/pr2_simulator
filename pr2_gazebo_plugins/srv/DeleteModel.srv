@@ -1,0 +1,4 @@
+string model_name                        # name of the model to be spawned in Gazebo
+---
+bool success                             # return true if spawn successful
+string status_message                    # comments if available

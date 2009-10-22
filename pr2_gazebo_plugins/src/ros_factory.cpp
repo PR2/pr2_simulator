@@ -57,7 +57,8 @@ RosFactory::RosFactory(Entity *parent)
 
   Param::Begin(&this->parameters);
   this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
-  this->spawnModelServiceNameP = new ParamT<std::string>("spawnModelServiceName","spawn_model_service", 0);
+  this->spawnModelServiceNameP = new ParamT<std::string>("spawnModelServiceName","spawn_model", 0);
+  this->deleteModelServiceNameP = new ParamT<std::string>("deleteModelServiceName","delete_model", 0);
   Param::End();
 }
 
@@ -67,6 +68,7 @@ RosFactory::~RosFactory()
 {
   delete this->robotNamespaceP;
   delete this->spawnModelServiceNameP;
+  delete this->deleteModelServiceNameP;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,8 +84,11 @@ void RosFactory::LoadChild(XMLConfigNode *node)
 
   this->spawnModelServiceNameP->Load(node);
   this->spawnModelServiceName = this->spawnModelServiceNameP->GetValue();
+  this->spawnModelService = this->rosnode_->advertiseService(this->spawnModelServiceName,&RosFactory::spawnModel, this);
 
-  this->spawnService = this->rosnode_->advertiseService(this->spawnModelServiceName,&RosFactory::spawnModel, this);
+  this->deleteModelServiceNameP->Load(node);
+  this->deleteModelServiceName = this->deleteModelServiceNameP->GetValue();
+  this->deleteModelService = this->rosnode_->advertiseService(this->deleteModelServiceName,&RosFactory::deleteModel, this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,11 +114,35 @@ bool RosFactory::IsGazeboModelXML(std::string robot_model)
   else
     return false;
 }
+////////////////////////////////////////////////////////////////////////////////
+// Service for deleting models in Gazebo
+bool RosFactory::deleteModel(pr2_gazebo_plugins::DeleteModel::Request &req,
+                             pr2_gazebo_plugins::DeleteModel::Response &res)
+{
+  if (!this->pushToDeleteQueue(req.model_name))
+  {
+    ROS_ERROR("Failed to push robot model to deletion queue iface");
+    return 1;
+  }
+
+  // wait and verify that model is spawned
+  while (gazebo::World::Instance()->GetModelByName(req.model_name))
+  {
+    ROS_DEBUG("Waiting for model deletion (%s)",req.model_name.c_str());
+    usleep(500000);
+  }
+
+  // set result
+  res.success = true;
+  res.status_message = std::string("successfully spawned robot");
+
+  return 0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
-// Service
-bool RosFactory::spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
-                            pr2_gazebo_plugins::GazeboModel::Response &res)
+// Service for spawning models in Gazebo
+bool RosFactory::spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
+                            pr2_gazebo_plugins::SpawnModel::Response &res)
 {
   // check to see if model name already exist as a model
   std::string model_name = req.model_name;
@@ -352,7 +381,12 @@ bool RosFactory::spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
   stream << gazebo_model_xml;
   std::string gazebo_model_xml_string = stream.str();
   ROS_DEBUG("Gazebo Model XML\n\n%s\n\n ",gazebo_model_xml_string.c_str());
-  this->pushToFactory(gazebo_model_xml_string);
+
+  if (!this->pushToFactory(gazebo_model_xml_string))
+  {
+    ROS_ERROR("Failed to push robot model to factory iface");
+    return 1;
+  }
 
   // wait and verify that model is spawned
   while (!gazebo::World::Instance()->GetModelByName(model_name))
@@ -432,6 +466,61 @@ bool RosFactory::pushToFactory(std::string gazebo_model_xml)
     factoryIface->Unlock();
   }
   return true;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Push model name to Iface for deletion
+bool RosFactory::pushToDeleteQueue(std::string model_name)
+{
+  // connect to gazebo
+  gazebo::Client *client = new gazebo::Client();
+  gazebo::FactoryIface *factoryIface = new gazebo::FactoryIface();
+
+  int serverId = 0;
+
+  bool connected_to_server = false;
+  /// Connect to the libgazebo server
+  while (!connected_to_server)
+  {
+    try
+    {
+      client->ConnectWait(serverId, GZ_CLIENT_ID_USER_FIRST);
+      connected_to_server = true;
+    }
+    catch (gazebo::GazeboError e)
+    {
+      ROS_ERROR("Gazebo error: Unable to connect\n %s\n",e.GetErrorStr().c_str());
+      usleep(1000000);
+      connected_to_server = false;
+    }
+  }
+
+  /// Open the Factory interface
+  try
+  {
+    factoryIface->Open(client, "default");
+  }
+  catch (gazebo::GazeboError e)
+  {
+    ROS_ERROR("Gazebo error: Unable to connect to the factory interface\n%s\n",e.GetErrorStr().c_str());
+    return -1;
+  }
+
+  bool writing_iface = true;
+  while (writing_iface)
+  {
+    factoryIface->Lock(1);
+    if (strcmp((char*)factoryIface->data->deleteModel,"")==0)
+    {
+      ROS_INFO("Deleting Robot Model Name:%s in Gazebo\n",model_name.c_str());
+      // don't overwrite data, only write if iface data is empty
+      strcpy((char*)factoryIface->data->deleteModel, model_name.c_str());
+      writing_iface = false;
+    }
+    factoryIface->Unlock();
+  }
+
+  return true;
+
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize the controller

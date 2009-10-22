@@ -34,7 +34,8 @@
 #include <gazebo/Model.hh>
 
 #include <ros/ros.h>
-#include "pr2_gazebo_plugins/GazeboModel.h"
+#include "pr2_gazebo_plugins/SpawnModel.h"
+#include "pr2_gazebo_plugins/DeleteModel.h"
 
 namespace gazebo
 {
@@ -121,6 +122,8 @@ class RosFactory : public Controller
   /// \brief Service Call Name
   private: ParamT<std::string> *spawnModelServiceNameP;
   private: std::string spawnModelServiceName;
+  private: ParamT<std::string> *deleteModelServiceNameP;
+  private: std::string deleteModelServiceName;
 
   /// \brief for setting ROS name space
   private: ParamT<std::string> *robotNamespaceP;
@@ -129,7 +132,8 @@ class RosFactory : public Controller
   /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
   private: ros::NodeHandle* rosnode_;
   /// \brief ros service
-  private: ros::ServiceServer spawnService;
+  private: ros::ServiceServer spawnModelService;
+  private: ros::ServiceServer deleteModelService;
 
   /// \brief check to see if string is a URDF XML
   private: bool IsURDF(std::string robot_model);
@@ -140,9 +144,16 @@ class RosFactory : public Controller
   /// \brief push xml to factory, returns true if successful
   private: bool pushToFactory(std::string gazebo_model_xml);
 
+  /// \brief push model name to iface queue for deletion
+  private: bool pushToDeleteQueue(std::string model_name);
+
   /// \brief ros service call to spawn model via factory
-  private: bool spawnModel(pr2_gazebo_plugins::GazeboModel::Request &req,
-                           pr2_gazebo_plugins::GazeboModel::Response &res);
+  private: bool spawnModel(pr2_gazebo_plugins::SpawnModel::Request &req,
+                           pr2_gazebo_plugins::SpawnModel::Response &res);
+
+  /// \brief ros service call to delete model in Gazebo
+  private: bool deleteModel(pr2_gazebo_plugins::DeleteModel::Request &req,
+                            pr2_gazebo_plugins::DeleteModel::Response &res);
 };
 
 /** \} */
