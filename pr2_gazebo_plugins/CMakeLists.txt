@@ -50,3 +50,11 @@ rosbuild_link_boost(ros_prosilica thread)
 rosbuild_add_executable(bin/ros_diffdrive src/ros_diffdrive.cpp)
 rosbuild_link_boost(bin/ros_diffdrive thread)
 
+
+exec_program("glxinfo" OUTPUT_VARIABLE glx_out RETURN_VALUE glx_val)
+if(${glx_val} EQUAL 0)
+  message(STATUS "run test here")
+else(${glx_val} EQUAL 0)
+  message(STATUS "no test here")
+endif(${glx_val} EQUAL 0)
+
