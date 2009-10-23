@@ -19,7 +19,15 @@ def spawn_model_client_from_urdf_param(model_name,param_name):
         print "Service call failed: %s"%e
 
 def usage():
-    return "%s [options]"%sys.argv[0]
+    print '''Commands:
+    list                 - List active models
+    spawn <name>         - Spawns and starts the model named <name>
+    del   <name>         - Stops and deletes the model named <name>
+    pause <name>         - Stops the model named <name>
+    start <name>         - Starts the model named <name>
+    '''
+
+    sys.exit(exit_code)
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
