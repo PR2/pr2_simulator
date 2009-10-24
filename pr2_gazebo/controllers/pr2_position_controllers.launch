@@ -4,7 +4,7 @@
   <rosparam file="$(find pr2_default_controllers)/pr2_joint_position_controllers.yaml" command="load" />
 
   <!-- start controller -->
-  <node  pkg="pr2_mechanism_control" type="spawner.py" args="r_shoulder_pan_position_controller r_shoulder_lift_position_controller r_upper_arm_roll_position_controller r_elbow_flex_position_controller r_forearm_roll_position_controller r_wrist_flex_position_controller r_wrist_roll_position_controller r_gripper_position_controller" output="screen" />
-  <node  pkg="pr2_mechanism_control" type="spawner.py" args="l_shoulder_pan_position_controller l_shoulder_lift_position_controller l_upper_arm_roll_position_controller l_elbow_flex_position_controller l_forearm_roll_position_controller l_wrist_flex_position_controller l_wrist_roll_position_controller l_gripper_position_controller" output="screen" />
+  <node  name="spawn_r_arm_position_controllers" pkg="pr2_mechanism_control" type="spawner.py" args="r_shoulder_pan_position_controller r_shoulder_lift_position_controller r_upper_arm_roll_position_controller r_elbow_flex_position_controller r_forearm_roll_position_controller r_wrist_flex_position_controller r_wrist_roll_position_controller r_gripper_position_controller" output="screen" />
+  <node  name="spawn_l_arm_position_controllers" pkg="pr2_mechanism_control" type="spawner.py" args="l_shoulder_pan_position_controller l_shoulder_lift_position_controller l_upper_arm_roll_position_controller l_elbow_flex_position_controller l_forearm_roll_position_controller l_wrist_flex_position_controller l_wrist_roll_position_controller l_gripper_position_controller" output="screen" />
 
 </launch>
