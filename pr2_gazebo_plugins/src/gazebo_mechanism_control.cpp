@@ -102,9 +102,9 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   this->fake_state_ = new pr2_mechanism_model::RobotState(&this->mc_->model_);
 
   // The gazebo joints and mechanism joints should match up.
-  for (unsigned int i = 0; i < this->mc_->model_.joints_.size(); ++i)
+  for (unsigned int i = 0; i < this->mc_->state_->joint_states_.size(); ++i)
   {
-    std::string joint_name = this->mc_->model_.joints_[i]->name_;
+    std::string joint_name = this->mc_->state_->joint_states_[i].joint_->name_;
 
     // fill in gazebo joints pointer
     gazebo::Joint *joint = this->parent_model_->GetJoint(joint_name);
@@ -210,15 +210,11 @@ void GazeboMechanismControl::UpdateChild()
     switch (this->joints_[i]->GetType())
     {
     case Joint::HINGE:
-      //std::cout << " hinge joint name " << mc_->model_.joints_[i]->name_ << std::endl;
-      //std::cout << " check damping coef " << mc_->model_.joints_[i]->joint_damping_coefficient_ << std::endl;
-      damping_force = this->mc_->model_.joints_[i]->joint_damping_coefficient_ * ((HingeJoint*)this->joints_[i])->GetAngleRate();
+      damping_force = this->mc_->state_->joint_states_[i].joint_->joint_damping_coefficient_ * ((HingeJoint*)this->joints_[i])->GetAngleRate();
       ((HingeJoint*)this->joints_[i])->SetTorque(effort - damping_force);
       break;
     case Joint::SLIDER:
-      //std::cout << " slider joint name " << mc_->model_.joints_[i]->name_ << std::endl;
-      //std::cout << " check damping coef " << mc_->model_.joints_[i]->joint_damping_coefficient_ << std::endl;
-      damping_force = this->mc_->model_.joints_[i]->joint_damping_coefficient_ * ((SliderJoint*)this->joints_[i])->GetPositionRate();
+      damping_force = this->mc_->state_->joint_states_[i].joint_->joint_damping_coefficient_ * ((SliderJoint*)this->joints_[i])->GetPositionRate();
       ((SliderJoint*)this->joints_[i])->SetSliderForce(effort - damping_force);
       break;
     default:
