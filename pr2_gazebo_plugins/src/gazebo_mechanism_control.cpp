@@ -104,7 +104,7 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   // The gazebo joints and mechanism joints should match up.
   for (unsigned int i = 0; i < this->mc_->state_->joint_states_.size(); ++i)
   {
-    std::string joint_name = this->mc_->state_->joint_states_[i].joint_->name_;
+    std::string joint_name = this->mc_->state_->joint_states_[i].joint_->name;
 
     // fill in gazebo joints pointer
     gazebo::Joint *joint = this->parent_model_->GetJoint(joint_name);
@@ -207,14 +207,18 @@ void GazeboMechanismControl::UpdateChild()
 
     double damping_force;
     double effort = this->fake_state_->joint_states_[i].commanded_effort_;
+    double damping = 0;
+    if (this->mc_->state_->joint_states_[i].joint_->dynamics)
+      damping = this->mc_->state_->joint_states_[i].joint_->dynamics->damping;
+
     switch (this->joints_[i]->GetType())
     {
     case Joint::HINGE:
-      damping_force = this->mc_->state_->joint_states_[i].joint_->joint_damping_coefficient_ * ((HingeJoint*)this->joints_[i])->GetAngleRate();
+      damping_force = damping * ((HingeJoint*)this->joints_[i])->GetAngleRate();
       ((HingeJoint*)this->joints_[i])->SetTorque(effort - damping_force);
       break;
     case Joint::SLIDER:
-      damping_force = this->mc_->state_->joint_states_[i].joint_->joint_damping_coefficient_ * ((SliderJoint*)this->joints_[i])->GetPositionRate();
+      damping_force = damping * ((SliderJoint*)this->joints_[i])->GetPositionRate();
       ((SliderJoint*)this->joints_[i])->SetSliderForce(effort - damping_force);
       break;
     default:
