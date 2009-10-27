@@ -36,7 +36,7 @@
 #include <gazebo/Entity.hh>
 #include <gazebo/Model.hh>
 #include "pr2_hardware_interface/hardware_interface.h"
-#include "pr2_mechanism_control/mechanism_control.h"
+#include "pr2_controller_manager/controller_manager.h"
 #include "pr2_mechanism_model/robot.h"
 #include "tinyxml/tinyxml.h"
 #include <gazebo/Param.hh>
@@ -48,7 +48,7 @@ class XMLConfigNode;
 
 /// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
 /// @{
-/** \defgroup gazebo_mechanism_control GazeboMechanismControl class
+/** \defgroup gazebo_controller_manager GazeboMechanismControl class
 
   \brief GazeboMechanismControl Plugin
   
@@ -59,12 +59,12 @@ class XMLConfigNode;
   \verbatim
   <model:physical name="ray_model">
     <!-- GazeboMechanismControl -->
-    <controller:gazebo_mechanism_control name="gazebo_mechanism_control" plugin="libgazebo_mechanism_control.so">
+    <controller:gazebo_controller_manager name="gazebo_controller_manager" plugin="libgazebo_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>1000.0</updateRate>
-      <robot filename="pr2.xml" /> <!-- gazebo_mechanism_control use this file to extract mechanism model -->
+      <robot filename="pr2.xml" /> <!-- gazebo_controller_manager use this file to extract mechanism model -->
       <gazebo_physics filename="gazebo_joints.xml" /> <!-- for simulator/physics specific settigs, currently just damping -->
-    </controller:gazebo_mechanism_control>
+    </controller:gazebo_controller_manager>
   </model:phyiscal>
   \endverbatim
  
@@ -107,12 +107,12 @@ class XMLConfigNode;
   \verbatim
   <model:physical name="ray_model">
     <!-- GazeboMechanismControl -->
-    <controller:gazebo_mechanism_control name="gazebo_mechanism_control" plugin="libgazebo_mechanism_control.so">
+    <controller:gazebo_controller_manager name="gazebo_controller_manager" plugin="libgazebo_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>1000.0</updateRate>
-      <robot filename="pr2.xml" /> <!-- gazebo_mechanism_control use this file to extract mechanism model -->
+      <robot filename="pr2.xml" /> <!-- gazebo_controller_manager use this file to extract mechanism model -->
       <gazebo_physics filename="gazebo_joints.xml" /> <!-- for simulator/physics specific settigs, currently just damping -->
-    </controller:gazebo_mechanism_control>
+    </controller:gazebo_controller_manager>
   </model:phyiscal>
   \endverbatim
    .
@@ -136,7 +136,7 @@ private:
 
   Model *parent_model_;
   pr2_hardware_interface::HardwareInterface hw_;
-  pr2_mechanism_control::MechanismControl *mc_;
+  pr2_controller_manager::MechanismControl *mc_;
 
   /// @todo The fake state helps Gazebo run the transmissions backwards, so
   ///       that it can figure out what its joints should do based on the

@@ -80,11 +80,11 @@
       </controller:ros_time>
 
       <!-- PR2_ACTARRAY -->
-      <controller:gazebo_mechanism_control name="gazebo_mechanism_control" plugin="libgazebo_mechanism_control.so">
+      <controller:gazebo_controller_manager name="gazebo_controller_manager" plugin="libgazebo_controller_manager.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>100.0</updateRate>
-        <interface:audio name="gazebo_mechanism_control_dummy_iface" />
-      </controller:gazebo_mechanism_control>
+        <interface:audio name="gazebo_controller_manager_dummy_iface" />
+      </controller:gazebo_controller_manager>
 
       <!-- ros_p3d for position groundtruth -->
       <controller:ros_p3d name="p3d_link1_controller" plugin="libros_p3d.so">

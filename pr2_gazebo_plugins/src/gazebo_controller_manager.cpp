@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <pr2_gazebo_plugins/gazebo_mechanism_control.h>
+#include <pr2_gazebo_plugins/gazebo_controller_manager.h>
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -47,7 +47,7 @@
 
 namespace gazebo {
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_mechanism_control", GazeboMechanismControl);
+GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_controller_manager", GazeboMechanismControl);
 
 GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
   : Controller(parent), hw_(), fake_state_(NULL)
@@ -90,11 +90,11 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   char** argv = NULL;
   ros::init(argc,argv,"gazebo");
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_gazebo_model
-  ROS_INFO("starting gazebo_mechanism_control plugin in ns: %s",this->robotNamespace.c_str());
+  ROS_INFO("starting gazebo_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
-  this->mc_ = new pr2_mechanism_control::MechanismControl(&hw_,*this->rosnode_);
+  this->mc_ = new pr2_controller_manager::MechanismControl(&hw_,*this->rosnode_);
 
-  // read pr2.xml (pr2_gazebo_mechanism_control.xml)
+  // read pr2.xml (pr2_gazebo_controller_manager.xml)
   // setup actuators, then setup mechanism control node
   ReadPr2Xml(node);
 
@@ -271,7 +271,7 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
   TiXmlDocument doc;
   if (!doc.Parse(urdf_string.c_str()))
   {
-    ROS_ERROR("Could not load the gazebo mechanism_control plugin's configuration file: %s\n",
+    ROS_ERROR("Could not load the gazebo controller_manager plugin's configuration file: %s\n",
             urdf_string.c_str());
     abort();
   }

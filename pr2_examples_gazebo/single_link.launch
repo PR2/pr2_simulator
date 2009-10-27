@@ -5,7 +5,7 @@
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="spawn_single_link" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" />
 
-  <node name="spawn_controllers" pkg="pr2_mechanism_control" type="spawner.py" args="$(find pr2_examples_gazebo)/single_link_defs/controllers_single_link.xml" respawn="false" output="screen" />
+  <node name="spawn_controllers" pkg="pr2_controller_manager" type="spawner.py" args="$(find pr2_examples_gazebo)/single_link_defs/controllers_single_link.xml" respawn="false" output="screen" />
 
   <node name="test_controllers" pkg="robot_mechanism_controllers" type="control.py" args="set test_controller 0.5" respawn="false" output="screen" />
 </launch>

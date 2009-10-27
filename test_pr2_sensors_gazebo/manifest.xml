@@ -18,7 +18,7 @@
   <depend package="stereo_image_proc" />
 
   <!-- for laser scan -->
-  <depend package="pr2_mechanism_control"/>
+  <depend package="pr2_controller_manager"/>
   <depend package="pr2_mechanism_controllers"/>
   <depend package="semantic_point_annotator"/> <!-- in semantic_mapping -->
   <depend package="laser_filters"/> <!-- in laser_pipeline -->

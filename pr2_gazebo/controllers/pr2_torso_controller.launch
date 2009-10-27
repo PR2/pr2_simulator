@@ -1,4 +1,4 @@
 <launch>
   <rosparam file="$(find pr2_default_controllers)/pr2_joint_position_controllers.yaml" command="load"/>
-  <node name="pr2_torso_position_controller" pkg="pr2_mechanism_control" type="spawner.py" args="torso_lift_position_controller" output="screen" />
+  <node name="pr2_torso_position_controller" pkg="pr2_controller_manager" type="spawner.py" args="torso_lift_position_controller" output="screen" />
 </launch>

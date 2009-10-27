@@ -9,7 +9,7 @@
   <depend stack="geometry" /> <!-- angles, bullet -->
   <depend stack="common_msgs" /> <!-- diagnostic_msgs, geometry_msgs, nav_msgs, sensor_msgs -->
   <depend stack="simulator_gazebo" /> <!-- gazebo, opende -->
-  <depend stack="pr2_mechanism" /> <!-- pr2_hardware_interface, pr2_mechanism_control, pr2_mechanism_model -->
+  <depend stack="pr2_mechanism" /> <!-- pr2_hardware_interface, pr2_controller_manager, pr2_mechanism_model -->
   <depend stack="opencv" /> <!-- opencv_latest -->
   <depend stack="pr2_common" /> <!-- pr2_msgs -->
   <depend stack="camera_drivers" /> <!-- prosilica_cam -->

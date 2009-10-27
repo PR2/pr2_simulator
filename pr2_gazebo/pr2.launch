@@ -13,8 +13,8 @@
   </node>
 
   <!-- Diagnostics -->
-  <node pkg="pr2_mechanism_control" type="controllers_to_diagnostics.py" name="controller_diagnostics" />
-  <node pkg="pr2_mechanism_control" type="joints_to_diagnostics.py" name="joint_diagnostics" />
+  <node pkg="pr2_controller_manager" type="controllers_to_diagnostics.py" name="controller_diagnostics" />
+  <node pkg="pr2_controller_manager" type="joints_to_diagnostics.py" name="joint_diagnostics" />
 
 </launch>
 
