@@ -11,29 +11,10 @@
   <node name="spawn_pr2_2_urdf" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description -x 0 -y  0 -m pr2_2 -n pr2_2" respawn="false" output="screen" />
   <node name="spawn_pr2_3_urdf" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description -x 0 -y -1 -m pr2_3 -n pr2_3" respawn="false" output="screen" />
 
-  <!-- Robot state publisher -->
-  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2_1" >
-    <param name="publish_frequency" type="double" value="50.0" />
-    <param name="tf_prefix" type="string" value="" />
-  </node>
-  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2_2" >
-    <param name="publish_frequency" type="double" value="50.0" />
-    <param name="tf_prefix" type="string" value="" />
-  </node>
-  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="pr2_3" >
-    <param name="publish_frequency" type="double" value="50.0" />
-    <param name="tf_prefix" type="string" value="" />
-  </node>
-
-  <!-- Diagnostics -->
-  <node pkg="pr2_controller_manager" type="controllers_to_diagnostics.py" name="controller_diagnostics" ns="pr2_1" />
-  <node pkg="pr2_controller_manager" type="joints_to_diagnostics.py" name="joint_diagnostics" ns="pr2_1" />
-
-  <node pkg="pr2_controller_manager" type="controllers_to_diagnostics.py" name="controller_diagnostics" ns="pr2_2" />
-  <node pkg="pr2_controller_manager" type="joints_to_diagnostics.py" name="joint_diagnostics" ns="pr2_2" />
-
-  <node pkg="pr2_controller_manager" type="controllers_to_diagnostics.py" name="controller_diagnostics" ns="pr2_3" />
-  <node pkg="pr2_controller_manager" type="joints_to_diagnostics.py" name="joint_diagnostics" ns="pr2_3" />
+  <!-- Controller Manager -->
+  <include file="$(find pr2_controller_manager)/controller_manager.launch" ns="pr2_1" />
+  <include file="$(find pr2_controller_manager)/controller_manager.launch" ns="pr2_2" />
+  <include file="$(find pr2_controller_manager)/controller_manager.launch" ns="pr2_3" />
 
 </launch>
 
