@@ -8,7 +8,7 @@
 
   <!-- table -->
   <param name="desk3" textfile="$(find gazebo_worlds)/objects/desk3.model" />
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="desk3 1.0 0.0 0.0 0 0 0 desk3" respawn="false" output="screen" />
+  <node name="spawn_desk3" pkg="gazebo_tools" type="spawn_gazebo_model" args="desk3 1.0 0.0 0.0 0 0 0 desk3" respawn="false" output="screen" />
 
   <!-- cups
   <param name="000_580_67"      textfile="$(find gazebo_worlds)/objects/000.580.67.model" />
@@ -24,11 +24,11 @@
   <param name="object103"      textfile="$(find gazebo_worlds)/objects/object103.model" />
   <param name="object104"      textfile="$(find gazebo_worlds)/objects/object104.model" />
   <param name="object105"      textfile="$(find gazebo_worlds)/objects/object105.model" />
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object101 1.0  0.0 0.369 0 0 0 object101" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object102 1.0  0.2 0.369 0 0 0 object102" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object103 1.0 -0.2 0.369 0 0 0 object103" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object104 1.0  0.4 0.369 0 0 0 object104" respawn="false" output="screen" />
-  <node pkg="gazebo_tools" type="spawn_gazebo_model" args="object105 2.0  0.0 1.500 0 0 0 face1"     respawn="false" output="screen" />
+  <node name="spawn_object101" pkg="gazebo_tools" type="spawn_gazebo_model" args="object101 1.0  0.0 0.369 0 0 0 object101" respawn="false" output="screen" />
+  <node name="spawn_object102" pkg="gazebo_tools" type="spawn_gazebo_model" args="object102 1.0  0.2 0.369 0 0 0 object102" respawn="false" output="screen" />
+  <node name="spawn_object103" pkg="gazebo_tools" type="spawn_gazebo_model" args="object103 1.0 -0.2 0.369 0 0 0 object103" respawn="false" output="screen" />
+  <node name="spawn_object104" pkg="gazebo_tools" type="spawn_gazebo_model" args="object104 1.0  0.4 0.369 0 0 0 object104" respawn="false" output="screen" />
+  <node name="spawn_object105" pkg="gazebo_tools" type="spawn_gazebo_model" args="object105 2.0  0.0 1.500 0 0 0 face1"     respawn="false" output="screen" />
 
 </launch>
 
