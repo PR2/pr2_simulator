@@ -174,7 +174,7 @@ void GazeboControllerManager::UpdateChild()
   }
 
   // Reverses the transmissions to propagate the joint position into the actuators.
-  this->fake_state_->propagateStateBackwards();
+  this->fake_state_->propagateJointPositionToActuatorPosition();
 
   //--------------------------------------------------
   //  Runs Mechanism Control
@@ -197,7 +197,7 @@ void GazeboControllerManager::UpdateChild()
   //--------------------------------------------------
 
   // Reverses the transmissions to propagate the actuator commands into the joints.
-  this->fake_state_->propagateEffortBackwards();
+  this->fake_state_->propagateActuatorEffortToJointEffort();
 
   // Copies the commands from the mechanism joints into the gazebo joints.
   for (unsigned int i = 0; i < this->joints_.size(); ++i)
