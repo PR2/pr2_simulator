@@ -160,7 +160,7 @@ public:
 
 
 int main(int argc, char** argv) {
-  ros::init(argc,argv,"ros_diffdrive");
+  ros::init(argc,argv,"ros_diffdrive",ros::init_options::AnonymousName);
 
   DiffDrive d;
   return 0;

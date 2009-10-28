@@ -37,6 +37,9 @@
 #include <gazebo/GazeboError.hh>
 #include <gazebo/ControllerFactory.hh>
 
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
+
 using namespace gazebo;
 
 GZ_REGISTER_DYNAMIC_CONTROLLER("ros_step_world_state", RosStepWorldState);
@@ -57,7 +60,8 @@ RosStepWorldState::RosStepWorldState(Entity *parent)
   this->frameNameP = new ParamT<std::string>("frameName", "base_link", 0);
   Param::End();
 
-  this->worldStateConnectCount = 0;
+  this->all_bodies.clear();
+  this->models.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +83,7 @@ void RosStepWorldState::LoadChild(XMLConfigNode *node)
 
   int argc = 0;
   char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
+  ros::init(argc,argv,"gazebo",ros::init_options::AnonymousName);
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
 
   this->topicNameP->Load(node);
@@ -87,23 +91,51 @@ void RosStepWorldState::LoadChild(XMLConfigNode *node)
   this->frameNameP->Load(node);
   this->frameName = this->frameNameP->GetValue();
 
-  this->pub_ = this->rosnode_->advertise<pr2_gazebo_plugins::WorldState>(this->topicName,1,
-    boost::bind( &RosStepWorldState::WorldStateConnect, this),
-    boost::bind( &RosStepWorldState::WorldStateDisconnect, this));
+  this->sub_ = rosnode_->subscribe(this->topicName,100,&RosStepWorldState::WorldStateCallback,this);
+
+  // spawn 2 threads by default, ///@todo: make this a parameter
+  ros::MultiThreadedSpinner s(2);
+  boost::thread spinner_thread( boost::bind( &ros::spin, s ) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Someone subscribes to me
-void RosStepWorldState::WorldStateConnect()
+void RosStepWorldState::WorldStateCallback(const pr2_gazebo_plugins::WorldStateConstPtr& worldStateMsg)
 {
-  this->worldStateConnectCount++;
-}
+  ROS_DEBUG("received state message");
 
-////////////////////////////////////////////////////////////////////////////////
-// Someone subscribes to me
-void RosStepWorldState::WorldStateDisconnect()
-{
-  this->worldStateConnectCount--;
+  // get information from message
+  // ignore frame_id for now, everything inertial.  this->worldStateMsg->header.frame_id
+  gazebo::Simulator::Instance()->SetSimTime(worldStateMsg->header.stamp.toSec());
+
+  int object_count = worldStateMsg->get_name_size();
+
+  //this->lock.lock();
+  for (int count = 0; count < object_count; count++)
+  {
+    boost::recursive_mutex::scoped_lock lock(*gazebo::Simulator::Instance()->GetMRMutex());
+    std::map<std::string,gazebo::Body*>::iterator body = this->all_bodies.find(worldStateMsg->name[count]);
+    if (body == this->all_bodies.end())
+    {
+      //ROS_ERROR("body %s is not in this world!",worldStateMsg->name[count].c_str());
+    }
+    else
+    {
+      //ROS_ERROR("setting pose for body %s.",worldStateMsg->name[count].c_str());
+      Vector3 pos;
+      Quatern rot;
+      pos.x = worldStateMsg->pose[count].position.x;
+      pos.y = worldStateMsg->pose[count].position.y;
+      pos.z = worldStateMsg->pose[count].position.z;
+      rot.x = worldStateMsg->pose[count].orientation.x;
+      rot.y = worldStateMsg->pose[count].orientation.y;
+      rot.z = worldStateMsg->pose[count].orientation.z;
+      rot.u = worldStateMsg->pose[count].orientation.w;
+      body->second->SetPose(Pose3d(pos,rot));
+    }
+  }
+  //this->lock.unlock();
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,102 +148,36 @@ void RosStepWorldState::InitChild()
 // Update the controller
 void RosStepWorldState::UpdateChild()
 {
-  /***************************************************************/
-  /*                                                             */
-  /*  this is called at every update simulation step             */
-  /*                                                             */
-  /***************************************************************/
-  if (this->worldStateConnectCount == 0)
-    return;
 
-  /***************************************************************/
-  /*                                                             */
-  /*  publish                                                    */
-  /*                                                             */
-  /***************************************************************/
-  double cur_time = Simulator::Instance()->GetSimTime();
+  /********************************************************************/
+  /*                                                                  */
+  /*  build list of all bodies in the world (across models)           */
+  /*                                                                  */
+  /*  need a faster way to hook up each body with incoming states     */
+  /*                                                                  */
+  /********************************************************************/
 
-  this->bodies = this->parent_model_->GetBodies();
-  if (this->bodies)
+  // FIXME: this test simply checks the number of models for now, better
+  //        to setup a flag to indicate whether models in the world have changed
+  if (this->models.size() != gazebo::World::Instance()->GetModels().size())
   {
-    this->lock.lock();
+    this->models = gazebo::World::Instance()->GetModels();
 
-    // Add Frame Name
-    this->worldStateMsg.header.frame_id = this->frameName;
-    this->worldStateMsg.header.stamp.fromSec(cur_time);
-
-    this->worldStateMsg.set_name_size(this->bodies->size());
-    this->worldStateMsg.set_pose_size(this->bodies->size());
-    this->worldStateMsg.set_twist_size(this->bodies->size());
-    this->worldStateMsg.set_wrench_size(this->bodies->size());
-
-    // Iterate through all bodies
-    std::map<std::string, Body*>::const_iterator biter;
-    int count = 0;
-    for (biter=this->bodies->begin(); biter!=this->bodies->end(); biter++)
+    // aggregate all bodies into a single vector
+    for (std::vector<gazebo::Model*>::iterator miter = this->models.begin(); miter != this->models.end(); miter++)
     {
-      //ROS_ERROR("body name: %s",(biter->second)->GetName().c_str());
-      // get name
-      this->worldStateMsg.name[count] =  biter->second->GetName();
-
-      // set pose
-      // get pose from simulator
-      Pose3d pose;
-      Quatern rot;
-      Vector3 pos;
-      // Get Pose/Orientation ///@todo: verify correctness
-      pose = (biter->second)->GetPose();
-
-      // apply xyz offsets and get position and rotation components
-      pos = pose.pos; // (add if there's offset) + this->xyzOffsets;
-      rot = pose.rot;
-      // apply rpy offsets
-      /* add if there's offsets
-      Quatern qOffsets;
-      qOffsets.SetFromEuler(this->rpyOffsets);
-      rot = qOffsets*rot;
-      rot.Normalize();
-      */
-    
-      this->worldStateMsg.pose[count].position.x    = pos.x;
-      this->worldStateMsg.pose[count].position.y    = pos.y;
-      this->worldStateMsg.pose[count].position.z    = pos.z;
-      this->worldStateMsg.pose[count].orientation.x = rot.x;
-      this->worldStateMsg.pose[count].orientation.y = rot.y;
-      this->worldStateMsg.pose[count].orientation.z = rot.z;
-      this->worldStateMsg.pose[count].orientation.w = rot.u;
-
-      // set velocities
-      // get Rates
-      Vector3 vpos = (biter->second)->GetPositionRate(); // get velocity in gazebo frame
-      Quatern vrot = (biter->second)->GetRotationRate(); // get velocity in gazebo frame
-      Vector3 veul = (biter->second)->GetEulerRate(); // get velocity in gazebo frame
-
-      // pass linear rates
-      this->worldStateMsg.twist[count].linear.x        = vpos.x;
-      this->worldStateMsg.twist[count].linear.y        = vpos.y;
-      this->worldStateMsg.twist[count].linear.z        = vpos.z;
-      // pass euler angular rates
-      this->worldStateMsg.twist[count].angular.x    = veul.x;
-      this->worldStateMsg.twist[count].angular.y    = veul.y;
-      this->worldStateMsg.twist[count].angular.z    = veul.z;
-
-      // get forces
-      Vector3 force = (biter->second)->GetForce(); // get velocity in gazebo frame
-      Vector3 torque = (biter->second)->GetTorque(); // get velocity in gazebo frame
-      this->worldStateMsg.wrench[count].force.x = force.x;
-      this->worldStateMsg.wrench[count].force.x = force.y;
-      this->worldStateMsg.wrench[count].force.x = force.z;
-      this->worldStateMsg.wrench[count].torque.x = torque.x;
-      this->worldStateMsg.wrench[count].torque.x = torque.y;
-      this->worldStateMsg.wrench[count].torque.x = torque.z;
-
-      count++;
+      // list of all bodies in the current model
+      const std::map<std::string,gazebo::Body*> *bodies = (*miter)->GetBodies();
+      // Iterate through all bodies
+      std::map<std::string, Body*>::const_iterator biter;
+      for (biter=bodies->begin(); biter!=bodies->end(); biter++)
+      {
+        this->all_bodies.insert(make_pair(biter->first,biter->second));
+      }
     }
-
-    this->pub_.publish(this->worldStateMsg);
-    this->lock.unlock();
   }
+  //ROS_ERROR("debug: %d",this->all_bodies.size());
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

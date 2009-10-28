@@ -40,6 +40,8 @@
 #include <vector>
 #include <string>
 
+#include <boost/thread.hpp>
+
 namespace gazebo
 {
 /// @addtogroup gazebo_dynamic_plugins Gazebo Dynamic Plugins

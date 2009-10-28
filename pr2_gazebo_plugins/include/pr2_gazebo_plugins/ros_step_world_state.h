@@ -35,6 +35,7 @@
 #include <pr2_gazebo_plugins/WorldState.h>
 
 #include <ros/ros.h>
+#include <boost/thread.hpp>
 
 #include <map>
 #include <vector>
@@ -82,26 +83,28 @@ class RosStepWorldState : public Controller
   /// \brief Finalize the controller
   protected: virtual void FiniChild();
 
-  /// \brief: keep track of number of connections
-  private: int worldStateConnectCount;
-  private: void WorldStateConnect();
-  private: void WorldStateDisconnect();
-
   /// \brief: Message for sending world state
   private: pr2_gazebo_plugins::WorldState worldStateMsg;
 
-  /// \bridf: Keep list of all models in the world
+  /// \brief: Keep list of all models in the world
   private: const std::map<std::string,gazebo::Body*> *bodies;
 
-  /// \bridf: parent should be a model
+  /// \brief: parent should be a model
   private: gazebo::Model* parent_model_;
 
-  /// \bridf: ros node handle and publisher
+  /// \brief: keep list of all models in the world
+  private: std::vector<gazebo::Model*> models;
+
+  /// \brief: keep list of all bodies in the world (across models)
+  private: std::map<std::string,gazebo::Body*> all_bodies;
+
+  /// \brief: ros node handle and publisher
   private: ros::NodeHandle* rosnode_;
-  private: ros::Publisher pub_;
+  private: ros::Subscriber sub_;
+  private: void WorldStateCallback(const pr2_gazebo_plugins::WorldStateConstPtr& worldStateMsg);
 
   /// \brief A mutex to lock access to fields that are used in message callbacks
-  private: boost::mutex lock;
+  //private: boost::mutex lock;
 
   /// \brief for setting ROS name space
   private: ParamT<std::string> *robotNamespaceP;

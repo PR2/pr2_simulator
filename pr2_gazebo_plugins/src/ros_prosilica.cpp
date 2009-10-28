@@ -132,7 +132,7 @@ void RosProsilica::LoadChild(XMLConfigNode *node)
   this->robotNamespace = this->robotNamespaceP->GetValue();
   int argc = 0;
   char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
+  ros::init(argc,argv,"gazebo",ros::init_options::AnonymousName);
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
 
   this->imageTopicNameP->Load(node);

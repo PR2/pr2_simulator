@@ -76,7 +76,7 @@ void RosBumper::LoadChild(XMLConfigNode *node)
 
   int argc = 0;
   char** argv = NULL;
-  ros::init(argc,argv,"gazebo");
+  ros::init(argc,argv,"gazebo",ros::init_options::AnonymousName);
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
 
   this->bumperTopicNameP->Load(node);
