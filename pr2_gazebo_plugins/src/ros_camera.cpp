@@ -63,11 +63,23 @@ RosCamera::RosCamera(Entity *parent)
 
   Param::Begin(&this->parameters);
   this->robotNamespaceP = new ParamT<std::string>("robotNamespace","/",0);
-  this->topicNameP = new ParamT<std::string>("topicName","stereo/raw_stereo", 0);
-  this->frameNameP = new ParamT<std::string>("frameName","stereo_link", 0);
+  this->imageTopicNameP = new ParamT<std::string>("imageTopicName","generic_camera/image_raw", 0);
+  this->cameraInfoTopicNameP = new ParamT<std::string>("cameraInfoTopicName","generic_camera/camera_info", 0);
+  this->frameNameP = new ParamT<std::string>("frameName","generic_camera_link", 0);
+  // camera parameters 
+  this->CxPrimeP = new ParamT<double>("CxPrime",0, 0); // default to 0 for compute on the fly
+  this->CxP  = new ParamT<double>("Cx" ,0, 0); // default to 0 for compute on the fly
+  this->CyP  = new ParamT<double>("Cy" ,0, 0); // default to 0 for compute on the fly
+  this->focal_lengthP  = new ParamT<double>("focal_length" ,0, 0); // == image_width(px) / (2*tan( hfov(radian) /2)), default to 0 for compute on the fly
+  this->distortion_k1P  = new ParamT<double>("distortion_k1" ,0, 0);
+  this->distortion_k2P  = new ParamT<double>("distortion_k2" ,0, 0);
+  this->distortion_k3P  = new ParamT<double>("distortion_k3" ,0, 0);
+  this->distortion_t1P  = new ParamT<double>("distortion_t1" ,0, 0);
+  this->distortion_t2P  = new ParamT<double>("distortion_t2" ,0, 0);
   Param::End();
 
   this->imageConnectCount = 0;
+  this->infoConnectCount = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,8 +88,18 @@ RosCamera::~RosCamera()
 {
   delete this->robotNamespaceP;
   delete this->rosnode_;
-  delete this->topicNameP;
+  delete this->imageTopicNameP;
+  delete this->cameraInfoTopicNameP;
   delete this->frameNameP;
+  delete this->CxPrimeP;
+  delete this->CxP;
+  delete this->CyP;
+  delete this->focal_lengthP;
+  delete this->distortion_k1P;
+  delete this->distortion_k2P;
+  delete this->distortion_k3P;
+  delete this->distortion_t1P;
+  delete this->distortion_t2P;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,15 +113,50 @@ void RosCamera::LoadChild(XMLConfigNode *node)
   ros::init(argc,argv,"gazebo");
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
 
-  this->topicNameP->Load(node);
+  this->imageTopicNameP->Load(node);
+  this->cameraInfoTopicNameP->Load(node);
   this->frameNameP->Load(node);
-  this->topicName = this->topicNameP->GetValue();
+  this->CxPrimeP->Load(node);
+  this->CxP->Load(node);
+  this->CyP->Load(node);
+  this->focal_lengthP->Load(node);
+  this->distortion_k1P->Load(node);
+  this->distortion_k2P->Load(node);
+  this->distortion_k3P->Load(node);
+  this->distortion_t1P->Load(node);
+  this->distortion_t2P->Load(node);
+  this->imageTopicName = this->imageTopicNameP->GetValue();
+  this->cameraInfoTopicName = this->cameraInfoTopicNameP->GetValue();
   this->frameName = this->frameNameP->GetValue();
+  this->CxPrime = this->CxPrimeP->GetValue();
+  this->Cx = this->CxP->GetValue();
+  this->Cy = this->CyP->GetValue();
+  this->focal_length = this->focal_lengthP->GetValue();
+  this->distortion_k1 = this->distortion_k1P->GetValue();
+  this->distortion_k2 = this->distortion_k2P->GetValue();
+  this->distortion_k3 = this->distortion_k3P->GetValue();
+  this->distortion_t1 = this->distortion_t1P->GetValue();
+  this->distortion_t2 = this->distortion_t2P->GetValue();
 
-  ROS_DEBUG("================= %s", this->topicName.c_str());
-  this->pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->topicName,1,
+  this->image_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageTopicName,1,
     boost::bind( &RosCamera::ImageConnect, this),
     boost::bind( &RosCamera::ImageDisconnect, this));
+  this->camera_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->cameraInfoTopicName,1,
+    boost::bind( &RosCamera::InfoConnect, this),
+    boost::bind( &RosCamera::InfoDisconnect, this));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Increment count
+void RosCamera::InfoConnect()
+{
+  this->infoConnectCount++;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Decrement count
+void RosCamera::InfoDisconnect()
+{
+  this->infoConnectCount--;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,6 +208,15 @@ void RosCamera::InitChild()
     this->skip = 3;
   }
 
+  /// Compute camera parameters if set to 0
+  if (this->CxPrime == 0)
+    this->CxPrime = ((double)this->width+1.0) /2.0;
+  if (this->Cx == 0)
+    this->Cx = ((double)this->width+1.0) /2.0;
+  if (this->Cy == 0)
+    this->Cy = ((double)this->height+1.0) /2.0;
+  if (this->focal_length == 0)
+    this->focal_length = ((double)this->width) / (2.0 *tan(this->myParent->GetHFOV().GetAsRadian()/2.0));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -171,6 +237,9 @@ void RosCamera::UpdateChild()
     this->PutCameraData();
   }
 
+  /// publish CameraInfo
+  if (this->infoConnectCount > 0)
+    this->PublishCameraInfo();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,8 +260,6 @@ void RosCamera::PutCameraData()
   // Get a pointer to image data
   src = this->myParent->GetImageData(0);
 
-  //std::cout << " updating camera " << this->topicName << " " << this->width << std::endl;
-
   if (src)
   {
     //double tmpT0 = Simulator::Instance()->GetWallTime();
@@ -207,7 +274,7 @@ void RosCamera::PutCameraData()
     //double tmpT2;
 
     /// @todo: don't bother if there are no subscribers
-    if (this->pub_.getNumSubscribers() > 0)
+    if (this->image_pub_.getNumSubscribers() > 0)
     {
       // copy from src to imageMsg
       fillImage(this->imageMsg,
@@ -220,7 +287,7 @@ void RosCamera::PutCameraData()
       //tmpT2 = Simulator::Instance()->GetWallTime();
 
       // publish to ros
-      this->pub_.publish(this->imageMsg);
+      this->image_pub_.publish(this->imageMsg);
     }
 
     //double tmpT3 = Simulator::Instance()->GetWallTime();
@@ -230,3 +297,53 @@ void RosCamera::PutCameraData()
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Put laser data to the interface
+void RosCamera::PublishCameraInfo()
+{
+  // fill CameraInfo
+  this->cameraInfoMsg.header.frame_id = this->frameName;
+  this->cameraInfoMsg.header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+  this->cameraInfoMsg.height = this->height,
+  this->cameraInfoMsg.width  = this->width,
+  // distortion
+  this->cameraInfoMsg.D[0] = 0.0;
+  this->cameraInfoMsg.D[1] = 0.0;
+  this->cameraInfoMsg.D[2] = 0.0;
+  this->cameraInfoMsg.D[3] = 0.0;
+  this->cameraInfoMsg.D[4] = 0.0;
+  // original camera matrix
+  this->cameraInfoMsg.K[0] = this->focal_length;
+  this->cameraInfoMsg.K[1] = 0.0;
+  this->cameraInfoMsg.K[2] = this->Cx;
+  this->cameraInfoMsg.K[3] = 0.0;
+  this->cameraInfoMsg.K[4] = this->focal_length;
+  this->cameraInfoMsg.K[5] = this->Cy;
+  this->cameraInfoMsg.K[6] = 0.0;
+  this->cameraInfoMsg.K[7] = 0.0;
+  this->cameraInfoMsg.K[8] = 1.0;
+  // rectification
+  this->cameraInfoMsg.R[0] = 1.0;
+  this->cameraInfoMsg.R[1] = 0.0;
+  this->cameraInfoMsg.R[2] = 0.0;
+  this->cameraInfoMsg.R[3] = 0.0;
+  this->cameraInfoMsg.R[4] = 1.0;
+  this->cameraInfoMsg.R[5] = 0.0;
+  this->cameraInfoMsg.R[6] = 0.0;
+  this->cameraInfoMsg.R[7] = 0.0;
+  this->cameraInfoMsg.R[8] = 1.0;
+  // camera projection matrix (same as camera matrix due to lack of distortion/rectification) (is this generated?)
+  this->cameraInfoMsg.P[0] = this->focal_length;
+  this->cameraInfoMsg.P[1] = 0.0;
+  this->cameraInfoMsg.P[2] = this->Cx;
+  this->cameraInfoMsg.P[3] = 0.0;
+  this->cameraInfoMsg.P[4] = 0.0;
+  this->cameraInfoMsg.P[5] = this->focal_length;
+  this->cameraInfoMsg.P[6] = this->Cy;
+  this->cameraInfoMsg.P[7] = 0.0;
+  this->cameraInfoMsg.P[8] = 0.0;
+  this->cameraInfoMsg.P[9] = 0.0;
+  this->cameraInfoMsg.P[10] = 1.0;
+  this->cameraInfoMsg.P[11] = 0.0;
+  this->camera_info_pub_.publish(this->cameraInfoMsg);
+}

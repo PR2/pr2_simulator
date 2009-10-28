@@ -19,7 +19,7 @@
  *
  */
 /*
- * Desc: A dynamic controller plugin that publishes ROS image topic for generic camera sensor.
+ * Desc: A dynamic controller plugin that publishes ROS image_raw camera_info topic for generic camera sensor.
  * Author: John Hsu
  * Date: 24 Sept 2008
  * SVN: $Id$
@@ -30,6 +30,7 @@
 #include <ros/ros.h>
 #include "boost/thread/mutex.hpp"
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/CameraInfo.h>
 #include <gazebo/Param.hh>
 #include <gazebo/Controller.hh>
 
@@ -43,7 +44,7 @@ namespace gazebo
 
   \brief Ros Camera Plugin Controller.
   
-  This is a controller that collects data from a Camera Sensor and populates a libgazebo camera interface as well as publish a ROS sensor_msgs::Image (under the field \b \<topicName\>). This controller should only be used as a child of a camera sensor (see example below.
+  This is a controller that collects data from a Camera Sensor and populates a libgazebo camera interface as well as publish a ROS sensor_msgs::Image (under the field \b \<imageTopicName\>). This controller should only be used as a child of a camera sensor (see example below.
 
   Example Usage:
   \verbatim
@@ -53,7 +54,8 @@ namespace gazebo
         <controller:ros_camera name="controller-name" plugin="libros_camera.so">
             <alwaysOn>true</alwaysOn>
             <updateRate>15.0</updateRate>
-            <topicName>camera_name/image</topicName>
+            <imageTopicName>camera_name/image_raw</imageTopicName>
+            <cameraInfoTopicName>camera_name/camera_info</cameraInfoTopicName>
             <frameName>camera_body_name</frameName>
         </controller:ros_camera>
       </sensor:camera>
@@ -69,7 +71,7 @@ namespace gazebo
 
     \brief RosCamera Controller.
            \li Starts a ROS node if none exists. \n
-           \li Simulates a generic camera and broadcast sensor_msgs::Image topic over ROS.
+           \li Simulates a generic camera and broadcast sensor_msgs::Image sensor_msgs::CameraInfo topic over ROS.
            \li Example Usage:
   \verbatim
   <model:physical name="camera_model">
@@ -78,7 +80,8 @@ namespace gazebo
         <controller:ros_camera name="controller-name" plugin="libros_camera.so">
             <alwaysOn>true</alwaysOn>
             <updateRate>15.0</updateRate>
-            <topicName>camera_name/image</topicName>
+            <imageTopicName>camera_name/image_raw</imageTopicName>
+            <cameraInfoTopicName>camera_name/camera_info</cameraInfoTopicName>
             <frameName>camera_body_name</frameName>
         </controller:ros_camera>
       </sensor:camera>
@@ -113,35 +116,66 @@ class RosCamera : public Controller
 
   /// \brief Put camera data to the ROS topic
   private: void PutCameraData();
+  /// \brief Publish CameraInfo to the ROS topic
+  private: void PublishCameraInfo();
 
   /// \brief Keep track of number of connctions
   private: int imageConnectCount;
   private: void ImageConnect();
   private: void ImageDisconnect();
 
+  /// \brief Keep track of number of connctions for CameraInfo
+  private: int infoConnectCount;
+  private: void InfoConnect();
+  private: void InfoDisconnect();
+
   /// \brief A pointer to the parent camera sensor
   private: MonoCameraSensor *myParent;
 
   /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
   private: ros::NodeHandle* rosnode_;
-  private: ros::Publisher pub_;
+  private: ros::Publisher image_pub_,camera_info_pub_;
 
   /// \brief ROS image message
   private: sensor_msgs::Image imageMsg;
+  private: sensor_msgs::CameraInfo cameraInfoMsg;
 
   /// \brief Parameters
-  private: ParamT<std::string> *topicNameP;
+  private: ParamT<std::string> *imageTopicNameP;
+  private: ParamT<std::string> *cameraInfoTopicNameP;
   private: ParamT<std::string> *frameNameP;
+
+  private: ParamT<double> *CxPrimeP;       // rectified optical center x, for sim, CxPrime == Cx
+  private: ParamT<double> *CxP;            // optical center x
+  private: ParamT<double> *CyP;            // optical center y
+  private: ParamT<double> *focal_lengthP;  // also known as focal length
+  private: ParamT<double> *distortion_k1P; // linear distortion
+  private: ParamT<double> *distortion_k2P; // quadratic distortion
+  private: ParamT<double> *distortion_k3P; // cubic distortion
+  private: ParamT<double> *distortion_t1P; // tangential distortion
+  private: ParamT<double> *distortion_t2P; // tangential distortion
 
   /// \brief for setting ROS name space
   private: ParamT<std::string> *robotNamespaceP;
   private: std::string robotNamespace;
 
   /// \brief ROS image topic name
-  private: std::string topicName;
+  private: std::string imageTopicName;
+  /// \brief ROS camera_info topic name
+  private: std::string cameraInfoTopicName;
   /// \brief ROS frame transform name to use in the image message header.
   ///        This should typically match the link name the sensor is attached.
   private: std::string frameName;
+
+  private: double CxPrime;
+  private: double Cx;
+  private: double Cy;
+  private: double focal_length;
+  private: double distortion_k1;
+  private: double distortion_k2;
+  private: double distortion_k3;
+  private: double distortion_t1;
+  private: double distortion_t2;
 
   /// \brief A mutex to lock access to fields that are used in ROS message callbacks
   private: boost::mutex lock;
