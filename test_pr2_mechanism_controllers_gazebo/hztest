@@ -50,7 +50,7 @@ import os, os.path, threading, time
 import rospy, rostest
 from std_msgs.msg import *
 from tf.msg import tfMessage
-from pr2_mechanism_msgs.msg import MechanismState
+from pr2_mechanism_msgs.msg import MechanismStatistics
 
 MIN_MSGS        = 1
 TEST_TIMEOUT    = 360.0
