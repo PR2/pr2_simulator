@@ -103,9 +103,6 @@ class RosStepWorldState : public Controller
   private: ros::Subscriber sub_;
   private: void WorldStateCallback(const pr2_gazebo_plugins::WorldStateConstPtr& worldStateMsg);
 
-  /// \brief A mutex to lock access to fields that are used in message callbacks
-  //private: boost::mutex lock;
-
   /// \brief for setting ROS name space
   private: ParamT<std::string> *robotNamespaceP;
   private: std::string robotNamespace;

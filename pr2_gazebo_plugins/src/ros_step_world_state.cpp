@@ -110,7 +110,6 @@ void RosStepWorldState::WorldStateCallback(const pr2_gazebo_plugins::WorldStateC
 
   int object_count = worldStateMsg->get_name_size();
 
-  //this->lock.lock();
   for (int count = 0; count < object_count; count++)
   {
     boost::recursive_mutex::scoped_lock lock(*gazebo::Simulator::Instance()->GetMRMutex());
@@ -134,7 +133,6 @@ void RosStepWorldState::WorldStateCallback(const pr2_gazebo_plugins::WorldStateC
       body->second->SetPose(Pose3d(pos,rot));
     }
   }
-  //this->lock.unlock();
 
 }
 
