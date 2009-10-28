@@ -16,8 +16,6 @@
     <!-- nav-stack -->
     <include file="$(find pr2_2dnav_gazebo)/2dnav-stack-fake_localization.launch"/>
 
-    <include file="$(find 2dnav_pr2)/rviz/rviz_move_base.launch"/>
-    <node name="rxtools" pkg="rxtools" type="rxconsole" respawn="false" />
     <!--
     <param name="/trex/ping_frequency" value="1"/>
     <node name="highlevel_controllers" pkg="highlevel_controllers" type="recharge_controller" args="" respawn="false" />
