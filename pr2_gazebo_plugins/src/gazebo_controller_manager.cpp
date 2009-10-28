@@ -47,15 +47,15 @@
 
 namespace gazebo {
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_controller_manager", GazeboMechanismControl);
+GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_controller_manager", GazeboControllerManager);
 
-GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
+GazeboControllerManager::GazeboControllerManager(Entity *parent)
   : Controller(parent), hw_(), fake_state_(NULL)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
   if (!this->parent_model_)
-    gzthrow("GazeboMechanismControl controller requires a Model as its parent");
+    gzthrow("GazeboControllerManager controller requires a Model as its parent");
 
   Param::Begin(&this->parameters);
   this->robotParamP = new ParamT<std::string>("robotParam", "robot_description", 0);
@@ -70,15 +70,15 @@ GazeboMechanismControl::GazeboMechanismControl(Entity *parent)
 
 }
 
-GazeboMechanismControl::~GazeboMechanismControl()
+GazeboControllerManager::~GazeboControllerManager()
 {
   delete this->robotParamP;
   delete this->robotNamespaceP;
-  delete this->mc_; 
+  delete this->cm_; 
   delete this->rosnode_;
 }
 
-void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
+void GazeboControllerManager::LoadChild(XMLConfigNode *node)
 {
   // get parameter name
   this->robotParamP->Load(node);
@@ -92,19 +92,19 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_gazebo_model
   ROS_INFO("starting gazebo_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
-  this->mc_ = new pr2_controller_manager::MechanismControl(&hw_,*this->rosnode_);
+  this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);
 
   // read pr2.xml (pr2_gazebo_controller_manager.xml)
   // setup actuators, then setup mechanism control node
   ReadPr2Xml(node);
 
   // Initializes the fake state (for running the transmissions backwards).
-  this->fake_state_ = new pr2_mechanism_model::RobotState(&this->mc_->model_);
+  this->fake_state_ = new pr2_mechanism_model::RobotState(&this->cm_->model_);
 
   // The gazebo joints and mechanism joints should match up.
-  for (unsigned int i = 0; i < this->mc_->state_->joint_states_.size(); ++i)
+  for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
   {
-    std::string joint_name = this->mc_->state_->joint_states_[i].joint_->name;
+    std::string joint_name = this->cm_->state_->joint_states_[i].joint_->name;
 
     // fill in gazebo joints pointer
     gazebo::Joint *joint = this->parent_model_->GetJoint(joint_name);
@@ -123,12 +123,12 @@ void GazeboMechanismControl::LoadChild(XMLConfigNode *node)
   this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
 }
 
-void GazeboMechanismControl::InitChild()
+void GazeboControllerManager::InitChild()
 {
   this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
 }
 
-void GazeboMechanismControl::UpdateChild()
+void GazeboControllerManager::UpdateChild()
 {
 
   if (getenv("CHECK_SPEEDUP"))
@@ -182,7 +182,7 @@ void GazeboMechanismControl::UpdateChild()
   this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
   try
   {
-    this->mc_->update();
+    this->cm_->update();
   }
   catch (const char* c)
   {
@@ -208,8 +208,8 @@ void GazeboMechanismControl::UpdateChild()
     double damping_force;
     double effort = this->fake_state_->joint_states_[i].commanded_effort_;
     double damping = 0;
-    if (this->mc_->state_->joint_states_[i].joint_->dynamics)
-      damping = this->mc_->state_->joint_states_[i].joint_->dynamics->damping;
+    if (this->cm_->state_->joint_states_[i].joint_->dynamics)
+      damping = this->cm_->state_->joint_states_[i].joint_->dynamics->damping;
 
     switch (this->joints_[i]->GetType())
     {
@@ -227,20 +227,20 @@ void GazeboMechanismControl::UpdateChild()
   }
 }
 
-void GazeboMechanismControl::FiniChild()
+void GazeboControllerManager::FiniChild()
 {
-  ROS_DEBUG("Calling FiniChild in GazeboMechanismControl");
+  ROS_DEBUG("Calling FiniChild in GazeboControllerManager");
 
   pr2_hardware_interface::ActuatorMap::const_iterator it;
   for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
     delete it->second;
-  this->mc_->~MechanismControl();
+  this->cm_->~ControllerManager();
 
   pr2_hardware_interface::deleteElements(&this->joints_);
   delete this->fake_state_;
 }
 
-void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
+void GazeboControllerManager::ReadPr2Xml(XMLConfigNode *node)
 {
 
   std::string urdf_param_name;
@@ -248,7 +248,7 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
   // search and wait for robot_description on param server
   while(urdf_string.empty())
   {
-    ROS_WARN("gazebo mechanism control plugin is waiting for urdf: %s on the param server.", this->robotParam.c_str());
+    ROS_WARN("gazebo controller manager plugin is waiting for urdf: %s on the param server.", this->robotParam.c_str());
     if (this->rosnode_->searchParam(this->robotParam,urdf_param_name))
     {
       this->rosnode_->getParam(urdf_param_name,urdf_string);
@@ -264,14 +264,14 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
 
 
 
-  ROS_INFO("gazebo mechanism control got pr2.xml from param server, parsing it...");
+  ROS_INFO("gazebo controller manager got pr2.xml from param server, parsing it...");
   //std::cout << urdf_string << std::endl;
 
   // initialize TiXmlDocument doc with a string
   TiXmlDocument doc;
   if (!doc.Parse(urdf_string.c_str()))
   {
-    ROS_ERROR("Could not load the gazebo controller_manager plugin's configuration file: %s\n",
+    ROS_ERROR("Could not load the gazebo controller manager plugin's configuration file: %s\n",
             urdf_string.c_str());
     abort();
   }
@@ -305,10 +305,10 @@ void GazeboMechanismControl::ReadPr2Xml(XMLConfigNode *node)
   }
 
   // Setup mechanism control node
-  this->mc_->initXml(doc.RootElement());
+  this->cm_->initXml(doc.RootElement());
 
-  for (unsigned int i = 0; i < this->mc_->state_->joint_states_.size(); ++i)
-    this->mc_->state_->joint_states_[i].calibrated_ = true;
+  for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
+    this->cm_->state_->joint_states_[i].calibrated_ = true;
 }
 
 } // namespace gazebo

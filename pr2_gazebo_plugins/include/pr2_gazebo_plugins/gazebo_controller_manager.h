@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GAZEBO_MECHANISM_CONTROL_H
-#define GAZEBO_MECHANISM_CONTROL_H
+#ifndef GAZEBO_CONTROLLER_MANAGER_H
+#define GAZEBO_CONTROLLER_MANAGER_H
 
 #include <vector>
 #include <map>
@@ -119,11 +119,11 @@ class XMLConfigNode;
 **/
 
 
-class GazeboMechanismControl : public gazebo::Controller
+class GazeboControllerManager : public gazebo::Controller
 {
 public:
-  GazeboMechanismControl(Entity *parent);
-  virtual ~GazeboMechanismControl();
+  GazeboControllerManager(Entity *parent);
+  virtual ~GazeboControllerManager();
 
 protected:
   // Inherited from gazebo::Controller
@@ -136,7 +136,7 @@ private:
 
   Model *parent_model_;
   pr2_hardware_interface::HardwareInterface hw_;
-  pr2_controller_manager::MechanismControl *mc_;
+  pr2_controller_manager::ControllerManager *cm_;
 
   /// @todo The fake state helps Gazebo run the transmissions backwards, so
   ///       that it can figure out what its joints should do based on the
