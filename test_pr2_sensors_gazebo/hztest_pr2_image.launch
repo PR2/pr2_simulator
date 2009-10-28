@@ -36,7 +36,7 @@
 
   <!-- Test for publication of 'left narrow_stereo camera image publish rate' topic -->
   <test test-name="hztest_test_narrow_stereo_left_image" pkg="rostest" type="hztest" time-limit="60" name="narrow_stereo_left_image_test">
-    <param name="topic" value="/narrow_stereo/left/image" />
+    <param name="topic" value="/narrow_stereo/left/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
@@ -45,7 +45,7 @@
 
   <!-- Test for publication of 'right narrow_stereo camera image publish rate' topic -->
   <test test-name="hztest_test_narrow_stereo_right_image" pkg="rostest" type="hztest" time-limit="60" name="narrow_stereo_right_image_test">
-    <param name="topic" value="/narrow_stereo/right/image" />
+    <param name="topic" value="/narrow_stereo/right/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
@@ -72,7 +72,7 @@
 
   <!-- Test for publication of 'left wide_stereo camera image publish rate' topic -->
   <test test-name="hztest_test_wide_stereo_left_image" pkg="rostest" type="hztest" time-limit="60" name="wide_stereo_left_image_test">
-    <param name="topic" value="/wide_stereo/left/image" />
+    <param name="topic" value="/wide_stereo/left/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
@@ -81,7 +81,7 @@
 
   <!-- Test for publication of 'right wide_stereo camera image publish rate' topic -->
   <test test-name="hztest_test_wide_stereo_right_image" pkg="rostest" type="hztest" time-limit="60" name="wide_stereo_right_image_test">
-    <param name="topic" value="/wide_stereo/right/image" />
+    <param name="topic" value="/wide_stereo/right/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
