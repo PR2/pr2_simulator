@@ -44,7 +44,7 @@ namespace gazebo
 {
 /// @addtogroup gazebo_dynamic_plugins Gazebo Dynamic Plugins
 /// @{
-/** \defgroup RosPubWorldState
+/** \defgroup RosStepWorldState
 
   \brief A sample gazebo dynamic plugin
   
@@ -54,57 +54,20 @@ namespace gazebo
   \verbatim
     <model:physical name="robot_model1">
 
-      <controller:ros_pub_world_state name="ros_pub_world_state_controller" plugin="libros_pub_world_state.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>1000.0</updateRate>
-      </controller:ros_pub_world_state>
-
-      <xyz>0.0 0.0 0.02</xyz>
-      <rpy>0.0 0.0 0.0 </rpy>
-
-      <!-- a box -->
-      <body:box name="test_block">
-          <massMatrix>true</massMatrix>
-          <mass>1000</mass>
-          <ixx>100</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>100</iyy>
-          <iyz>0</iyz>
-          <izz>100</izz>
-          <cx>0</cx>
-          <cy>0</cy>
-          <cz>0</cz>
-          <xyz>0 0 0.002</xyz>
-          <rpy>0 -0 0</rpy>
-          <geom:box name="test_block_collision_geom">
-              <xyz>0 0 10</xyz>
-              <rpy>0 0 0</rpy>
-              <size>20 20 20</size>
-              <visual>
-                  <xyz>0 0 0</xyz>
-                  <rpy>0 -0 0</rpy>
-                  <scale>20 20 20</scale>
-                  <mesh>unit_box</mesh>
-                  <material>Gazebo/GrassFloor</material>
-              </visual>
-          </geom:box>
-      </body:box>
-
     </model:physical>
   \endverbatim
  
 \{
 */
 
-class RosPubWorldState : public Controller
+class RosStepWorldState : public Controller
 {
   /// \brief Constructor
   /// \param parent The parent entity, must be a Model or a Sensor
-  public: RosPubWorldState(Entity *parent);
+  public: RosStepWorldState(Entity *parent);
 
   /// \brief Destructor
-  public: virtual ~RosPubWorldState();
+  public: virtual ~RosStepWorldState();
 
   /// \brief Load the controller
   /// \param node XML config node
@@ -126,6 +89,9 @@ class RosPubWorldState : public Controller
 
   /// \brief: Message for sending world state
   private: pr2_gazebo_plugins::WorldState worldStateMsg;
+
+  /// \bridf: Keep list of all models in the world
+  private: const std::map<std::string,gazebo::Body*> *bodies;
 
   /// \bridf: parent should be a model
   private: gazebo::Model* parent_model_;

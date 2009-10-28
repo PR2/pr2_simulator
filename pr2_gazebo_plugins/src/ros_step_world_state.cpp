@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <assert.h>
 
-#include <pr2_gazebo_plugins/ros_pub_world_state.h>
+#include <pr2_gazebo_plugins/ros_step_world_state.h>
 
 #include <gazebo/Global.hh>
 #include <gazebo/XMLConfig.hh>
@@ -39,11 +39,11 @@
 
 using namespace gazebo;
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("ros_pub_world_state", RosPubWorldState);
+GZ_REGISTER_DYNAMIC_CONTROLLER("ros_step_world_state", RosStepWorldState);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-RosPubWorldState::RosPubWorldState(Entity *parent)
+RosStepWorldState::RosStepWorldState(Entity *parent)
     : Controller(parent)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
@@ -62,7 +62,7 @@ RosPubWorldState::RosPubWorldState(Entity *parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
-RosPubWorldState::~RosPubWorldState()
+RosStepWorldState::~RosStepWorldState()
 {
   delete this->robotNamespaceP;
   delete this->topicNameP;
@@ -72,7 +72,7 @@ RosPubWorldState::~RosPubWorldState()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void RosPubWorldState::LoadChild(XMLConfigNode *node)
+void RosStepWorldState::LoadChild(XMLConfigNode *node)
 {
   this->robotNamespaceP->Load(node);
   this->robotNamespace = this->robotNamespaceP->GetValue();
@@ -88,33 +88,33 @@ void RosPubWorldState::LoadChild(XMLConfigNode *node)
   this->frameName = this->frameNameP->GetValue();
 
   this->pub_ = this->rosnode_->advertise<pr2_gazebo_plugins::WorldState>(this->topicName,1,
-    boost::bind( &RosPubWorldState::WorldStateConnect, this),
-    boost::bind( &RosPubWorldState::WorldStateDisconnect, this));
+    boost::bind( &RosStepWorldState::WorldStateConnect, this),
+    boost::bind( &RosStepWorldState::WorldStateDisconnect, this));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Someone subscribes to me
-void RosPubWorldState::WorldStateConnect()
+void RosStepWorldState::WorldStateConnect()
 {
   this->worldStateConnectCount++;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Someone subscribes to me
-void RosPubWorldState::WorldStateDisconnect()
+void RosStepWorldState::WorldStateDisconnect()
 {
   this->worldStateConnectCount--;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize the controller
-void RosPubWorldState::InitChild()
+void RosStepWorldState::InitChild()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update the controller
-void RosPubWorldState::UpdateChild()
+void RosStepWorldState::UpdateChild()
 {
   /***************************************************************/
   /*                                                             */
@@ -131,53 +131,28 @@ void RosPubWorldState::UpdateChild()
   /***************************************************************/
   double cur_time = Simulator::Instance()->GetSimTime();
 
-  /// \bridf: list of all models in the world
-  std::vector<gazebo::Model*> models;
-  std::vector<gazebo::Model*>::iterator miter;
-
-  /// \bridf: list of all bodies in the model
-  const std::map<std::string,gazebo::Body*> *bodies;
-
-  std::map<std::string,gazebo::Body*> all_bodies;
-  all_bodies.clear();
-
-  models = gazebo::World::Instance()->GetModels();
-
-  // aggregate all bodies into a single vector
-  for (miter = models.begin(); miter != models.end(); miter++)
+  this->bodies = this->parent_model_->GetBodies();
+  if (this->bodies)
   {
-    bodies = (*miter)->GetBodies();
-    // Iterate through all bodies
-    std::map<std::string, Body*>::const_iterator biter;
-    for (biter=bodies->begin(); biter!=bodies->end(); biter++)
-    {
-      all_bodies.insert(make_pair(biter->first,biter->second));
-    }
-  }
-  //ROS_ERROR("debug: %d",all_bodies.size());
-
-  // construct world state message
-  if (!all_bodies.empty())
-  {
-    int count = 0;
     this->lock.lock();
 
-    // compose worldStateMsg
+    // Add Frame Name
     this->worldStateMsg.header.frame_id = this->frameName;
     this->worldStateMsg.header.stamp.fromSec(cur_time);
 
-    this->worldStateMsg.set_name_size(all_bodies.size());
-    this->worldStateMsg.set_pose_size(all_bodies.size());
-    this->worldStateMsg.set_twist_size(all_bodies.size());
-    this->worldStateMsg.set_wrench_size(all_bodies.size());
+    this->worldStateMsg.set_name_size(this->bodies->size());
+    this->worldStateMsg.set_pose_size(this->bodies->size());
+    this->worldStateMsg.set_twist_size(this->bodies->size());
+    this->worldStateMsg.set_wrench_size(this->bodies->size());
 
-    // Iterate through all_bodies
-    std::map<std::string, Body*>::iterator biter;
-    for (biter=all_bodies.begin(); biter!=all_bodies.end(); biter++)
+    // Iterate through all bodies
+    std::map<std::string, Body*>::const_iterator biter;
+    int count = 0;
+    for (biter=this->bodies->begin(); biter!=this->bodies->end(); biter++)
     {
       //ROS_ERROR("body name: %s",(biter->second)->GetName().c_str());
       // get name
-      this->worldStateMsg.name[count] =  std::string(biter->second->GetName());
+      this->worldStateMsg.name[count] =  biter->second->GetName();
 
       // set pose
       // get pose from simulator
@@ -233,15 +208,15 @@ void RosPubWorldState::UpdateChild()
 
       count++;
     }
+
     this->pub_.publish(this->worldStateMsg);
     this->lock.unlock();
-
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Finalize the controller
-void RosPubWorldState::FiniChild()
+void RosStepWorldState::FiniChild()
 {
 }
 
