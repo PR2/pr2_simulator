@@ -3,8 +3,6 @@
   <!-- send prf.xml to param server -->
   <include file="$(find pr2_defs)/launch/upload_prf.launch" />
 
-  <!-- <include file="$(find pr2_defs)/launch/upload_prf.launch" /> -->
-
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="spawn_prf" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" />
  
