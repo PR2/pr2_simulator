@@ -20,8 +20,8 @@
   <include file="$(find pr2_default_controllers)/head_position_controller.launch"/>
 
   <!-- starting up stereos -->
-  <include file="$(find stereo_image_proc)/narrow_stereoproc.launch" />
-  <include file="$(find stereo_image_proc)/wide_stereoproc.launch" />
+  <include file="$(find stereo_image_proc)/narrow.launch" />
+  <include file="$(find stereo_image_proc)/wide.launch" />
 
   <!-- send head a pointing command -->
   <node name="point_head"  pkg="pr2_mechanism_controllers" type="pointhead.py" args="10 0 1 /base_link" output="screen"/>
