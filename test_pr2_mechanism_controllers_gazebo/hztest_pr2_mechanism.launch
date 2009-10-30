@@ -36,7 +36,7 @@
   <test test-name="hztest_test_joint_state" pkg="test_pr2_mechanism_controllers_gazebo" type="hztest" time-limit="50" name="joint_state_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (mechanism_state_test vs. scan_test). -->
-    <param name="topic" value="/joint_states" />
+    <param name="topic" value="/joint_state" />
     <param name="hz" value="100.0" />
     <param name="hzerror" value="2.0" />
     <param name="test_duration" value="10.0" />
