@@ -198,7 +198,8 @@ void RosCamera::InitChild()
   }
   else if (this->myParent->GetImageFormat() == "B8G8R8")
   {
-    this->type = sensor_msgs::image_encodings::BGR8;
+    //this->type = sensor_msgs::image_encodings::BGR8;
+    this->type = sensor_msgs::image_encodings::RGB8; // FIXME: gazebo does not produce BGR correctly
     this->skip = 3;
   }
   else
