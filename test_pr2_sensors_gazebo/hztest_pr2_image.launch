@@ -12,8 +12,8 @@
   <include file="$(find pr2_gazebo)/controllers/pr2_tilt_laser_controller.launch"/>
 
   <!-- start stereo -->
-  <include file="$(find stereo_image_proc)/wide_stereoproc.launch" />
-  <include file="$(find stereo_image_proc)/narrow_stereoproc.launch" />
+  <include file="$(find stereo_image_proc)/wide.launch" />
+  <include file="$(find stereo_image_proc)/narrow.launch" />
 
   <!-- Run hztest -->
   <!-- Test for publication rate of 'stereo/cloud' topic -->
