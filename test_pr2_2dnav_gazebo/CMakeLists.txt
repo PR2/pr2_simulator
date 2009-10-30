@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-rospack(test_pr2_2dnav_gazebo)
+rosbuild_init(test_pr2_2dnav_gazebo)
 
 rosbuild_add_rostest_labeled(gazebo test_pr2_2dnav_wg.launch)
 rosbuild_add_rostest_labeled(gazebo test_pr2_2dnav_empty_rotation.launch)
