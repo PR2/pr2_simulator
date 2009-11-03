@@ -19,10 +19,6 @@
   <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
   <include file="$(find pr2_default_controllers)/head_position_controller.launch"/>
 
-  <!-- starting up stereos -->
-  <include file="$(find stereo_image_proc)/narrow.launch" />
-  <include file="$(find stereo_image_proc)/wide.launch" />
-
   <!-- send head a pointing command -->
   <node name="point_head"  pkg="pr2_mechanism_controllers" type="pointhead.py" args="10 0 1 /base_link" output="screen"/>
   <node name="tucharms" pkg="pr2_experimental_controllers" type="tuckarm.py" args="b" output="screen"/>
