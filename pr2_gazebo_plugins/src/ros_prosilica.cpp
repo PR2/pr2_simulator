@@ -49,7 +49,7 @@
 #include <sensor_msgs/fill_image.h>
 #include <diagnostic_updater/diagnostic_updater.h>
 
-#include <opencv_latest/CvBridge.h>
+#include <cv_bridge/CvBridge.h>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 

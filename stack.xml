@@ -12,8 +12,8 @@
   <depend stack="common_msgs" /> <!-- diagnostic_msgs, geometry_msgs, nav_msgs, sensor_msgs -->
   <depend stack="simulator_gazebo" /> <!-- gazebo -->
   <depend stack="physics_ode" /> <!-- opende -->
-  <depend stack="image_common" /> <!-- image_transport used by prosilica_camera -->
-  <depend stack="opencv" /> <!-- opencv_latest -->
+  <depend stack="image_common" /> <!-- image_transport used by prosilica_camera plugin -->
+  <depend stack="vision_opencv" /> <!-- cv_bridge used by prosilica camera plugin -->
   <depend stack="camera_drivers" /> <!-- prosilica_cam -->
   <depend stack="common" /> <!-- tinyxml, xacro -->
   <depend stack="robot_model" /> <!-- urdf, convex_decomposition, ivcon -->

@@ -33,7 +33,7 @@
 #include <gazebo/Controller.hh>
 
 // image components
-#include "opencv_latest/CvBridge.h"
+#include "cv_bridge/CvBridge.h"
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/CameraInfo.h"
 
