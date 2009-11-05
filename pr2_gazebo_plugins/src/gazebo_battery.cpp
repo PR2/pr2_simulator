@@ -27,181 +27,138 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <pr2_gazebo_plugins/gazebo_battery.h>
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <unistd.h>
-#include <set>
-#include <gazebo/Global.hh>
-#include <gazebo/XMLConfig.hh>
-#include <gazebo/Model.hh>
-#include <gazebo/HingeJoint.hh>
-#include <gazebo/SliderJoint.hh>
-#include <gazebo/Simulator.hh>
 #include <gazebo/gazebo.h>
-#include <gazebo/GazeboError.hh>
 #include <gazebo/ControllerFactory.hh>
-#include <map>
+#include <gazebo/GazeboError.hh>
+#include <gazebo/Simulator.hh>
+#include <pr2_gazebo_plugins/gazebo_battery.h>
+#include <diagnostic_updater/diagnostic_updater.h>
+
+using namespace std;
 
 namespace gazebo {
 
-  GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_battery", GazeboBattery);
+GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_battery", GazeboBattery);
 
-  GazeboBattery::GazeboBattery(Entity *parent): Controller(parent)
-  {
-    this->parent_model_ = dynamic_cast<Model*>(this->parent);
+GazeboBattery::GazeboBattery(Entity* parent) : Controller(parent)
+{
+    model_ = dynamic_cast<Model*>(parent);
+    if (!model_)
+        gzthrow("GazeboBattery controller requires a Model as its parent");
 
-    if (!this->parent_model_)
-       gzthrow("GazeboBattery controller requires a Model as its parent");
-
-    Param::Begin(&this->parameters);
-    this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
-    this->stateTopicNameP = new ParamT<std::string>("stateTopicName","power_state",0);
-    //this->diagnosticMessageTopicNameP = new ParamT<std::string>("diagnosticMessageTopicName","diagnostic",0);
-    this->default_consumption_rateP       = new ParamT<double>("default_consumption_rate",-10.0,0);
-    this->full_capacityP                  = new ParamT<double>("full_charge_energy",0.0,0);
-    this->default_charge_rateP            = new ParamT<double>("default_charge_rate",-10.0,0);
-    //this->diagnostic_rateP     = new ParamT<double>("diagnostic_rate",1.0,0);
-    this->power_state_rateP  = new ParamT<double>("power_state_rate_",1.0,0);
+    // Initialize parameters
+    Param::Begin(&parameters);
+    robot_namespace_param_   = new ParamT<string>("robotNamespace",     "/",           0);
+    power_state_topic_param_ = new ParamT<string>("powerStateTopic",    "power_state", 0);
+    power_state_rate_param_  = new ParamT<double>("powerStateRate",        1.0,        0);
+    full_capacity_param_     = new ParamT<double>("fullChargeCapacity",   80.0,        0);
+    discharge_rate_param_    = new ParamT<double>("dischargeRate",      -500.0,        0);
+    charge_rate_param_       = new ParamT<double>("chargeRate",          500.0,        0);
+    discharge_voltage_param_ = new ParamT<double>("dischargeVoltage",     16.0,        0);
+    charge_voltage_param_    = new ParamT<double>("chargeVoltage",        16.0,        0);
     Param::End();
+}
 
-  }
+GazeboBattery::~GazeboBattery()
+{
+    delete ros_node_;
 
-  GazeboBattery::~GazeboBattery()
-  {
-    delete this->rosnode_;
+    delete robot_namespace_param_;
+    delete power_state_topic_param_;
+    delete power_state_rate_param_;
+    delete full_capacity_param_;
+    delete discharge_rate_param_;
+    delete charge_rate_param_;
+    delete discharge_voltage_param_;
+    delete charge_voltage_param_;
+}
 
-    delete this->robotNamespaceP;
-    delete this->stateTopicNameP;
-    //delete this->diagnosticMessageTopicNameP;
-    delete this->default_consumption_rateP;
-    delete this->full_capacityP;
-    delete this->default_charge_rateP;
-    //delete this->diagnostic_rateP;
-    delete this->power_state_rateP;
-  }
+void GazeboBattery::LoadChild(XMLConfigNode* configNode)
+{
+    // Load parameters from XML
+    robot_namespace_param_->Load(configNode);
+    power_state_topic_param_->Load(configNode);
+    power_state_rate_param_->Load(configNode);
+    full_capacity_param_->Load(configNode);
+    discharge_rate_param_->Load(configNode);
+    charge_rate_param_->Load(configNode);
+    discharge_voltage_param_->Load(configNode);
+    charge_voltage_param_->Load(configNode);
 
-  void GazeboBattery::LoadChild(XMLConfigNode *node)
-  {
-
-    this->robotNamespaceP->Load(node);
-    this->robotNamespace = this->robotNamespaceP->GetValue();
     int argc = 0;
-    char** argv = NULL;
-    ros::init(argc,argv,"gazebo",ros::init_options::AnonymousName);
-    this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+    char* argv = NULL;
+    ros::init(argc, &argv, "gazebo_battery", ros::init_options::AnonymousName);
 
-    this->stateTopicNameP->Load(node);
-    this->stateTopicName_ = this->stateTopicNameP->GetValue();
-    this->pub_ = this->rosnode_->advertise<pr2_msgs::PowerState>(this->stateTopicName_,10);
+    ros_node_        = new ros::NodeHandle(robot_namespace_param_->GetValue());
+    power_state_pub_ = ros_node_->advertise<pr2_msgs::PowerState>(power_state_topic_param_->GetValue(), 10);
+    plugged_in_sub_  = ros_node_->subscribe("plugged_in", 10, &GazeboBattery::SetPlug, this);
+}
 
-    //this->diagnosticMessageTopicNameP->Load(node);
-    //this->diagnosticMessageTopicName_ = this->diagnosticMessageTopicNameP->GetValue();
-    //this->diag_pub_ = this->rosnode_->advertise<diagnostic_msgs::DiagnosticArray>(this->diagnosticMessageTopicName_,10);
+void GazeboBattery::InitChild()
+{
+    last_time_ = curr_time_ = Simulator::Instance()->GetSimTime();
 
-    /// faking the plug and unplug of robot
-    this->sub_ = this->rosnode_->subscribe("plugged_in",10,&GazeboBattery::SetPlug,this);
+    // Initialize battery to full capacity
+    charge_      = full_capacity_param_->GetValue();
+    charge_rate_ = discharge_rate_param_->GetValue();
+    voltage_     = discharge_voltage_param_->GetValue();
+}
 
-    this->default_consumption_rateP->Load(node);
-    this->default_consumption_rate_       = this->default_consumption_rateP->GetValue();
-    this->full_capacityP->Load(node);
-    this->full_capacity_       = this->full_capacityP->GetValue();
-    this->default_charge_rateP->Load(node);
-    this->default_charge_rate_ = this->default_charge_rateP->GetValue();
+void GazeboBattery::UpdateChild()
+{
+    // Update time
+    curr_time_ = Simulator::Instance()->GetSimTime();
+    double dt = curr_time_ - last_time_;
+    last_time_ = curr_time_;
 
-    /// @todo make below useful
-    //this->diagnostic_rateP->Load(node);
-    //this->diagnostic_rate_     = //this->diagnostic_rateP->GetValue();
-    /// @todo make below useful
-    this->power_state_rateP->Load(node);
-    this->power_state_rate_  = this->power_state_rateP->GetValue();
-  }
+    // Update battery charge
+    double current = charge_rate_ / voltage_;
+    charge_ += (dt / 3600) * current;   // charge is measured in ampere-hours, simulator time is measured in secs
 
-  void GazeboBattery::SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg)
-  {
-    this->lock_.lock();
+    // Clamp to [0, full_capacity]
+    if (charge_ < 0)
+        charge_ = 0;
+    if (charge_ > full_capacity_param_->GetValue())
+        charge_ = full_capacity_param_->GetValue();
+
+    // Publish power state (simulate the power_monitor node)
+    power_state_.header.stamp.sec  = (unsigned long) floor(curr_time_);
+    power_state_.header.stamp.nsec = (unsigned long) floor(1e9 * (curr_time_ - power_state_.header.stamp.sec));
+
+    power_state_.power_consumption = charge_rate_;
+    if (current < 0.0)
+        power_state_.time_remaining = (-charge_ / current) * 60;  // time remaining reported in hours
+    else
+        power_state_.time_remaining = 65535;
+    power_state_.prediction_method = "fuel guage";
+    power_state_.relative_capacity = (int) (100.0 * (charge_ / full_capacity_param_->GetValue()));
+
+    lock_.lock();
+    power_state_pub_.publish(power_state_);
+    lock_.unlock();
+}
+
+void GazeboBattery::FiniChild()
+{
+    // Do nothing
+}
+
+void GazeboBattery::SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg)
+{
+    lock_.lock();
+
     if (plug_msg->status == "the robot is very much plugged into the wall")
     {
-      this->consumption_rate_ = this->default_charge_rate_ + this->default_consumption_rate_;
-      this->battery_state_.AC_present = 4;
+        charge_rate_            = charge_rate_param_->GetValue() + discharge_rate_param_->GetValue();
+        power_state_.AC_present = 4;
     }
     else
     {
-      this->consumption_rate_ = this->default_consumption_rate_;
-      this->battery_state_.AC_present = 0;
+        charge_rate_            = discharge_rate_param_->GetValue();
+        power_state_.AC_present = 0;
     }
-    this->lock_.unlock();
-  }
 
-  void GazeboBattery::InitChild()
-  {
-    this->current_time_ = Simulator::Instance()->GetSimTime();
-    this->last_time_    = this->current_time_;
+    lock_.unlock();
+}
 
-    /// initialize battery
-    this->charge_           = this->full_capacity_; /// our convention is joules
-    this->consumption_rate_ = this->default_consumption_rate_; /// time based decay rate in watts
-  }
-
-  void GazeboBattery::UpdateChild()
-  {
-    this->current_time_ = Simulator::Instance()->GetSimTime();
-
-    /**********************************************************/
-    /*                                                        */
-    /*   update battery                                       */
-    /*                                                        */
-    /**********************************************************/
-    this->charge_ = this->charge_ + (this->current_time_ - this->last_time_)*this->consumption_rate_;
-    if (this->charge_ < 0) this->charge_ = 0;
-    if (this->charge_ > this->full_capacity_) this->charge_ = this->full_capacity_;
-    //std::cout << " battery charge remaining: " << this->charge_ << " Joules " << std::endl;
-
-    /**********************************************************/
-    /*                                                        */
-    /* publish power state                                    */
-    /*                                                        */
-    /**********************************************************/
-    //this->power_state_.header.frame_id = ; // no frame id for battery
-    this->power_state_.header.stamp.sec = (unsigned long)floor(this->current_time_);
-    this->power_state_.header.stamp.nsec = (unsigned long)floor(  1e9 * (  this->current_time_ - this->power_state_.header.stamp.sec) );
-    if (this->consumption_rate_ > 0)
-        this->power_state_.time_remaining = this->charge_ / this->consumption_rate_;
-    else
-        this->power_state_.time_remaining = 65535;
-    //this->power_state_.energy_capacity = this->full_capacity_;
-    this->power_state_.power_consumption = this->consumption_rate_;
-
-    this->lock_.lock();
-    this->pub_.publish(this->power_state_);
-    this->lock_.unlock();
-    
-    /**********************************************************/
-    /*                                                        */
-    /* publish diagnostic message                             */
-    /*                                                        */
-    /**********************************************************/
-    //this->diagnostic_status_.level = 0;
-    //this->diagnostic_status_.name = "battery diagnostic";
-    //this->diagnostic_status_.message = "battery ok";
-    //this->diagnostic_message_.header = this->power_state_.header;
-    //this->diagnostic_message_.set_status_size(1);
-    //this->diagnostic_message_.status[0] = this->diagnostic_status_;
-    //this->lock_.lock();
-    //this->diag_pub_.publish(this->diagnosticMessageTopicName_,diagnostic_message_);
-    //this->lock_.unlock();
-
-    this->last_time_    = this->current_time_;
-  }
-
-  void GazeboBattery::FiniChild()
-  {
-    ROS_DEBUG("Calling FiniChild in GazeboBattery");
-  }
-
-
-
-} // namespace gazebo
-
-
+}
