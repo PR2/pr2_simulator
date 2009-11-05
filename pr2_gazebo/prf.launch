@@ -9,5 +9,10 @@
   <!-- Controller Manager -->
   <include file="$(find pr2_controller_manager)/controller_manager.launch" />
 
+  <!-- Default Controllers -->
+  <rosparam command="load" file="$(find pr2_default_controllers)/pr2_arm_controllers.yaml" />
+  <rosparam command="load" file="$(find pr2_default_controllers)/head_position_controller.yaml" />
+
+
 </launch>
 
