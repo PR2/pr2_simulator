@@ -28,6 +28,20 @@ material PR2/wall_texture
   }
 }
 
+material PR2/caster_texture
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture pr2_caster_texture.png
+      }
+    }
+  }
+}
+
 material PR2/wheel_r
 {
   technique
