@@ -28,6 +28,7 @@
 #define ROS_CAMERA_HH
 
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
 #include "boost/thread/mutex.hpp"
 #include <gazebo/Param.hh>
 #include <gazebo/Controller.hh>
@@ -207,6 +208,11 @@ class RosProsilica : public Controller
   private: int height, width, depth;
   private: std::string type;
   private: int skip;
+
+  private: ros::CallbackQueue prosilica_queue_;
+  private: void ProsilicaQueueThread();
+  private: boost::thread* prosilica_thread_;
+
 };
 
 /** \} */

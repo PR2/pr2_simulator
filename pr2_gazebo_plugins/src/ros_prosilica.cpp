@@ -122,6 +122,7 @@ RosProsilica::~RosProsilica()
   delete this->distortion_k3P;
   delete this->distortion_t1P;
   delete this->distortion_t2P;
+  delete this->prosilica_thread_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -396,6 +397,8 @@ void RosProsilica::InitChild()
     this->skip = 3;
   }
 
+  // start custom queue for prosilica
+  this->prosilica_thread_ = new boost::thread( boost::bind( &RosProsilica::ProsilicaQueueThread,this ) );
 
 }
 
@@ -451,6 +454,7 @@ void RosProsilica::UpdateChild()
 void RosProsilica::FiniChild()
 {
   this->myParent->SetActive(false);
+  this->prosilica_thread_->join();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -461,4 +465,15 @@ void RosProsilica::PutCameraDataWithROI(int x, int y, int w, int h)
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Put laser data to the interface
+void RosProsilica::ProsilicaQueueThread()
+{
+  ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
+
+  while (this->rosnode_->ok())
+  {
+    this->prosilica_queue_.callAvailable(ros::WallDuration(0.01));
+  }
+}
 
