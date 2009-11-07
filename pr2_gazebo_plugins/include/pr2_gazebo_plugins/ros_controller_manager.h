@@ -41,6 +41,11 @@
 #include "pr2_mechanism_model/robot.h"
 #include "tinyxml/tinyxml.h"
 #include <gazebo/Param.hh>
+#include <ros/ros.h>
+#undef USE_CBQ
+#ifdef USE_CBQ
+#include <ros/callback_queue.h>
+#endif
 
 namespace gazebo
 {
@@ -178,6 +183,12 @@ private:
   std::string robotParam;
   std::string robotNamespace;
 
+#ifdef USE_CBQ
+  private: ros::CallbackQueue controller_manager_queue_;
+  private: void ControllerManagerQueueThread();
+  private: boost::thread* controller_manager_callback_queue_thread_;
+#endif
+  private: boost::thread* ros_spinner_thread_;
 };
 
 /** \} */

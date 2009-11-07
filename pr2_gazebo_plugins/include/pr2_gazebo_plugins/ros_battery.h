@@ -27,150 +27,143 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GAZEBO_BATTERY_H
-#define GAZEBO_BATTERY_H
+#ifndef PR2_GAZEBO_PLUGINS_ROS_BATTERY_H
+#define PR2_GAZEBO_PLUGINS_ROS_BATTERY_H
 
-#include <vector>
 #include <map>
+#include <vector>
+#include <boost/thread/mutex.hpp>
 #include <gazebo/Controller.hh>
 #include <gazebo/Entity.hh>
 #include <gazebo/Model.hh>
-#include <pr2_msgs/PowerState.h>
-#include <diagnostic_msgs/DiagnosticArray.h>
-#include <diagnostic_msgs/DiagnosticStatus.h>
-#include <pr2_gazebo_plugins/PlugCommand.h>
-#include <ros/ros.h>
-#include <boost/thread/mutex.hpp>
 #include <gazebo/Param.hh>
+#include <ros/ros.h>
+#include <pr2_msgs/PowerState.h>
+#include <pr2_gazebo_plugins/PlugCommand.h>
 
-namespace gazebo
-{
+namespace gazebo {
+
 class XMLConfigNode;
 
 /// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
 /// @{
 /** \defgroup ros_battery RosBattery class
 
-  \brief RosBattery Plugin
-  
-  This plugin simulates battery usage.
-  RosBattery requires model as its parent.
+ \brief RosBattery Plugin
 
-  \verbatim
-  <model:physical name="ray_model">
+ This plugin simulates battery usage.
+ RosBattery requires a model as its parent.
+
+ \verbatim
+ <model:physical name="ray_model">
     <!-- RosBattery -->
-    <controller:ros_battery name="ros_battery" plugin="libros_battery.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>1000.0</updateRate>
-      <interface:audio name="ros_battery_dummy_iface" />
+    <controller:ros_battery name="ros_battery_controller" plugin="libros_battery.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1.0</updateRate>
+        <timeout>5</timeout>
+        <interface:audio name="battery_dummy_interface" />
+        <powerStateTopic>power_state</powerStateTopic>
+        <powerStateRate>10.0</powerStateRate>
+        <fullChargeCapacity>87.78</fullChargeCapacity>
+        <dischargeRate>-474</dischargeRate>
+        <chargeRate>525</chargeRate>
+        <dischargeVoltage>15.52</dischargeVoltage>
+        <chargeVoltage>16.41</chargeVoltage>
     </controller:ros_battery>
-  </model:phyiscal>
-  \endverbatim
+ </model:physical>
+ \endverbatim
  
-\{
+ \{
 
-
-*/
+ */
 
 /**
  * \brief Battery simulation
  *   \li starts a ROS node if none exists
- *   \li return power state and diagnostic message over ROS topic.
+ *   \li publishes PowerState messages on the /power_state topic
  * .
  *
-  \verbatim
-  <model:physical name="ray_model">
+ \verbatim
+ <model:physical name="ray_model">
     <!-- RosBattery -->
-    <controller:ros_battery name="ros_battery" plugin="libros_battery.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>1000.0</updateRate>
-      <interface:audio name="ros_battery_dummy_iface" />
+    <controller:ros_battery name="ros_battery_controller" plugin="libros_battery.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1.0</updateRate>
+        <timeout>5</timeout>
+        <interface:audio name="battery_dummy_interface" />
+        <powerStateTopic>power_state</powerStateTopic>
+        <powerStateRate>10.0</powerStateRate>
+        <fullChargeCapacity>87.78</fullChargeCapacity>
+        <dischargeRate>-474</dischargeRate>
+        <chargeRate>525</chargeRate>
+        <dischargeVoltage>15.52</dischargeVoltage>
+        <chargeVoltage>16.41</chargeVoltage>
     </controller:ros_battery>
-  </model:phyiscal>
-  \endverbatim
-**/
-
-
-class RosBattery : public gazebo::Controller
+ </model:physical>
+ \endverbatim
+ **/
+class RosBattery : public Controller
 {
 public:
-  RosBattery(Entity *parent);
-  virtual ~RosBattery();
+    RosBattery(Entity* parent);
+    virtual ~RosBattery();
 
 protected:
-  // Inherited from gazebo::Controller
-  virtual void LoadChild(XMLConfigNode *node);
-  virtual void InitChild();
-  virtual void UpdateChild();
-  virtual void FiniChild();
+    // Inherited from Controller
+    virtual void LoadChild(XMLConfigNode* node);
+    virtual void InitChild();
+    virtual void UpdateChild();
+    virtual void FiniChild();
 
 private:
+    /// \brief listen to ROS to see if we are charging
+    void SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg);
 
-  Model *parent_model_;
+private:
+    Model* model_;
+    double curr_time_;
+    double last_time_;
 
-  /// \brief ros message for power state
-  pr2_msgs::PowerState power_state_;
-  /// \brief ros message for battery state
-  pr2_msgs::PowerState battery_state_;
+    ParamT<std::string>* robot_namespace_param_;
+    ParamT<std::string>* power_state_topic_param_;
 
-  /// \brief ros message for diagnostic messages
-  diagnostic_msgs::DiagnosticArray diagnostic_message_;
-  diagnostic_msgs::DiagnosticStatus diagnostic_status_;
+    ros::NodeHandle* ros_node_;
+    ros::Subscriber  plugged_in_sub_;
+    ros::Publisher   power_state_pub_;
 
-  /// \brief pointer to ros node
-  private: ros::NodeHandle* rosnode_;
-  private: ros::Publisher pub_;
-  private: ros::Subscriber sub_;
+    /// \brief lock access to fields that are used in message callbacks
+    boost::mutex lock_;
 
-  /// \brief power state topic name
-  private: ParamT<std::string> *stateTopicNameP;
-  private: std::string stateTopicName_;
+    pr2_msgs::PowerState power_state_;
 
-  /// \brief diag. msg. topic name
-  private: ParamT<std::string> *diagnosticMessageTopicNameP;
-  private: std::string diagnosticMessageTopicName_;
+    /// \brief rate to broadcast power state message
+    ParamT<double>* power_state_rate_param_;
 
-  /// \brief A mutex to lock access to fields that are used in message callbacks
-  private: boost::mutex lock_;
+    /// \brief internal variables for keeping track of simulated battery
 
-  /// \brief stores current simulator time
-  private: double current_time_;
+    /// \brief full capacity of battery (Ah)
+    ParamT<double>* full_capacity_param_;
 
-  /// \brief stores last simulator time
-  private: double last_time_;
+    /// \brief charge rate when plugged in (W)
+    ParamT<double>* charge_rate_param_;
 
-  /// \brief rate to broadcast diagnostic message
-  private: double diagnostic_rate_;
+    /// \brief discharge rate when not plugged in (W)
+    ParamT<double>* discharge_rate_param_;
 
-  /// \brief rate to broadcast power states message
-  private: ParamT<double> *power_state_rateP;
-  private: double power_state_rate_;
+    /// \brief charge voltage when plugged in (V)
+    ParamT<double>* charge_voltage_param_;
 
-  /// \brief some internal variables for keeping track of simulated battery
-  ///           @todo make consumption rate vary with joint commands, motion, etc
+    /// \brief discharge voltage when plugged in (V)
+    ParamT<double>* discharge_voltage_param_;
 
-  /// \brief full capacity of battery
-  private: ParamT<double> *full_capacityP;
-  private: double full_capacity_;
+    /// \brief charge state (Ah)
+    double charge_;
 
-  /// \brief charge state;
-  private: double charge_;
+    /// \brief charge rate (W)
+    double charge_rate_;
 
-  /// \brief default charge rate when plugged in
-  private: ParamT<double> *default_charge_rateP;
-  private: double default_charge_rate_;
-
-  /// \brief power drain, if this is negative, we are charging the battery.
-  private: double consumption_rate_;
-  private: ParamT<double> *default_consumption_rateP;
-  private: double default_consumption_rate_;
-
-  /// \brief listen to ROS to see if we are charging
-  private: void SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg);
-
-  /// \brief for setting ROS name space
-  private: ParamT<std::string> *robotNamespaceP;
-  private: std::string robotNamespace;
+    /// \brief voltage (V)
+    double voltage_;
 };
 
 /** \} */
@@ -179,4 +172,3 @@ private:
 }
 
 #endif
-
