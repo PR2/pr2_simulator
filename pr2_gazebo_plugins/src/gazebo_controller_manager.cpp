@@ -76,6 +76,10 @@ GazeboControllerManager::~GazeboControllerManager()
   delete this->robotNamespaceP;
   delete this->cm_; 
   delete this->rosnode_;
+#ifdef USE_CBQ
+  delete this->controller_manager_callback_queue_thread_;
+#endif
+  delete this->ros_spinner_thread_;
 }
 
 void GazeboControllerManager::LoadChild(XMLConfigNode *node)
@@ -126,6 +130,15 @@ void GazeboControllerManager::LoadChild(XMLConfigNode *node)
 void GazeboControllerManager::InitChild()
 {
   this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
+
+#ifdef USE_CBQ
+  // start custom queue for controller manager
+  this->controller_manager_callback_queue_thread_ = new boost::thread( boost::bind( &GazeboControllerManager::ControllerManagerQueueThread,this ) );
+#endif
+
+  // pr2_etherCAT calls ros::spin(), we'll thread out one spinner here to mimic that
+  this->ros_spinner_thread_ = new boost::thread( boost::bind( &ros::spin ) );
+
 }
 
 void GazeboControllerManager::UpdateChild()
@@ -238,6 +251,11 @@ void GazeboControllerManager::FiniChild()
 
   pr2_hardware_interface::deleteElements(&this->joints_);
   delete this->fake_state_;
+
+#ifdef USE_CBQ
+  this->controller_manager_callback_queue_thread_->join();
+#endif
+  this->ros_spinner_thread_->join();
 }
 
 void GazeboControllerManager::ReadPr2Xml(XMLConfigNode *node)
@@ -310,5 +328,21 @@ void GazeboControllerManager::ReadPr2Xml(XMLConfigNode *node)
   for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
     this->cm_->state_->joint_states_[i].calibrated_ = true;
 }
+
+#ifdef USE_CBQ
+////////////////////////////////////////////////////////////////////////////////
+// custom callback queue
+void GazeboControllerManager::ControllerManagerQueueThread()
+{
+  ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
+
+  static const double timeout = 0.01;
+
+  while (this->rosnode_->ok())
+  {
+    this->controller_manager_queue_.callAvailable(ros::WallDuration(timeout));
+  }
+}
+#endif
 
 } // namespace gazebo

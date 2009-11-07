@@ -79,10 +79,6 @@ void RosTime::LoadChild(XMLConfigNode *node)
 
   // broadcasting sim time, so set parameter, this should really be in the launch script param tag, so it's set before nodes start
   this->rosnode_->setParam("/use_sim_time", true);
-
-  // spawn 2 threads by default, ///@todo: make this a parameter
-  ros::MultiThreadedSpinner s(2);
-  boost::thread spinner_thread( boost::bind( &ros::spin, s ) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

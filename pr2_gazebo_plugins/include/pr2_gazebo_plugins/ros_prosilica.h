@@ -28,7 +28,10 @@
 #define ROS_CAMERA_HH
 
 #include <ros/ros.h>
+#define USE_CBQ
+#ifdef USE_CBQ
 #include <ros/callback_queue.h>
+#endif
 #include "boost/thread/mutex.hpp"
 #include <gazebo/Param.hh>
 #include <gazebo/Controller.hh>
@@ -209,9 +212,13 @@ class RosProsilica : public Controller
   private: std::string type;
   private: int skip;
 
+#ifdef USE_CBQ
   private: ros::CallbackQueue prosilica_queue_;
   private: void ProsilicaQueueThread();
-  private: boost::thread* prosilica_thread_;
+  private: boost::thread* prosilica_callback_queue_thread_;
+#else
+  private: boost::thread* ros_spinner_thread_;
+#endif
 
 };
 

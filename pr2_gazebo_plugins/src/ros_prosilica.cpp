@@ -63,7 +63,8 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <string>
 
-using namespace gazebo;
+namespace gazebo
+{
 
 GZ_REGISTER_DYNAMIC_CONTROLLER("ros_prosilica", RosProsilica);
 
@@ -122,7 +123,11 @@ RosProsilica::~RosProsilica()
   delete this->distortion_k3P;
   delete this->distortion_t1P;
   delete this->distortion_t2P;
-  delete this->prosilica_thread_;
+#ifdef USE_CBQ
+  delete this->prosilica_callback_queue_thread_;
+#else
+  delete this->ros_spinner_thread_;
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -397,8 +402,13 @@ void RosProsilica::InitChild()
     this->skip = 3;
   }
 
+#ifdef USE_CBQ
   // start custom queue for prosilica
-  this->prosilica_thread_ = new boost::thread( boost::bind( &RosProsilica::ProsilicaQueueThread,this ) );
+  this->prosilica_callback_queue_thread_ = new boost::thread( boost::bind( &RosProsilica::ProsilicaQueueThread,this ) );
+#else
+  // start ros spinner as it is done in prosilica node
+  this->ros_spinner_thread_ = new boost::thread( boost::bind( &ros::spin ) );
+#endif
 
 }
 
@@ -454,7 +464,11 @@ void RosProsilica::UpdateChild()
 void RosProsilica::FiniChild()
 {
   this->myParent->SetActive(false);
-  this->prosilica_thread_->join();
+#ifdef USE_CBQ
+  this->prosilica_callback_queue_thread_->join();
+#else
+  this->ros_spinner_thread_->join();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -465,15 +479,20 @@ void RosProsilica::PutCameraDataWithROI(int x, int y, int w, int h)
 }
 
 
+#ifdef USE_CBQ
 ////////////////////////////////////////////////////////////////////////////////
 // Put laser data to the interface
 void RosProsilica::ProsilicaQueueThread()
 {
   ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
 
+  static const double timeout = 0.01;
+
   while (this->rosnode_->ok())
   {
-    this->prosilica_queue_.callAvailable(ros::WallDuration(0.01));
+    this->prosilica_queue_.callAvailable(ros::WallDuration(timeout));
   }
 }
+#endif
 
+}
