@@ -1,7 +1,21 @@
 <launch>
-  <!-- TBD trajectory controller api review
+  <!-- launch a set of trajectory controllers -->
+  <!-- pending new trajectory controller from animate_robot
   <rosparam file="$(find pr2_default_controllers)/r_arm_trajectory_controller.yaml" command="load"/>
   <rosparam file="$(find pr2_default_controllers)/l_arm_trajectory_controller.yaml" command="load"/>
   <node pkg="pr2_controller_manager" type="spawner.py" args="Trajectory" output="screen" />
   -->
+
+  <!-- launch base trajectory controller -->
+  <param name="base_trajectory_controller/controller_frequency" value="20.0" type="double" />
+  <node pkg="pr2_mechanism_controllers" type="base_trajectory_controller"/>
+
+  <!-- load head and base controllers -->
+  <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
+  <include file="$(find pr2_default_controllers)/head_position_controller.launch"/>
+
+  <!-- tilting laser controller -->
+  <include file="$(find pr2_gazebo)/controllers/pr2_tilt_laser_controller.launch"/>
+
 </launch>
+

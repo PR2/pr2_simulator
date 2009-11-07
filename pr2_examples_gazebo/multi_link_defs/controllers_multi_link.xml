@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
-
+<!-- BROKEN CONTROLLERS, NEED TO BE FIXED -->
+<!-- BROKEN CONTROLLERS, NEED TO BE FIXED -->
+<!-- BROKEN CONTROLLERS, NEED TO BE FIXED -->
+<!-- BROKEN CONTROLLERS, NEED TO BE FIXED -->
+<!-- BROKEN CONTROLLERS, NEED TO BE FIXED -->
 <controllers>
-  <!-- ========================================= -->
   <!-- right arm array -->
   <controller name="test_controller" type="ArmDynamicsControllerNode">
     <listen_topic name="multi_link_commands" />

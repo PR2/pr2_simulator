@@ -4,16 +4,13 @@
   <include file="$(find gazebo)/launch/wg_world.launch"/>
 
   <!-- start up robot -->
-  <include file="$(find pr2_gazebo)/pr2.launch"/>
+  <include file="$(find pr2_gazebo)/pr2_armless.launch"/>
 
   <!-- load map -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(find gazebo_worlds)/Media/materials/textures/willowMap.png 0.1" respawn="true" machine="three" />
 
-  <!-- Tug Arms For Navigation -->
-  <node name="tuckarms" pkg="pr2_experimental_controllers" type="tuckarm.py" args="b" output="screen" />
-
   <!-- nav-stack -->
-  <include file="$(find pr2_2dnav_gazebo)/2dnav-stack-amcl.launch"/>
+  <include file="$(find pr2_2dnav_gazebo)/2dnav-stack-fake_localization.launch"/>
 
 </launch>
 

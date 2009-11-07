@@ -1,8 +1,0 @@
-<launch>
-  <!-- send cylinder_object.xml to param server -->
-  <param name="object_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/cylinder_object_defs.xml'" />
-
-  <!-- push cylinder_object_description to factory and spawn robot in gazebo -->
-  <node name="spawn_object" pkg="gazebo_tools" type="spawn_gazebo_model" args="object_description -z 0.0 -m object_1" respawn="false" output="screen" /> 
-</launch>
-

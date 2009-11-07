@@ -6,4 +6,3 @@
   <include file="$(find pr2_gazebo)/controllers/pr2_tilt_laser_controller.launch"/>
 
 </launch>
-

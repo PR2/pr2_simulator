@@ -1,6 +1,6 @@
 <launch>
-  <!-- send dual_link.xml to param server -->
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/dual_link_defs/dual_link.xml'" />
+  <!-- send dual_link.urdf to param server -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/dual_link_defs/dual_link.urdf.xacro'" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="spawn_dual_links" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" />

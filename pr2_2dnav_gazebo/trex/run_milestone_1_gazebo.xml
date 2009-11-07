@@ -1,6 +1,6 @@
 <launch>
   <!-- start up robot with 2dnav-stack -->
-  <include file="$(find pr2_2dnav_gazebo)/2dnav-gazebo-prototype1-wg-fake_localization.xml"/>
+  <include file="$(find pr2_2dnav_gazebo)/2dnav-gazebo-pr2-armless-wg-fake_localization.xml"/>
 
   <!-- start up trex -->
   <param name="/trex/input_file" value="pr2.cfg"/>

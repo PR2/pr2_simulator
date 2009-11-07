@@ -1,6 +1,0 @@
-<launch>
-  <!-- send simple_cylinder.xml to param server -->
-  <param name="simple_cylinder" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/simple_rdf_examples/simple_cylinder.xml'" />
-  <node name="spawn_simple_cylinder" pkg="gazebo_tools" type="spawn_gazebo_model" args="simple_cylinder" respawn="false" output="screen" />
-</launch>
-

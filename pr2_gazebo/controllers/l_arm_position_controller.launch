@@ -1,0 +1,6 @@
+<launch>
+  <!--  arm controller -->
+  <rosparam file="$(find pr2_default_controllers)/pr2_joint_position_controllers.yaml" command="load" />
+  <node name="l_arm_pos_controller" pkg="pr2_controller_manager" type="spawner.py" args="l_shoulder_pan_position_controller l_shoulder_lift_position_controller l_upper_arm_roll_position_controller l_elbow_flex_position_controller l_forearm_roll_position_controller l_wrist_flex_position_controller l_wrist_roll_position_controller l_gripper_position_controller" output="screen"/>
+</launch>
+

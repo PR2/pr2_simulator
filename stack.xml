@@ -29,8 +29,6 @@
 
   <!-- referenced non-stack packages -->
   <!--depend stack=""/--> <!-- wg-ros-pkg/pr2/pr2_default_controllers --> 
-  <!--depend stack=""/--> <!-- wg-ros-pkg/nav/teleop_base --> 
-  <!--depend stack=""/--> <!-- wg-ros-pkg/pr2/teleop/teleop_arm_kebyoard --> 
 
   <!-- added for tests -->
   <depend stack="laser_pipeline"/> <!-- laser_filters --> 

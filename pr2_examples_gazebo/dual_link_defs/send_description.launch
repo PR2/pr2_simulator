@@ -1,5 +1,0 @@
-<launch>
-
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/dual_link_defs/dual_link.xml'" />
-
-</launch>

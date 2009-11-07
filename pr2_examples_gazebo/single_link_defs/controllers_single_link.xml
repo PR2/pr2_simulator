@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<controllers>
-  <controller name="test_controller" topic="link1_controller" type="JointPositionControllerNode">
-    <joint name="link1_joint" >
-      <pid p="2000" d="200" i="0.1" iClamp="1" />
-    </joint>
-  </controller>
-</controllers>
-

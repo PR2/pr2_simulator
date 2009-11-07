@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <pr2_gazebo_plugins/gazebo_controller_manager.h>
+#include <pr2_gazebo_plugins/ros_controller_manager.h>
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -47,19 +47,20 @@
 
 namespace gazebo {
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_controller_manager", GazeboControllerManager);
+GZ_REGISTER_DYNAMIC_CONTROLLER("ros_controller_manager", RosControllerManager);
 
-GazeboControllerManager::GazeboControllerManager(Entity *parent)
+RosControllerManager::RosControllerManager(Entity *parent)
   : Controller(parent), hw_(), fake_state_(NULL)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
   if (!this->parent_model_)
-    gzthrow("GazeboControllerManager controller requires a Model as its parent");
+    gzthrow("RosControllerManager controller requires a Model as its parent");
 
   Param::Begin(&this->parameters);
   this->robotParamP = new ParamT<std::string>("robotParam", "robot_description", 0);
   this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  this->setModelsJointsStatesServiceNameP = new ParamT<std::string>("setModelsJointsStatesServiceName","set_models_joints_states", 0);
   Param::End();
 
   if (getenv("CHECK_SPEEDUP"))
@@ -70,19 +71,24 @@ GazeboControllerManager::GazeboControllerManager(Entity *parent)
 
 }
 
-GazeboControllerManager::~GazeboControllerManager()
+/// \brief callback for setting models joints states
+bool setModelsJointsStates(pr2_gazebo_plugins::SetModelsJointsStates::Request &req,
+                           pr2_gazebo_plugins::SetModelsJointsStates::Response &res)
+{
+
+  return true;
+}
+
+
+RosControllerManager::~RosControllerManager()
 {
   delete this->robotParamP;
   delete this->robotNamespaceP;
   delete this->cm_; 
   delete this->rosnode_;
-#ifdef USE_CBQ
-  delete this->controller_manager_callback_queue_thread_;
-#endif
-  delete this->ros_spinner_thread_;
 }
 
-void GazeboControllerManager::LoadChild(XMLConfigNode *node)
+void RosControllerManager::LoadChild(XMLConfigNode *node)
 {
   // get parameter name
   this->robotParamP->Load(node);
@@ -94,11 +100,11 @@ void GazeboControllerManager::LoadChild(XMLConfigNode *node)
   char** argv = NULL;
   ros::init(argc,argv,"gazebo",ros::init_options::AnonymousName);
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_gazebo_model
-  ROS_INFO("starting gazebo_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
+  ROS_INFO("starting ros_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
   this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);
 
-  // read pr2.xml (pr2_gazebo_controller_manager.xml)
+  // read pr2 urdf
   // setup actuators, then setup mechanism control node
   ReadPr2Xml(node);
 
@@ -127,21 +133,12 @@ void GazeboControllerManager::LoadChild(XMLConfigNode *node)
   this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
 }
 
-void GazeboControllerManager::InitChild()
+void RosControllerManager::InitChild()
 {
   this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
-
-#ifdef USE_CBQ
-  // start custom queue for controller manager
-  this->controller_manager_callback_queue_thread_ = new boost::thread( boost::bind( &GazeboControllerManager::ControllerManagerQueueThread,this ) );
-#endif
-
-  // pr2_etherCAT calls ros::spin(), we'll thread out one spinner here to mimic that
-  this->ros_spinner_thread_ = new boost::thread( boost::bind( &ros::spin ) );
-
 }
 
-void GazeboControllerManager::UpdateChild()
+void RosControllerManager::UpdateChild()
 {
 
   if (getenv("CHECK_SPEEDUP"))
@@ -240,9 +237,9 @@ void GazeboControllerManager::UpdateChild()
   }
 }
 
-void GazeboControllerManager::FiniChild()
+void RosControllerManager::FiniChild()
 {
-  ROS_DEBUG("Calling FiniChild in GazeboControllerManager");
+  ROS_DEBUG("Calling FiniChild in RosControllerManager");
 
   pr2_hardware_interface::ActuatorMap::const_iterator it;
   for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
@@ -251,14 +248,9 @@ void GazeboControllerManager::FiniChild()
 
   pr2_hardware_interface::deleteElements(&this->joints_);
   delete this->fake_state_;
-
-#ifdef USE_CBQ
-  this->controller_manager_callback_queue_thread_->join();
-#endif
-  this->ros_spinner_thread_->join();
 }
 
-void GazeboControllerManager::ReadPr2Xml(XMLConfigNode *node)
+void RosControllerManager::ReadPr2Xml(XMLConfigNode *node)
 {
 
   std::string urdf_param_name;
@@ -328,21 +320,5 @@ void GazeboControllerManager::ReadPr2Xml(XMLConfigNode *node)
   for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
     this->cm_->state_->joint_states_[i].calibrated_ = true;
 }
-
-#ifdef USE_CBQ
-////////////////////////////////////////////////////////////////////////////////
-// custom callback queue
-void GazeboControllerManager::ControllerManagerQueueThread()
-{
-  ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
-
-  static const double timeout = 0.01;
-
-  while (this->rosnode_->ok())
-  {
-    this->controller_manager_queue_.callAvailable(ros::WallDuration(timeout));
-  }
-}
-#endif
 
 } // namespace gazebo

@@ -19,11 +19,6 @@ Demos for running high fidelity 3D gazebo simulation with 2dnav-stack.
   <node pkg="map_server" type="map_server" args="$(find gazebo_worlds)/Media/materials/textures/map_blank.png 0.1" respawn="true" machine="three" />
   <!-- nav-stack -->
   <include file="$(find pr2_2dnav_gazebo)/2dnav-stack-amcl.launch"/>
-  <!-- for visualization -->
-  <include file="$(find 2dnav_pr2)/rviz/rviz_move_base.launch"/>
-  <!-- for manual control -->
-  <!--node pkg="teleop_base" type="teleop_base_keyboard" respawn="false" output="screen" /-->
-  <!--node pkg="teleop_arm_keyboard" type="teleop_arm_keyboard" respawn="false" output="screen" /-->
 </launch>
       @endverbatim
 **/

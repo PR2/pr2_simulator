@@ -37,15 +37,10 @@
 #include <gazebo/Model.hh>
 #include "pr2_hardware_interface/hardware_interface.h"
 #include "pr2_controller_manager/controller_manager.h"
+#include "pr2_gazebo_plugins/SetModelsJointsStates.h"
 #include "pr2_mechanism_model/robot.h"
 #include "tinyxml/tinyxml.h"
 #include <gazebo/Param.hh>
-
-#include <ros/ros.h>
-#undef USE_CBQ
-#ifdef USE_CBQ
-#include <ros/callback_queue.h>
-#endif
 
 namespace gazebo
 {
@@ -54,7 +49,7 @@ class XMLConfigNode;
 
 /// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
 /// @{
-/** \defgroup gazebo_controller_manager GazeboMechanismControl class
+/** \defgroup ros_controller_manager GazeboMechanismControl class
 
   \brief GazeboMechanismControl Plugin
   
@@ -65,12 +60,12 @@ class XMLConfigNode;
   \verbatim
   <model:physical name="ray_model">
     <!-- GazeboMechanismControl -->
-    <controller:gazebo_controller_manager name="gazebo_controller_manager" plugin="libgazebo_controller_manager.so">
+    <controller:ros_controller_manager name="ros_controller_manager" plugin="libros_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>1000.0</updateRate>
-      <robot filename="pr2.xml" /> <!-- gazebo_controller_manager use this file to extract mechanism model -->
+      <robot filename="pr2.xml" /> <!-- ros_controller_manager use this file to extract mechanism model -->
       <gazebo_physics filename="gazebo_joints.xml" /> <!-- for simulator/physics specific settigs, currently just damping -->
-    </controller:gazebo_controller_manager>
+    </controller:ros_controller_manager>
   </model:phyiscal>
   \endverbatim
  
@@ -113,23 +108,23 @@ class XMLConfigNode;
   \verbatim
   <model:physical name="ray_model">
     <!-- GazeboMechanismControl -->
-    <controller:gazebo_controller_manager name="gazebo_controller_manager" plugin="libgazebo_controller_manager.so">
+    <controller:ros_controller_manager name="ros_controller_manager" plugin="libros_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>1000.0</updateRate>
-      <robot filename="pr2.xml" /> <!-- gazebo_controller_manager use this file to extract mechanism model -->
+      <robot filename="pr2.xml" /> <!-- ros_controller_manager use this file to extract mechanism model -->
       <gazebo_physics filename="gazebo_joints.xml" /> <!-- for simulator/physics specific settigs, currently just damping -->
-    </controller:gazebo_controller_manager>
+    </controller:ros_controller_manager>
   </model:phyiscal>
   \endverbatim
    .
 **/
 
 
-class GazeboControllerManager : public gazebo::Controller
+class RosControllerManager : public gazebo::Controller
 {
 public:
-  GazeboControllerManager(Entity *parent);
-  virtual ~GazeboControllerManager();
+  RosControllerManager(Entity *parent);
+  virtual ~RosControllerManager();
 
 protected:
   // Inherited from gazebo::Controller
@@ -150,6 +145,10 @@ private:
   pr2_mechanism_model::RobotState *fake_state_;
   std::vector<gazebo::Joint*>  joints_;
 
+  /// \brief Service Call Name
+  private: ParamT<std::string> *setModelsJointsStatesServiceNameP;
+  private: std::string setModelsJointsStatesServiceName;
+
   /*
    * \brief read pr2.xml for actuators, and pass tinyxml node to mechanism control node's initXml.
    */
@@ -160,6 +159,14 @@ private:
    */
   ros::NodeHandle* rosnode_;
 
+  /// \brief ros service
+  private: ros::ServiceServer setModelsJointsStatesService;
+
+  ///\brief ros service callback
+  private: bool setModelsJointsStates(pr2_gazebo_plugins::SetModelsJointsStates::Request &req,
+                                      pr2_gazebo_plugins::SetModelsJointsStates::Response &res);
+
+  ///\brief ros service callback
   /*
    *  \brief tmp vars for performance checking
    */
@@ -171,12 +178,6 @@ private:
   std::string robotParam;
   std::string robotNamespace;
 
-#ifdef USE_CBQ
-  private: ros::CallbackQueue controller_manager_queue_;
-  private: void ControllerManagerQueueThread();
-  private: boost::thread* controller_manager_callback_queue_thread_;
-#endif
-  private: boost::thread* ros_spinner_thread_;
 };
 
 /** \} */

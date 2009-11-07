@@ -1,10 +1,9 @@
 <package>
-  <description>Start a PR2 in 3D simulation environment.</description>
+  <description>Sample simulation using ROS-Gazebo plugins for PR2 joint control.</description>
   <author>John Hsu</author>
   <license>BSD</license>
   <review status="na" notes=""/>
-  <url>http://pr.willowgarage.com/wiki/Simulator</url>
+  <url>http://pr.willowgarage.com/wiki/pr2_examples_gazebo</url>
   <depend package="pr2_gazebo_plugins"/>
   <depend package="gazebo_tools"/>
-  <depend package="teleop_arm_keyboard"/>
 </package>

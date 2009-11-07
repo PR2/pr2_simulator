@@ -12,20 +12,14 @@
   <node name="spawn_pr2" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen"/>
 
   <!-- start arm controller -->
-  <include file="$(find pr2_arm_gazebo)/controllers/r_arm_position_controller.launch"/>
+  <include file="$(find pr2_gazebo)/controllers/r_arm_position_controller.launch"/>
 
   <!-- some hand waving -->
-  <node name="move_arm" pkg="pr2_arm_gazebo" type="grasp_preprogrammed.py" output="screen"/>
+  <node name="move_arm" pkg="pr2_gazebo" type="grasp_preprogrammed.py" output="screen"/>
 
-  <!-- for visualization -->
-  <!--
-  <node pkg="rviz" type="rviz" respawn="false" output="screen" />
-  -->
-  <!--include file="$(find pr2_arm_gazebo)/tests/debug_plot.launch"/-->
-
-  <param name="table_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/table_defs.xml'" />
+  <param name="table_description" command="$(find xacro)/xacro.py '$(find gazebo_worlds)/objects/table.urdf.xacro'" />
   <node name="spawn_table" pkg="gazebo_tools" type="spawn_gazebo_model" args="table_description -z 0.01 -m table_1" respawn="false" output="screen" />
-  <param name="object_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/table_defs/cylinder_object_defs.xml'" />
+  <param name="object_description" command="$(find xacro)/xacro.py '$(find gazebo_worlds)/objects/cylinder_object.urdf.xacro'" />
   <node name="spawn_object" pkg="gazebo_tools" type="spawn_gazebo_model" args="object_description -x -0.02 -y -0.195 -z 0.0 -m object_1" respawn="false" output="screen" /> 
 </launch>
 
