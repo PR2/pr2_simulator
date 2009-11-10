@@ -175,7 +175,7 @@ void GazeboRosControllerManager::UpdateChild()
     if (!this->joints_[i])
       continue;
 
-    this->fake_state_->joint_states_[i].applied_effort_ = this->fake_state_->joint_states_[i].commanded_effort_;
+    this->fake_state_->joint_states_[i].measured_effort_ = this->fake_state_->joint_states_[i].commanded_effort_;
 
     switch(this->joints_[i]->GetType())
     {
