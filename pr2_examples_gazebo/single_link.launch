@@ -9,6 +9,5 @@
 
   <node name="spawn_test_controller" pkg="pr2_controller_manager" type="spawner.py" args="test_controller" respawn="false" output="screen" />
 
-  <node name="set_test_controller" pkg="robot_mechanism_controllers" type="control.py" args="set test_controller 0.5" respawn="false" output="screen" />
 </launch>
 
