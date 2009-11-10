@@ -13,6 +13,10 @@
   <rosparam command="load" file="$(find pr2_default_controllers)/pr2_arm_controllers.yaml" />
   <rosparam command="load" file="$(find pr2_default_controllers)/head_position_controller.yaml" />
 
+  <!-- diagnostics aggregator -->
+  <node pkg="diagnostic_aggregator" type="aggregator_node" name="diag_agg" args="Robot" >
+    <rosparam command="load" file="$(find pr2_gazebo)/controllers/diagnostic_aggregator.yaml" />
+  </node>
 
 </launch>
 

@@ -1,0 +1,13 @@
+joints:
+  type: GenericAnalyzer
+  prefix: Joint
+  contains: [
+    'Position',
+    'Velocity',
+    'Commanded Effort',
+    'Calibrated']     
+
+realtime system:
+  type: GenericAnalyzer
+  prefix: Controllers
+
