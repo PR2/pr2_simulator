@@ -23,7 +23,7 @@
   <!-- unreleased stacks -->
   <depend stack="pr2_mechanism" /> <!-- pr2_hardware_interface, pr2_controller_manager, pr2_mechanism_model -->
   <depend stack="image_pipeline" /> <!-- stereo_msgs, stereo_image_proc -->
-  <depend stack="controllers" /> <!-- control_toolbox used by pr2_mechanism_controllers and robot_mechanism_controllers -->
+  <depend stack="pr2_controllers" /> <!-- pr2_controllers used by pr2_mechanism_controllers and robot_mechanism_controllers -->
   <depend stack="pr2_common" /> <!-- pr2_msgs -->
   <depend stack="manipulation_common" /> <!-- trajectory used by pr2_controller_manager, trajectory_msgs(manipulation_msgs) by robot_mechanism_controllers -->
 
