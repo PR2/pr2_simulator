@@ -40,6 +40,7 @@
 #include <gazebo/SliderJoint.hh>
 #include <gazebo/Simulator.hh>
 #include <gazebo/gazebo.h>
+#include <angles/angles.h>
 #include <gazebo/GazeboError.hh>
 #include <gazebo/ControllerFactory.hh>
 #include <urdf/model.h>
@@ -180,7 +181,8 @@ void GazeboRosControllerManager::UpdateChild()
     {
     case Joint::HINGE: {
       HingeJoint *hj = (HingeJoint*)this->joints_[i];
-      this->fake_state_->joint_states_[i].position_ = hj->GetAngle();
+      this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
+                    angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle());
       this->fake_state_->joint_states_[i].velocity_ = hj->GetAngleRate();
       break;
     }
