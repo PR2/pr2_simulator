@@ -43,7 +43,7 @@
   
   <joint name="link1_joint" type="revolute" >
     <axis xyz="1 0 0" />
-    <limit upper="-3" lower="3" effort="100" velocity="5" />
+    <limit upper="1" lower="-1" effort="100" velocity="5" />
     <parent link="base_block" />
     <origin xyz="0 0 1" rpy="0 0 0" />
     <child link="link1" />
