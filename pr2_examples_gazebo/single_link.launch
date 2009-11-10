@@ -7,7 +7,7 @@
 
   <rosparam file="$(find pr2_examples_gazebo)/single_link_defs/single_link_position_controller.yaml" command="load"/>
 
-  <node name="spawn_test_controller" pkg="pr2_controller_manager" type="spawner.py" args="test_controller" respawn="false" output="screen" />
+  <node name="spawn_test_controller" pkg="pr2_controller_manager" type="spawner" args="test_controller" respawn="false" output="screen" />
 
 </launch>
 
