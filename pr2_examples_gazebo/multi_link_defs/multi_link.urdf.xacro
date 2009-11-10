@@ -290,29 +290,29 @@
   <include filename="./multi_link.transmission.xacro" />
 
   <gazebo>
-      <controller:ros_time name="ros_time" plugin="libros_time.so">
+      <controller:gazebo_ros_time name="gazebo_ros_time" plugin="libgazebo_ros_time.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>1000.0</updateRate>
-        <interface:audio name="dummy_ros_time_iface_should_not_be_here"/>
-      </controller:ros_time>
+        <interface:audio name="dummy_gazebo_ros_time_iface_should_not_be_here"/>
+      </controller:gazebo_ros_time>
 
       <!-- PR2_ACTARRAY -->
-      <controller:ros_controller_manager name="ros_controller_manager" plugin="libros_controller_manager.so">
+      <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>1000.0</updateRate>
 
-        <interface:audio name="ros_controller_manager_dummy_iface" />
-      </controller:ros_controller_manager>
+        <interface:audio name="gazebo_ros_controller_manager_dummy_iface" />
+      </controller:gazebo_ros_controller_manager>
 
-      <!-- ros_p3d for position groundtruth -->
-      <controller:ros_p3d name="p3d_link3_controller" plugin="libros_p3d.so">
+      <!-- gazebo_ros_p3d for position groundtruth -->
+      <controller:gazebo_ros_p3d name="p3d_link3_controller" plugin="libgazebo_ros_p3d.so">
           <alwaysOn>true</alwaysOn>
           <updateRate>1000.0</updateRate>
           <bodyName>link3</bodyName>
           <topicName>link3_pose</topicName>
           <frameName>map</frameName>
           <interface:position name="p3d_link3_position"/>
-      </controller:ros_p3d>
+      </controller:gazebo_ros_p3d>
   </gazebo>
   
 </robot>
