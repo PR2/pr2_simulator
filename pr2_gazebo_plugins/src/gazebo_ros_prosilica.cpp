@@ -138,7 +138,7 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   this->robotNamespace = this->robotNamespaceP->GetValue();
   int argc = 0;
   char** argv = NULL;
-  ros::init(argc,argv,"gazebo",ros::init_options::AnonymousName);
+  ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
 
   this->imageTopicNameP->Load(node);
@@ -178,8 +178,16 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   this->image_rect_pub_ = this->rosnode_->advertise<sensor_msgs::Image>(this->imageRectTopicName,1);
   /// @todo: cam info pub is not implement yet
   this->cam_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->camInfoTopicName,1);
-  this->cam_info_ser_ = this->rosnode_->advertiseService(this->camInfoServiceName,&GazeboRosProsilica::camInfoService, this);
-  this->poll_ser_ = this->rosnode_->advertiseService(this->pollServiceName,&GazeboRosProsilica::triggeredGrab, this);
+
+  // advertise camera info services on the custom queue
+  ros::AdvertiseServiceOptions cam_info_aso = ros::AdvertiseServiceOptions::create<prosilica_camera::CameraInfo>(
+      this->camInfoServiceName,boost::bind( &GazeboRosProsilica::camInfoService, this, _1, _2 ), ros::VoidPtr(), &this->prosilica_queue_);
+  this->cam_info_ser_ = this->rosnode_->advertiseService(cam_info_aso);
+
+  // advertise poll services on the custom queue
+  ros::AdvertiseServiceOptions poll_aso = ros::AdvertiseServiceOptions::create<prosilica_camera::PolledImage>(
+      this->pollServiceName,boost::bind( &GazeboRosProsilica::triggeredGrab, this, _1, _2 ), ros::VoidPtr(), &this->prosilica_queue_);
+  this->poll_ser_ = this->rosnode_->advertiseService(poll_aso);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -465,6 +473,9 @@ void GazeboRosProsilica::FiniChild()
 {
   this->myParent->SetActive(false);
 #ifdef USE_CBQ
+  this->prosilica_queue_.clear();
+  this->prosilica_queue_.disable();
+  ros::requestShutdown();
   this->prosilica_callback_queue_thread_->join();
 #else
   this->ros_spinner_thread_->join();

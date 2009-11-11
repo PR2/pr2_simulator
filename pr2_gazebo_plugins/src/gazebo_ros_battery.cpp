@@ -87,7 +87,7 @@ void GazeboRosBattery::LoadChild(XMLConfigNode* configNode)
 
     int argc = 0;
     char* argv = NULL;
-    ros::init(argc, &argv, "gazebo_ros_battery", ros::init_options::AnonymousName);
+    ros::init(argc, &argv, "gazebo_ros_battery", ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
 
     ros_node_        = new ros::NodeHandle(robot_namespace_param_->GetValue());
     power_state_pub_ = ros_node_->advertise<pr2_msgs::PowerState>(power_state_topic_param_->GetValue(), 10);

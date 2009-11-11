@@ -103,7 +103,7 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
 
   int argc = 0;
   char** argv = NULL;
-  ros::init(argc,argv,"gazebo",ros::init_options::AnonymousName);
+  ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_gazebo_model
   ROS_INFO("starting gazebo_ros_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
@@ -268,6 +268,9 @@ void GazeboRosControllerManager::FiniChild()
   }
   delete this->fake_state_;
 #ifdef USE_CBQ
+  this->controller_manager_queue_.clear();
+  this->controller_manager_queue_.disable();
+  ros::requestShutdown();
   this->controller_manager_callback_queue_thread_->join();
 #endif
   this->ros_spinner_thread_->join();
