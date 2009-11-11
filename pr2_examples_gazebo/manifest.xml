@@ -5,5 +5,6 @@
   <review status="na" notes=""/>
   <url>http://pr.willowgarage.com/wiki/pr2_examples_gazebo</url>
   <depend package="pr2_gazebo_plugins"/>
+  <depend package="gazebo_plugins"/>
   <depend package="gazebo_tools"/>
 </package>

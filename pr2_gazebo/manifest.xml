@@ -3,8 +3,9 @@
   <author>John Hsu</author>
   <license>BSD</license>
   <review status="na" notes=""/>
-  <url>http://pr.willowgarage.com/wiki/Simulator</url>
+  <url>http://pr.willowgarage.com/wiki/pr2_simulator</url>
   <depend package="pr2_gazebo_plugins"/>
+  <depend package="gazebo_plugins"/>
   <depend package="gazebo_tools"/>
   <depend package="pr2_ogre" />
   <depend package="gazebo_worlds"/>
