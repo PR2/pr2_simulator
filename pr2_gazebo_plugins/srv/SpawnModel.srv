@@ -1,4 +1,0 @@
-pr2_gazebo_plugins/GazeboModel model     # message containing a model for spawning
----
-bool success                             # return true if spawn successful
-string status_message                    # comments if available

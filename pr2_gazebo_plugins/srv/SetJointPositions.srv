@@ -1,6 +1,0 @@
-string model_name                    # name of the model
-string[] joint_names                 # joint names
-float64[] joint_positions             # desired joint positions
----
-bool success                         # return true if spawn successful
-string status_message                # comments if available
