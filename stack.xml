@@ -19,7 +19,7 @@
   <depend stack="robot_model" /> <!-- urdf, convex_decomposition, ivcon -->
   <depend stack="ros" /> <!-- std_msgs, roscpp, rospy -->
   <depend stack="visualization_common"/> <!-- ogre_tools --> 
-  <depend stack="diagnostics" /> <!-- used by prosilica_camera and pr2_controller_manager -->
+  <depend stack="diagnostics" /> <!-- used by prosilica_camera and pr2_controller_manager, diagnostics_aggregator used by pr2_gazebo launch script -->
   <!-- unreleased stacks -->
   <depend stack="pr2_mechanism" /> <!-- pr2_hardware_interface, pr2_controller_manager, pr2_mechanism_model -->
   <depend stack="image_pipeline" /> <!-- stereo_msgs, stereo_image_proc -->
