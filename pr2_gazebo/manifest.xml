@@ -16,6 +16,7 @@
   <depend package="pr2_mechanism_controllers"/>
   <depend package="pr2_experimental_controllers"/>
   <depend package="robot_state_publisher"/>
+  <depend package="diagnostic_aggregator"/>
 
   <depend package="rospy"/>
   <depend package="std_msgs"/>
