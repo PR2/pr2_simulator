@@ -3,7 +3,7 @@
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/single_link_defs/single_link.urdf.xacro'" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="spawn_single_link" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" />
+  <node name="spawn_single_link" pkg="gazebo_tools" type="gazebo_model" args="-p robot_description spawn" respawn="false" output="screen" />
 
   <rosparam file="$(find pr2_examples_gazebo)/single_link_defs/single_link_position_controller.yaml" command="load"/>
 

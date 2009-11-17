@@ -104,7 +104,7 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
   int argc = 0;
   char** argv = NULL;
   ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
-  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from spawn_gazebo_model
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from gazebo_model spawner
   ROS_INFO("starting gazebo_ros_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
   this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);

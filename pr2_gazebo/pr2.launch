@@ -4,7 +4,7 @@
   <include file="$(find pr2_description)/robots/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="pr2_spawn_gazebo_model" pkg="gazebo_tools" type="spawn_gazebo_model" args="robot_description" respawn="false" output="screen" />
+  <node name="pr2_gazebo_model" pkg="gazebo_tools" type="gazebo_model" args="-p robot_description spawn" respawn="false" output="screen" />
  
   <!-- Controller Manager -->
   <include file="$(find pr2_controller_manager)/controller_manager.launch" />
