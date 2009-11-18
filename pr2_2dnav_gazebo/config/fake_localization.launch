@@ -1,6 +1,0 @@
-<launch>
-    <!-- fake localization for simulation -->
-    <node pkg="fake_localization" type="fake_localization" name="fake_localization" respawn="false" output="screen" >
-      <param name="odom_frame_id" value="odom_combined"/>
-    </node>
-</launch>
