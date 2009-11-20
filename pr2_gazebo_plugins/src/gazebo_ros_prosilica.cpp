@@ -495,8 +495,6 @@ void GazeboRosProsilica::PutCameraDataWithROI(int x, int y, int w, int h)
 // Put laser data to the interface
 void GazeboRosProsilica::ProsilicaQueueThread()
 {
-  ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
-
   static const double timeout = 0.01;
 
   while (this->rosnode_->ok())
