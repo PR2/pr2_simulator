@@ -28,8 +28,6 @@
   <depend stack="manipulation_common" /> <!-- trajectory used by pr2_controller_manager, trajectory_msgs(manipulation_msgs) by robot_mechanism_controllers -->
 
   <!-- referenced non-stack packages -->
-  <!--depend stack=""/--> <!-- wg-ros-pkg/pr2/pr2_default_controllers --> 
+  <!--depend stack="pr2"/--> <!-- wg-ros-pkg/pr2/pr2_default_controllers --> 
 
-  <!-- added for tests -->
-  <depend stack="laser_pipeline"/> <!-- laser_filters --> 
 </stack>
