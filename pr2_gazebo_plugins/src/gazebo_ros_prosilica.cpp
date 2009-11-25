@@ -179,6 +179,7 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   /// @todo: cam info pub is not implement yet
   this->cam_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->camInfoTopicName,1);
 
+#ifdef USE_CBQ
   // advertise camera info services on the custom queue
   ros::AdvertiseServiceOptions cam_info_aso = ros::AdvertiseServiceOptions::create<prosilica_camera::CameraInfo>(
       this->camInfoServiceName,boost::bind( &GazeboRosProsilica::camInfoService, this, _1, _2 ), ros::VoidPtr(), &this->prosilica_queue_);
@@ -188,6 +189,10 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   ros::AdvertiseServiceOptions poll_aso = ros::AdvertiseServiceOptions::create<prosilica_camera::PolledImage>(
       this->pollServiceName,boost::bind( &GazeboRosProsilica::triggeredGrab, this, _1, _2 ), ros::VoidPtr(), &this->prosilica_queue_);
   this->poll_ser_ = this->rosnode_->advertiseService(poll_aso);
+#else
+  this->cam_info_ser_ = this->rosnode_->advertiseService(this->camInfoServiceName,&RosProsilica::camInfoService, this);
+  this->poll_ser_ = this->rosnode_->advertiseService(this->pollServiceName,&RosProsilica::triggeredGrab, this);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
