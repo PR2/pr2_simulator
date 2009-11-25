@@ -108,12 +108,12 @@ void GazeboRosBattery::UpdateChild()
 {
     // Update time
     curr_time_ = Simulator::Instance()->GetSimTime();
-    Time dt = curr_time_ - last_time_;
+    double dt = curr_time_ - last_time_;
     last_time_ = curr_time_;
 
     // Update battery charge
     double current = charge_rate_ / voltage_;
-    charge_ += (dt.Double() / 3600) * current;   // charge is measured in ampere-hours, simulator time is measured in secs
+    charge_ += (dt / 3600) * current;   // charge is measured in ampere-hours, simulator time is measured in secs
 
     // Clamp to [0, full_capacity]
     if (charge_ < 0)
@@ -122,8 +122,8 @@ void GazeboRosBattery::UpdateChild()
         charge_ = full_capacity_param_->GetValue();
 
     // Publish power state (simulate the power_monitor node)
-    power_state_.header.stamp.sec  = curr_time_.sec;
-    power_state_.header.stamp.nsec = curr_time_.nsec;
+    power_state_.header.stamp.sec  = (unsigned long) floor(curr_time_);
+    power_state_.header.stamp.nsec = (unsigned long) floor(1e9 * (curr_time_ - power_state_.header.stamp.sec));
 
     power_state_.power_consumption = charge_rate_;
     if (current < 0.0)

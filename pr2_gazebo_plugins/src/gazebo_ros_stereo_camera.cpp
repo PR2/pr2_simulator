@@ -327,8 +327,8 @@ void GazeboRosStereoCamera::PutCameraData()
       this->lock.lock();
       // setup header
       this->rawStereoMsg.header.frame_id = this->frameName;
-      this->rawStereoMsg.header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
-      this->rawStereoMsg.header.stamp.nsec = Simulator::Instance()->GetSimTime().nsec;
+      this->rawStereoMsg.header.stamp.sec = (unsigned long)floor(Simulator::Instance()->GetSimTime());
+      this->rawStereoMsg.header.stamp.nsec = (unsigned long)floor(  1e9 * (  Simulator::Instance()->GetSimTime() - this->rawStereoMsg.header.stamp.sec) );
 
       // copy from src to leftImageMsg
       this->leftImageMsg->header = this->rawStereoMsg.header;

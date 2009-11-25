@@ -121,8 +121,8 @@ private:
 
 private:
     Model* model_;
-    Time curr_time_;
-    Time last_time_;
+    double curr_time_;
+    double last_time_;
 
     ParamT<std::string>* robot_namespace_param_;
     ParamT<std::string>* power_state_topic_param_;

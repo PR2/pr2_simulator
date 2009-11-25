@@ -36,7 +36,8 @@
 #include <gazebo/Global.hh>
 #include <gazebo/XMLConfig.hh>
 #include <gazebo/Model.hh>
-#include <gazebo/Joint.hh>
+#include <gazebo/HingeJoint.hh>
+#include <gazebo/SliderJoint.hh>
 #include <gazebo/Simulator.hh>
 #include <gazebo/gazebo.h>
 #include <angles/angles.h>
@@ -134,15 +135,12 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
 
   }
 
-  this->hw_.current_time_.sec = Simulator::Instance()->GetSimTime().sec;
-  this->hw_.current_time_.nsec = Simulator::Instance()->GetSimTime().nsec;
+  this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
 }
 
 void GazeboRosControllerManager::InitChild()
 {
-  this->hw_.current_time_.sec = Simulator::Instance()->GetSimTime().sec;
-  this->hw_.current_time_.nsec = Simulator::Instance()->GetSimTime().nsec;
-
+  this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
 #ifdef USE_CBQ
   // start custom queue for controller manager
   this->controller_manager_callback_queue_thread_ = new boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerQueueThread,this ) );
@@ -155,10 +153,11 @@ void GazeboRosControllerManager::InitChild()
 
 void GazeboRosControllerManager::UpdateChild()
 {
+
   if (getenv("CHECK_SPEEDUP"))
   {
-    Time wall_elapsed = Simulator::Instance()->GetWallTime() - wall_start;
-    Time sim_elapsed  = Simulator::Instance()->GetSimTime()  - sim_start;
+    double wall_elapsed = Simulator::Instance()->GetWallTime() - wall_start;
+    double sim_elapsed  = Simulator::Instance()->GetSimTime()  - sim_start;
     std::cout << " real time: " <<  wall_elapsed
               << "  sim time: " <<  sim_elapsed
               << "  speed up: " <<  sim_elapsed / wall_elapsed
@@ -181,19 +180,16 @@ void GazeboRosControllerManager::UpdateChild()
     switch(this->joints_[i]->GetType())
     {
     case Joint::HINGE: {
-      Joint *hj = this->joints_[i];
-      this->fake_state_->joint_states_[i].position_ = 
-        this->fake_state_->joint_states_[i].position_ + 
-        angles::shortest_angular_distance(
-            this->fake_state_->joint_states_[i].position_,
-            hj->GetAngle(0).GetAsRadian() );
-      this->fake_state_->joint_states_[i].velocity_ = hj->GetVelocity(0);
+      HingeJoint *hj = (HingeJoint*)this->joints_[i];
+      this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
+                    angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle());
+      this->fake_state_->joint_states_[i].velocity_ = hj->GetAngleRate();
       break;
     }
     case Joint::SLIDER: {
-      Joint *sj = this->joints_[i];
-      this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).GetAsRadian();
-      this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
+      SliderJoint *sj = (SliderJoint*)this->joints_[i];
+      this->fake_state_->joint_states_[i].position_ = sj->GetPosition();
+      this->fake_state_->joint_states_[i].velocity_ = sj->GetPositionRate();
       break;
     }
     default:
@@ -207,9 +203,7 @@ void GazeboRosControllerManager::UpdateChild()
   //--------------------------------------------------
   //  Runs Mechanism Control
   //--------------------------------------------------
-  this->hw_.current_time_.sec = Simulator::Instance()->GetSimTime().sec;
-  this->hw_.current_time_.nsec = Simulator::Instance()->GetSimTime().nsec;
-
+  this->hw_.current_time_ = ros::Time(Simulator::Instance()->GetSimTime());
   try
   {
     this->cm_->update();
@@ -244,12 +238,12 @@ void GazeboRosControllerManager::UpdateChild()
     switch (this->joints_[i]->GetType())
     {
     case Joint::HINGE:
-      damping_force = damping * (this->joints_[i])->GetVelocity(0);
-      this->joints_[i]->SetForce(0,effort - damping_force);
+      damping_force = damping * ((HingeJoint*)this->joints_[i])->GetAngleRate();
+      ((HingeJoint*)this->joints_[i])->SetTorque(effort - damping_force);
       break;
     case Joint::SLIDER:
-      damping_force = damping * this->joints_[i]->GetVelocity(0);
-      this->joints_[i]->SetForce(0,effort - damping_force);
+      damping_force = damping * ((SliderJoint*)this->joints_[i])->GetPositionRate();
+      ((SliderJoint*)this->joints_[i])->SetSliderForce(effort - damping_force);
       break;
     default:
       abort();
