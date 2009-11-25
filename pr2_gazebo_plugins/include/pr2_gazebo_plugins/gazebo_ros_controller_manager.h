@@ -175,7 +175,7 @@ private:
   /*
    *  \brief tmp vars for performance checking
    */
-  double wall_start, sim_start;
+  Time wall_start, sim_start;
 
   /// \brief set topic name of robot description parameter
   ParamT<std::string> *robotParamP;
