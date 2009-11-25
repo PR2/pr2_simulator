@@ -199,7 +199,8 @@ bool GazeboRosProsilica::camInfoService(prosilica_camera::CameraInfo::Request &r
   this->camInfoMsg = &res.cam_info;
   // fill CameraInfo
   this->camInfoMsg->header.frame_id = this->frameName;
-  this->camInfoMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+  this->camInfoMsg->header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+  this->camInfoMsg->header.stamp.nsec =Simulator::Instance()->GetSimTime().nsec;
   this->camInfoMsg->height = this->myParent->GetImageHeight();
   this->camInfoMsg->width  = this->myParent->GetImageWidth() ;
   // distortion
@@ -277,7 +278,8 @@ bool GazeboRosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &r
         // fill CameraInfo
         this->roiCameraInfoMsg = &res.cam_info;
         this->roiCameraInfoMsg->header.frame_id = this->frameName;
-        this->roiCameraInfoMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+        this->roiCameraInfoMsg->header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+        this->roiCameraInfoMsg->header.stamp.nsec = Simulator::Instance()->GetSimTime().nsec;
         this->roiCameraInfoMsg->width  = req.width; //this->myParent->GetImageWidth() ;
         this->roiCameraInfoMsg->height = req.height; //this->myParent->GetImageHeight();
         // distortion
@@ -322,13 +324,15 @@ bool GazeboRosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &r
 
 
         // copy data into image
-        this->imageMsg.header.frame_id    = this->frameName;
-        this->imageMsg.header.stamp       = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+        this->imageMsg.header.frame_id = this->frameName;
+        this->imageMsg.header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+        this->imageMsg.header.stamp.nsec = Simulator::Instance()->GetSimTime().nsec;
 
         // copy data into ROI image
         this->roiImageMsg = &res.image;
         this->roiImageMsg->header.frame_id = this->frameName;
-        this->roiImageMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+        this->roiImageMsg->header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+        this->roiImageMsg->header.stamp.nsec = Simulator::Instance()->GetSimTime().nsec;
 
         // copy from src to imageMsg
         fillImage(this->imageMsg,
