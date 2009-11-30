@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-rospack(pr2_ogre)
+rosbuild_init()
 
 # find needed paths
 rosbuild_find_ros_package(pr2_defs)
