@@ -179,7 +179,6 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   /// @todo: cam info pub is not implement yet
   this->cam_info_pub_ = this->rosnode_->advertise<sensor_msgs::CameraInfo>(this->camInfoTopicName,1);
 
-#ifdef USE_CBQ
   // advertise camera info services on the custom queue
   ros::AdvertiseServiceOptions cam_info_aso = ros::AdvertiseServiceOptions::create<prosilica_camera::CameraInfo>(
       this->camInfoServiceName,boost::bind( &GazeboRosProsilica::camInfoService, this, _1, _2 ), ros::VoidPtr(), &this->prosilica_queue_);
@@ -189,10 +188,6 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   ros::AdvertiseServiceOptions poll_aso = ros::AdvertiseServiceOptions::create<prosilica_camera::PolledImage>(
       this->pollServiceName,boost::bind( &GazeboRosProsilica::triggeredGrab, this, _1, _2 ), ros::VoidPtr(), &this->prosilica_queue_);
   this->poll_ser_ = this->rosnode_->advertiseService(poll_aso);
-#else
-  this->cam_info_ser_ = this->rosnode_->advertiseService(this->camInfoServiceName,&RosProsilica::camInfoService, this);
-  this->poll_ser_ = this->rosnode_->advertiseService(this->pollServiceName,&RosProsilica::triggeredGrab, this);
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -204,7 +199,8 @@ bool GazeboRosProsilica::camInfoService(prosilica_camera::CameraInfo::Request &r
   this->camInfoMsg = &res.cam_info;
   // fill CameraInfo
   this->camInfoMsg->header.frame_id = this->frameName;
-  this->camInfoMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+  this->camInfoMsg->header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+  this->camInfoMsg->header.stamp.nsec =Simulator::Instance()->GetSimTime().nsec;
   this->camInfoMsg->height = this->myParent->GetImageHeight();
   this->camInfoMsg->width  = this->myParent->GetImageWidth() ;
   // distortion
@@ -282,7 +278,8 @@ bool GazeboRosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &r
         // fill CameraInfo
         this->roiCameraInfoMsg = &res.cam_info;
         this->roiCameraInfoMsg->header.frame_id = this->frameName;
-        this->roiCameraInfoMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+        this->roiCameraInfoMsg->header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+        this->roiCameraInfoMsg->header.stamp.nsec = Simulator::Instance()->GetSimTime().nsec;
         this->roiCameraInfoMsg->width  = req.width; //this->myParent->GetImageWidth() ;
         this->roiCameraInfoMsg->height = req.height; //this->myParent->GetImageHeight();
         // distortion
@@ -327,13 +324,15 @@ bool GazeboRosProsilica::triggeredGrab(prosilica_camera::PolledImage::Request &r
 
 
         // copy data into image
-        this->imageMsg.header.frame_id    = this->frameName;
-        this->imageMsg.header.stamp       = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+        this->imageMsg.header.frame_id = this->frameName;
+        this->imageMsg.header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+        this->imageMsg.header.stamp.nsec = Simulator::Instance()->GetSimTime().nsec;
 
         // copy data into ROI image
         this->roiImageMsg = &res.image;
         this->roiImageMsg->header.frame_id = this->frameName;
-        this->roiImageMsg->header.stamp    = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
+        this->roiImageMsg->header.stamp.sec = Simulator::Instance()->GetSimTime().sec;
+        this->roiImageMsg->header.stamp.nsec = Simulator::Instance()->GetSimTime().nsec;
 
         // copy from src to imageMsg
         fillImage(this->imageMsg,
