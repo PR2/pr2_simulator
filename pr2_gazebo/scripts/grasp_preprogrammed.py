@@ -127,7 +127,7 @@ if __name__ == '__main__':
     pub_r_wrist_flex     .publish(Float64(CMD_POS_6))
     pub_r_wrist_roll     .publish(Float64(CMD_POS_7))
     pub_r_gripper.publish(Float64(G_CLOSE))
-    time.sleep(2)
+    time.sleep(20)
 
     #pan arm
     pub_r_shoulder_pan   .publish(Float64(CMD_POS_1+PAN_RAD))
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     pub_r_wrist_flex     .publish(Float64(CMD_POS_6))
     pub_r_wrist_roll     .publish(Float64(CMD_POS_7))
     pub_r_gripper.publish(Float64(G_CLOSE))
-    time.sleep(2)
+    time.sleep(10)
 
     #lower arm
     pub_r_shoulder_pan   .publish(Float64(CMD_POS_1+PAN_RAD))
@@ -149,7 +149,7 @@ if __name__ == '__main__':
     pub_r_wrist_flex     .publish(Float64(CMD_POS_6))
     pub_r_wrist_roll     .publish(Float64(CMD_POS_7))
     pub_r_gripper.publish(Float64(G_CLOSE))
-    time.sleep(2)
+    time.sleep(8)
 
     #open gripper
     pub_r_shoulder_pan   .publish(Float64(CMD_POS_1+PAN_RAD))
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     pub_r_wrist_flex     .publish(Float64(CMD_POS_6))
     pub_r_wrist_roll     .publish(Float64(CMD_POS_7))
     pub_r_gripper.publish(Float64(G_OPEN))
-    time.sleep(2)
+    time.sleep(10)
 
     #return arm
     pub_r_shoulder_pan   .publish(Float64(CMD_POS_1))
