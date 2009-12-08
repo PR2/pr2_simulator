@@ -31,20 +31,20 @@
 #include <gazebo/ControllerFactory.hh>
 #include <gazebo/GazeboError.hh>
 #include <gazebo/Simulator.hh>
-#include <pr2_gazebo_plugins/gazebo_ros_battery.h>
+#include <pr2_gazebo_plugins/gazebo_ros_ocean_battery.h>
 #include <diagnostic_updater/diagnostic_updater.h>
 
 using namespace std;
 
 namespace gazebo {
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_ros_battery", GazeboRosBattery);
+GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_ros_ocean_battery", GazeboRosOceanBattery);
 
-GazeboRosBattery::GazeboRosBattery(Entity* parent) : Controller(parent)
+GazeboRosOceanBattery::GazeboRosOceanBattery(Entity* parent) : Controller(parent)
 {
     model_ = dynamic_cast<Model*>(parent);
     if (!model_)
-        gzthrow("GazeboRosBattery controller requires a Model as its parent");
+        gzthrow("GazeboRosOceanBattery controller requires a Model as its parent");
 
     // Initialize parameters
     Param::Begin(&parameters);
@@ -59,7 +59,7 @@ GazeboRosBattery::GazeboRosBattery(Entity* parent) : Controller(parent)
     Param::End();
 }
 
-GazeboRosBattery::~GazeboRosBattery()
+GazeboRosOceanBattery::~GazeboRosOceanBattery()
 {
     delete ros_node_;
 
@@ -73,7 +73,7 @@ GazeboRosBattery::~GazeboRosBattery()
     delete charge_voltage_param_;
 }
 
-void GazeboRosBattery::LoadChild(XMLConfigNode* configNode)
+void GazeboRosOceanBattery::LoadChild(XMLConfigNode* configNode)
 {
     // Load parameters from XML
     robot_namespace_param_->Load(configNode);
@@ -87,31 +87,31 @@ void GazeboRosBattery::LoadChild(XMLConfigNode* configNode)
 
     int argc = 0;
     char* argv = NULL;
-    ros::init(argc, &argv, "gazebo_ros_battery", ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+    ros::init(argc, &argv, "gazebo_ros_ocean_battery", ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
 
     ros_node_        = new ros::NodeHandle(robot_namespace_param_->GetValue());
     power_state_pub_ = ros_node_->advertise<pr2_msgs::PowerState>(power_state_topic_param_->GetValue(), 10);
-    plugged_in_sub_  = ros_node_->subscribe("plugged_in", 10, &GazeboRosBattery::SetPlug, this);
+    plugged_in_sub_  = ros_node_->subscribe("plugged_in", 10, &GazeboRosOceanBattery::SetPlug, this);
 }
 
-void GazeboRosBattery::InitChild()
+void GazeboRosOceanBattery::InitChild()
 {
     last_time_ = curr_time_ = Simulator::Instance()->GetSimTime();
 
-    // Initialize battery to full capacity
+    // Initialize ocean battery to full capacity
     charge_      = full_capacity_param_->GetValue();
     charge_rate_ = discharge_rate_param_->GetValue();
     voltage_     = discharge_voltage_param_->GetValue();
 }
 
-void GazeboRosBattery::UpdateChild()
+void GazeboRosOceanBattery::UpdateChild()
 {
     // Update time
     curr_time_ = Simulator::Instance()->GetSimTime();
     double dt = curr_time_ - last_time_;
     last_time_ = curr_time_;
 
-    // Update battery charge
+    // Update ocean battery charge
     double current = charge_rate_ / voltage_;
     charge_ += (dt / 3600) * current;   // charge is measured in ampere-hours, simulator time is measured in secs
 
@@ -138,12 +138,12 @@ void GazeboRosBattery::UpdateChild()
     lock_.unlock();
 }
 
-void GazeboRosBattery::FiniChild()
+void GazeboRosOceanBattery::FiniChild()
 {
     // Do nothing
 }
 
-void GazeboRosBattery::SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg)
+void GazeboRosOceanBattery::SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg)
 {
     lock_.lock();
 

@@ -1,7 +1,6 @@
 <package>
   <description brief="Gazebo Plugins for Personal Robots">
-    Gazebo Plugins for various sensors and actuators on the PR2 robot.
-    This module also contains a test file for Player interface.
+    Gazebo Plugins for various PR2 specific sensors and actuators on the robot.
   </description>
   <author>Sachin Chitta, Stu Glaser, John Hsu</author>
   <license>BSD</license>
