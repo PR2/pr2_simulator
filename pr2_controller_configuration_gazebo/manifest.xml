@@ -1,0 +1,14 @@
+<package>
+  <description brief="pr2_controller_configuration_gazebo">
+
+     a clone of pr2_controller_configuration for PR2 Simulator
+
+  </description>
+  <author>Wim Meeussen,John Hsu</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_controller_configuration_gazebo</url>
+
+</package>
+
+

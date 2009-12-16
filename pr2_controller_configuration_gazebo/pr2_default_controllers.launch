@@ -1,0 +1,51 @@
+<launch>
+
+  <!-- Base -->
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_base_controller.yaml" command="load" />
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_odometry.yaml" command="load" />
+
+  <!-- Head -->
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_head_controller.yaml" />
+  
+  <!-- Arms -->
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_arm_controllers.yaml" />
+
+  <!-- Gripper -->
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_gripper_controllers.yaml" />
+
+  <!-- Tilt Laser -->
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_laser_tilt_controller.yaml" />
+
+  <!-- Torso -->
+
+  <!-- Controllers that come up started -->
+  <node name="default_controllers_spawner"
+        pkg="pr2_controller_manager" type="spawner" output="screen"
+        args="--wait-for=/calibrated pr2_base_controller pr2_base_odometry head_traj_controller laser_tilt_controller" />
+
+  <!-- Controllers that come up loaded -->
+  <node name="default_loaded_controllers_spawner"
+        pkg="pr2_controller_manager" type="spawner" output="screen"
+        args="--wait-for=/calibrated --stopped r_arm_controller l_arm_controller r_gripper_controller l_gripper_controller" />
+  <!--
+  <node name="send_default_laser_command"
+        pkg="pr2_mechanism_controllers" type="send_periodic_cmd_srv.py"
+        args="laser_tilt_controller linear 10 .75 .25" />
+  -->
+  
+  <!-- Nodes on top of the controllers -->
+  <node pkg="pr2_head_controller" type="pr2_head_controller" name="head_controller">
+    <remap from="/head_controller/controller_command" to="/head_traj_controller/command" />
+  </node>
+
+  <group ns="r_arm_controller">
+    <node name="joint_trajectory_action"
+          pkg="joint_trajectory_action" type="joint_trajectory_action" />
+  </group>
+  <group ns="l_arm_controller">
+    <node name="joint_trajectory_action"
+          pkg="joint_trajectory_action" type="joint_trajectory_action" />
+  </group>
+  
+        
+</launch>

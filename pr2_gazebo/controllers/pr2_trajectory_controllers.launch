@@ -1,8 +1,8 @@
 <launch>
   <!-- launch a set of trajectory controllers -->
   <!-- pending new trajectory controller from animate_robot
-  <rosparam file="$(find pr2_default_controllers)/r_arm_trajectory_controller.yaml" command="load"/>
-  <rosparam file="$(find pr2_default_controllers)/l_arm_trajectory_controller.yaml" command="load"/>
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/r_arm_trajectory_controller.yaml" command="load"/>
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/l_arm_trajectory_controller.yaml" command="load"/>
   <node pkg="pr2_controller_manager" type="spawner" args="Trajectory" output="screen" />
   -->
 
@@ -11,8 +11,8 @@
   <node pkg="pr2_mechanism_controllers" type="base_trajectory_controller"/>
 
   <!-- load head and base controllers -->
-  <include file="$(find pr2_default_controllers)/pr2_base_controller_odom.launch"/>
-  <include file="$(find pr2_default_controllers)/head_position_controller.launch"/>
+  <include file="$(find pr2_controller_configuration_gazebo)/pr2_base_controller_odom.launch"/>
+  <include file="$(find pr2_controller_configuration_gazebo)/head_position_controller.launch"/>
 
   <!-- tilting laser controller -->
   <include file="$(find pr2_gazebo)/controllers/pr2_tilt_laser_controller.launch"/>

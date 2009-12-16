@@ -130,7 +130,7 @@ void GazeboRosOceanBattery::UpdateChild()
         power_state_.time_remaining = (-charge_ / current) * 60;  // time remaining reported in hours
     else
         power_state_.time_remaining = 65535;
-    power_state_.prediction_method = "fuel guage";
+    power_state_.prediction_method = "fuel gauge";
     power_state_.relative_capacity = (int) (100.0 * (charge_ / full_capacity_param_->GetValue()));
 
     lock_.lock();
