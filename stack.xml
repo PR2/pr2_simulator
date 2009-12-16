@@ -14,7 +14,6 @@
   <depend stack="geometry"/> <!-- bullet, angles --> 
   <depend stack="pr2_mechanism"/> <!-- pr2_hardware_interface, pr2_mechanism_model, pr2_controller_manager --> 
   <depend stack="visualization_common"/> <!-- ogre_tools --> 
-  <depend stack="image_pipeline"/> <!-- stereo_msgs --> 
   <depend stack="simulator_gazebo"/> <!-- gazebo_tools, gazebo, gazebo_plugins, gazebo_worlds --> 
   <depend stack="common"/> <!-- tinyxml --> 
   <depend stack="physics_ode"/> <!-- opende --> 
