@@ -11,7 +11,7 @@
   <depend package="gazebo_worlds"/>
   <depend package="pr2_defs"/>
   <depend package="pr2_description"/>
-  <depend package="pr2_default_controllers"/>
+  <depend package="pr2_controller_configuration_gazebo"/>
   <depend package="robot_mechanism_controllers"/>
   <depend package="pr2_mechanism_controllers"/>
   <depend package="robot_state_publisher"/>

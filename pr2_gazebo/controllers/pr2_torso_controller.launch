@@ -1,4 +1,4 @@
 <launch>
-  <rosparam file="$(find pr2_default_controllers)/pr2_joint_position_controllers.yaml" command="load"/>
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_joint_position_controllers.yaml" command="load"/>
   <node name="pr2_torso_position_controller" pkg="pr2_controller_manager" type="spawner" args="torso_lift_position_controller" output="screen" />
 </launch>
