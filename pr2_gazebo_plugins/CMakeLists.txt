@@ -10,12 +10,10 @@ add_definitions(-fPIC)
 
 rosbuild_add_boost_directories()
 
-rosbuild_add_library(gazebo_ros_stereo_camera src/gazebo_ros_stereo_camera.cpp)
-rosbuild_link_boost(gazebo_ros_stereo_camera thread)
 rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
 rosbuild_link_boost(gazebo_ros_controller_manager thread)
-rosbuild_add_library(gazebo_ros_battery src/gazebo_ros_battery.cpp)
-rosbuild_link_boost(gazebo_ros_battery thread)
+rosbuild_add_library(gazebo_ros_ocean_battery src/gazebo_ros_ocean_battery.cpp)
+rosbuild_link_boost(gazebo_ros_ocean_battery thread)
 rosbuild_add_library(gazebo_ros_prosilica src/gazebo_ros_prosilica.cpp)
 rosbuild_link_boost(gazebo_ros_prosilica thread)
 

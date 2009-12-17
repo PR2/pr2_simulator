@@ -1,7 +1,6 @@
 <package>
   <description brief="Gazebo Plugins for Personal Robots">
-    Gazebo Plugins for various sensors and actuators on the PR2 robot.
-    This module also contains a test file for Player interface.
+    Gazebo Plugins for various PR2 specific sensors and actuators on the robot.
   </description>
   <author>Sachin Chitta, Stu Glaser, John Hsu</author>
   <license>BSD</license>
@@ -11,15 +10,16 @@
   <depend package="gazebo_tools"/>
   <depend package="opende"/>
   <depend package="roscpp"/>
-  <depend package="prosilica_camera"/>
   <depend package="rospy"/>  
   <depend package="std_msgs" />
   <depend package="nav_msgs" />
   <depend package="sensor_msgs" />
   <depend package="cv_bridge" />
-  <depend package="stereo_msgs"/>
   <depend package="pr2_msgs" />
   <depend package="geometry_msgs" />
+  <depend package="opencv2" />
+  <depend package="diagnostic_updater" />
+  <depend package="cv_bridge" />
   <depend package="diagnostic_msgs" />
   <depend package="angles" />
   <depend package="pr2_hardware_interface" />
@@ -28,6 +28,7 @@
   <depend package="tinyxml" />
   <depend package="bullet" />
   <depend package="urdf" />
+  <depend package="polled_camera" />
   <export>
     <cpp cflags="-I${prefix}/include -I${prefix}/srv/cpp" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" />
   </export>

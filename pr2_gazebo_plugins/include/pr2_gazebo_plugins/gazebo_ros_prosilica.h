@@ -40,11 +40,15 @@
 #include "cv_bridge/CvBridge.h"
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/CameraInfo.h"
+// used by polled_camera
+#include "sensor_msgs/RegionOfInterest.h"
 
 // prosilica components
-#include "prosilica/prosilica.h"
-#include "prosilica_camera/CameraInfo.h"
-#include "prosilica_camera/PolledImage.h"
+// Stuff in image_common
+#include <image_transport/image_transport.h>
+#include <polled_camera/publication_server.h>
+#include <polled_camera/GetPolledImage.h>
+
 
 
 namespace gazebo
@@ -125,17 +129,8 @@ class GazeboRosProsilica : public Controller
   /// \brief Finalize the controller, unadvertise topics
   protected: virtual void FiniChild();
 
-  /// \brief Put camera data to the ROS topic
-  private: void PutCameraDataWithROI(int x, int y, int w, int h);
-
   /// \brief does nothing for now
   private: static void mouse_cb(int event, int x, int y, int flags, void* param) { };
-
-  /// \brief Service call to publish images, cam info
-  private: bool camInfoService(prosilica_camera::CameraInfo::Request &req,
-                               prosilica_camera::CameraInfo::Response &res);
-  private: bool triggeredGrab(prosilica_camera::PolledImage::Request &req,
-                              prosilica_camera::PolledImage::Response &res);
 
   /// \brief Keep track of number of connctions
   private: int imageConnectCount;
@@ -145,28 +140,45 @@ class GazeboRosProsilica : public Controller
   private: void InfoConnect();
   private: void InfoDisconnect();
 
+  private: void PutCameraData();
+  private: void PublishCameraInfo();
+
   /// \brief A pointer to the parent camera sensor
   private: MonoCameraSensor *myParent;
 
   /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
   private: ros::NodeHandle* rosnode_;
-  private: ros::Publisher image_pub_,image_rect_pub_,cam_info_pub_;
-  private: ros::ServiceServer cam_info_ser_,poll_ser_;
+
+  /// \brief image_transport
+  private: polled_camera::PublicationServer poll_srv_;      // Handles requests in polled mode
+
+  private: std::string mode_;
+
+  private: ros::Publisher image_pub_;
+  private: ros::Publisher camera_info_pub_;
+
+/*
+  /// \brief Service call to publish images, cam info
+  private: bool camInfoService(prosilica_camera::CameraInfo::Request &req,
+                               prosilica_camera::CameraInfo::Response &res);
+  private: bool triggeredGrab(prosilica_camera::PolledImage::Request &req,
+                              prosilica_camera::PolledImage::Response &res);
+*/
+
+  private: bool pollCallback(polled_camera::GetPolledImage::Request& req,
+                            sensor_msgs::Image& image, sensor_msgs::CameraInfo& info);
 
   /// \brief ros message
   /// \brief construct raw stereo message
   private: sensor_msgs::Image imageMsg;
-  private: sensor_msgs::Image imageRectMsg;
   private: sensor_msgs::Image *roiImageMsg;
-  private: sensor_msgs::CameraInfo *camInfoMsg;
+  private: sensor_msgs::CameraInfo cameraInfoMsg;
   private: sensor_msgs::CameraInfo *roiCameraInfoMsg;
 
 
   /// \brief Parameters
   private: ParamT<std::string> *imageTopicNameP;
-  private: ParamT<std::string> *imageRectTopicNameP;
-  private: ParamT<std::string> *camInfoTopicNameP;
-  private: ParamT<std::string> *camInfoServiceNameP;
+  private: ParamT<std::string> *cameraInfoTopicNameP;
   private: ParamT<std::string> *pollServiceNameP;
   private: ParamT<std::string> *frameNameP;
 
@@ -186,9 +198,7 @@ class GazeboRosProsilica : public Controller
 
   /// \brief ROS image topic name
   private: std::string imageTopicName;
-  private: std::string imageRectTopicName;
-  private: std::string camInfoTopicName;
-  private: std::string camInfoServiceName;
+  private: std::string cameraInfoTopicName;
   private: std::string pollServiceName;
   private: double CxPrime;
   private: double Cx;
@@ -205,7 +215,7 @@ class GazeboRosProsilica : public Controller
   private: std::string frameName;
 
   /// \brief A mutex to lock access to fields that are used in ROS message callbacks
-  //private: boost::mutex lock;
+  private: boost::mutex lock;
 
   /// \brief size of image buffer
   private: int height, width, depth;
