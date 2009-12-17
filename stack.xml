@@ -1,26 +1,27 @@
-<stack name="pr2_simulator" version="0.1.0">
+<stack name="pr2_simulator">
   <description brief="pr2_simulator">
 
-     pr2_simulator
+     PR2 specific simulation components.
+     Plugins and launch scripts necessary for running PR2 in simulation.
 
   </description>
   <author>Maintained by John Hsu</author>
   <license>BSD</license>  
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/pr2_simulator</url>
-  <depend stack="pr2_controllers"/> <!-- pr2_mechanism_controllers, robot_mechanism_controllers --> 
-  <depend stack="camera_drivers"/> <!-- prosilica_camera --> 
   <depend stack="robot_model"/> <!-- convex_decomposition, ivcon, urdf, robot_state_publisher --> 
+  <depend stack="image_common"/> <!-- polled_camera --> 
   <depend stack="geometry"/> <!-- bullet, angles --> 
-  <depend stack="pr2_mechanism"/> <!-- pr2_hardware_interface, pr2_mechanism_model, pr2_controller_manager --> 
   <depend stack="visualization_common"/> <!-- ogre_tools --> 
   <depend stack="simulator_gazebo"/> <!-- gazebo_tools, gazebo, gazebo_plugins, gazebo_worlds --> 
   <depend stack="common"/> <!-- tinyxml --> 
   <depend stack="physics_ode"/> <!-- opende --> 
-  <depend stack="vision_opencv"/> <!-- cv_bridge --> 
-  <depend stack="diagnostics"/> <!-- diagnostic_aggregator --> 
-  <depend stack="pr2_common"/> <!-- pr2_description, pr2_defs, pr2_msgs --> 
+  <depend stack="vision_opencv"/> <!-- opencv2, cv_bridge --> 
+  <depend stack="diagnostics"/> <!-- diagnostic_updater, diagnostic_aggregator --> 
   <depend stack="ros"/> <!-- std_msgs, rospy, roscpp --> 
   <depend stack="common_msgs"/> <!-- nav_msgs, geometry_msgs, sensor_msgs, diagnostic_msgs --> 
+  <depend stack="pr2_common"/> <!-- pr2_description, pr2_defs, pr2_msgs --> 
+  <depend stack="pr2_controllers"/> <!-- pr2_mechanism_controllers, robot_mechanism_controllers --> 
+  <depend stack="pr2_mechanism"/> <!-- pr2_hardware_interface, pr2_mechanism_model, pr2_controller_manager --> 
 
 </stack>
