@@ -1,7 +1,8 @@
-<stack name="pr2_simulator" version="0.1.0">
+<stack name="pr2_simulator">
   <description brief="pr2_simulator">
 
-     pr2_simulator
+     PR2 specific simulation components.
+     Plugins and launch scripts necessary for running PR2 in simulation.
 
   </description>
   <author>Maintained by John Hsu</author>
