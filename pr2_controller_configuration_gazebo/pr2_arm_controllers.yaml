@@ -1,0 +1,89 @@
+r_arm_controller:
+  type: "JointSplineTrajectoryController"
+  joints:
+    - r_shoulder_pan_joint
+    - r_shoulder_lift_joint
+    - r_upper_arm_roll_joint
+    - r_elbow_flex_joint
+    - r_forearm_roll_joint
+    - r_wrist_flex_joint
+    - r_wrist_roll_joint
+  gains:
+    r_shoulder_pan_joint: {p: 140.0, d: 30.0}
+    r_shoulder_lift_joint: {p: 170.0, d: 30.0}
+    r_upper_arm_roll_joint: {p: 300.0, d: 7.0}
+    r_elbow_flex_joint: {p: 100.0, d: 5.0}
+    r_forearm_roll_joint: {p: 300.0, d: 20.0}
+    r_wrist_flex_joint: {p: 200.0, d: 8.0}
+    r_wrist_roll_joint: {p: 200.0, d: 8.0}
+  joint_trajectory_action:
+    joints:
+      - r_shoulder_pan_joint
+      - r_shoulder_lift_joint
+      - r_upper_arm_roll_joint
+      - r_elbow_flex_joint
+      - r_forearm_roll_joint
+      - r_wrist_flex_joint
+      - r_wrist_roll_joint
+    constraints:
+      r_shoulder_pan_joint:
+        goal: 0.04
+      r_shoulder_lift_joint:
+        goal: 0.04
+      r_upper_arm_roll_joint:
+        goal: 0.04
+      r_elbow_flex_joint:
+        goal: 0.04
+      r_forearm_roll_joint:
+        goal: 0.04
+      r_wrist_flex_joint:
+        goal: 0.04
+      r_wrist_roll_joint:
+        goal: 0.04
+  
+
+
+
+l_arm_controller:
+  type: "JointSplineTrajectoryController"
+  joints:
+    - l_shoulder_pan_joint
+    - l_shoulder_lift_joint
+    - l_upper_arm_roll_joint
+    - l_elbow_flex_joint
+    - l_forearm_roll_joint
+    - l_wrist_flex_joint
+    - l_wrist_roll_joint
+  gains:
+    l_shoulder_pan_joint: {p: 140.0, d: 30.0}
+    l_shoulder_lift_joint: {p: 170.0, d: 30.0}
+    l_upper_arm_roll_joint: {p: 300.0, d: 7.0}
+    l_elbow_flex_joint: {p: 100.0, d: 5.0}
+    l_forearm_roll_joint: {p: 300.0, d: 20.0}
+    l_wrist_flex_joint: {p: 200.0, d: 8.0}
+    l_wrist_roll_joint: {p: 200.0, d: 8.0}
+
+  joint_trajectory_action:
+    joints:
+      - l_shoulder_pan_joint
+      - l_shoulder_lift_joint
+      - l_upper_arm_roll_joint
+      - l_elbow_flex_joint
+      - l_forearm_roll_joint
+      - l_wrist_flex_joint
+      - l_wrist_roll_joint
+    constraints:
+      l_shoulder_pan_joint:
+        goal: 0.04
+      l_shoulder_lift_joint:
+        goal: 0.04
+      l_upper_arm_roll_joint:
+        goal: 0.04
+      l_elbow_flex_joint:
+        goal: 0.04
+      l_forearm_roll_joint:
+        goal: 0.04
+      l_wrist_flex_joint:
+        goal: 0.04
+      l_wrist_roll_joint:
+        goal: 0.04
