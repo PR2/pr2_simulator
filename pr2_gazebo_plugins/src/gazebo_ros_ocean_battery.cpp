@@ -127,9 +127,9 @@ void GazeboRosOceanBattery::UpdateChild()
 
     power_state_.power_consumption = charge_rate_;
     if (current < 0.0)
-        power_state_.time_remaining.fromSec((-charge_ / current) * 60 * 60);  // convert to seconds
+        power_state_.time_remaining = ros::Duration((-charge_ / current) * 60);  // time remaining reported in hours
     else
-        power_state_.time_remaining.fromSec(2 * 60 * 60); //Max out at 2 hours??
+        power_state_.time_remaining = ros::Duration(65535,65535);
     power_state_.prediction_method = "fuel gauge";
     power_state_.relative_capacity = (int) (100.0 * (charge_ / full_capacity_param_->GetValue()));
 
