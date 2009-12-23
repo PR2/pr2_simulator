@@ -1,0 +1,12 @@
+torso_controller:
+  type: JointSplineTrajectoryController
+  joints:
+    - torso_lift_joint
+  gains:
+    torso_lift_joint:
+      p: 100000000.0
+      i: 10000.0
+      d: 0.0
+      i_clamp: 100000.0
+  position_joint_action_node:
+    joint: torso_lift_joint
