@@ -341,8 +341,7 @@ void GazeboRosProsilica::PutCameraData()
     this->lock.lock();
     // copy data into image
     this->imageMsg.header.frame_id = this->frameName;
-    this->imageMsg.header.stamp.sec = (unsigned long)floor(Simulator::Instance()->GetSimTime());
-    this->imageMsg.header.stamp.nsec = (unsigned long)floor(  1e9 * (  Simulator::Instance()->GetSimTime() - this->imageMsg.header.stamp.sec) );
+    this->imageMsg.header.stamp = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
 
     //double tmpT1 = Simulator::Instance()->GetWallTime();
     //double tmpT2;
@@ -480,8 +479,7 @@ void GazeboRosProsilica::PublishCameraInfo()
 {
   // fill CameraInfo
   this->cameraInfoMsg.header.frame_id = this->frameName;
-  this->cameraInfoMsg.header.stamp.sec = (unsigned long)floor(Simulator::Instance()->GetSimTime());
-  this->cameraInfoMsg.header.stamp.nsec = (unsigned long)floor(  1e9 * (  Simulator::Instance()->GetSimTime() - this->cameraInfoMsg.header.stamp.sec) );
+  this->cameraInfoMsg.header.stamp = ros::Time((unsigned long)floor(Simulator::Instance()->GetSimTime()));
   this->cameraInfoMsg.height = this->height;
   this->cameraInfoMsg.width  = this->width;
   // distortion
