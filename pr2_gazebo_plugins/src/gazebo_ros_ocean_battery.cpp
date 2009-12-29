@@ -122,8 +122,7 @@ void GazeboRosOceanBattery::UpdateChild()
         charge_ = full_capacity_param_->GetValue();
 
     // Publish power state (simulate the power_monitor node)
-    power_state_.header.stamp.sec  = (unsigned long) floor(curr_time_);
-    power_state_.header.stamp.nsec = (unsigned long) floor(1e9 * (curr_time_ - power_state_.header.stamp.sec));
+    power_state_.header.stamp  = ros::Time((unsigned long)floor(curr_time_));
 
     power_state_.power_consumption = charge_rate_;
     if (current < 0.0)
