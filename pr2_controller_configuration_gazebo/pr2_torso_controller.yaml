@@ -10,3 +10,4 @@ torso_controller:
       i_clamp: 100000.0
   position_joint_action_node:
     joint: torso_lift_joint
+    goal_threshold: 0.01
