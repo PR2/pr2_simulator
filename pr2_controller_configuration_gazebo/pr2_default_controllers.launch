@@ -43,11 +43,11 @@
   </node>
 
   <group ns="r_arm_controller">
-    <node name="joint_trajectory_action"
+    <node name="joint_trajectory_action_node"
           pkg="joint_trajectory_action" type="joint_trajectory_action" />
   </group>
   <group ns="l_arm_controller">
-    <node name="joint_trajectory_action"
+    <node name="joint_trajectory_action_node"
           pkg="joint_trajectory_action" type="joint_trajectory_action" />
   </group>
   

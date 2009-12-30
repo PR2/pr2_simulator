@@ -16,7 +16,7 @@ r_arm_controller:
     r_forearm_roll_joint: {p: 300.0, d: 20.0}
     r_wrist_flex_joint: {p: 200.0, d: 8.0}
     r_wrist_roll_joint: {p: 200.0, d: 8.0}
-  joint_trajectory_action:
+  joint_trajectory_action_node:
     joints:
       - r_shoulder_pan_joint
       - r_shoulder_lift_joint
@@ -64,7 +64,7 @@ l_arm_controller:
     l_wrist_flex_joint: {p: 200.0, d: 8.0}
     l_wrist_roll_joint: {p: 200.0, d: 8.0}
 
-  joint_trajectory_action:
+  joint_trajectory_action_node:
     joints:
       - l_shoulder_pan_joint
       - l_shoulder_lift_joint
