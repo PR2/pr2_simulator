@@ -20,6 +20,8 @@
   <depend package="pr2_head_controller"/>
   <depend package="pr2_head_action"/>
   <depend package="joint_trajectory_action"/>
+  <depend package="pr2_gripper_action"/>
+  <depend package="single_joint_position_action"/>
 
   <depend package="rospy"/>
   <depend package="std_msgs"/>
