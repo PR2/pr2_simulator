@@ -172,15 +172,20 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   // prosilica::AcquisitionMode mode_; /// @todo Make this property of Camera
   std::string mode_param_name;
 
-  if (this->rosnode_->searchParam("trigger_mode",mode_param_name)) ///\@todo: hardcoded per prosilica_camera wiki api, make this an urdf parameter
+  //ROS_ERROR("before trigger_mode %s %s",mode_param_name.c_str(),this->mode_.c_str());
+
+  if (this->rosnode_->searchParam("/trigger_mode",mode_param_name)) ///\@todo: hardcoded per prosilica_camera wiki api, make this an urdf parameter
   {
       this->rosnode_->getParam(mode_param_name,this->mode_);
   }
   else
   {
-      ROS_DEBUG("defaults to Continuous");
-      this->mode_ = "Continuous";
+      ROS_DEBUG("defaults to Triggered");
+      this->mode_ = "Triggered";
   }
+
+  //this->rosnode_->getParam(mode_param_name,this->mode_);
+  //ROS_ERROR("trigger_mode %s %s",mode_param_name.c_str(),this->mode_.c_str());
 
   if (this->mode_ == "Triggered")
   {
@@ -188,34 +193,24 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   }
   else if (this->mode_ == "Continuous")
   {
-      /// assign queue here? already assigned to nodehandle...
-      ros::AdvertiseOptions image_ao = ros::AdvertiseOptions::create<sensor_msgs::Image>(
-        this->imageTopicName,1,
-        boost::bind( &GazeboRosProsilica::ImageConnect,this),
-        boost::bind( &GazeboRosProsilica::ImageDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
-      this->image_pub_ = this->rosnode_->advertise(image_ao);
-
-      ros::AdvertiseOptions camera_info_ao = ros::AdvertiseOptions::create<sensor_msgs::CameraInfo>(
-        this->cameraInfoTopicName,1,
-        boost::bind( &GazeboRosProsilica::InfoConnect,this),
-        boost::bind( &GazeboRosProsilica::InfoDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
-      this->camera_info_pub_ = this->rosnode_->advertise(camera_info_ao);
+      ROS_DEBUG("do nothing here,mode: %s",this->mode_.c_str());
   }
   else
   {
-      ros::AdvertiseOptions image_ao = ros::AdvertiseOptions::create<sensor_msgs::Image>(
-        this->imageTopicName,1,
-        boost::bind( &GazeboRosProsilica::ImageConnect,this),
-        boost::bind( &GazeboRosProsilica::ImageDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
-      this->image_pub_ = this->rosnode_->advertise(image_ao);
-
-      ros::AdvertiseOptions camera_info_ao = ros::AdvertiseOptions::create<sensor_msgs::CameraInfo>(
-        this->cameraInfoTopicName,1,
-        boost::bind( &GazeboRosProsilica::InfoConnect,this),
-        boost::bind( &GazeboRosProsilica::InfoDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
-      this->camera_info_pub_ = this->rosnode_->advertise(camera_info_ao);
       ROS_ERROR("trigger_mode is invalid: %s, using Continuous mode",this->mode_.c_str());
   }
+  /// advertise topics for image and camera info
+  ros::AdvertiseOptions image_ao = ros::AdvertiseOptions::create<sensor_msgs::Image>(
+    this->imageTopicName,1,
+    boost::bind( &GazeboRosProsilica::ImageConnect,this),
+    boost::bind( &GazeboRosProsilica::ImageDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
+  this->image_pub_ = this->rosnode_->advertise(image_ao);
+
+  ros::AdvertiseOptions camera_info_ao = ros::AdvertiseOptions::create<sensor_msgs::CameraInfo>(
+    this->cameraInfoTopicName,1,
+    boost::bind( &GazeboRosProsilica::InfoConnect,this),
+    boost::bind( &GazeboRosProsilica::InfoDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
+  this->camera_info_pub_ = this->rosnode_->advertise(camera_info_ao);
 
 }
 
@@ -314,12 +309,15 @@ void GazeboRosProsilica::UpdateChild()
   }
   else
   {
-    this->PutCameraData();
+    // publish if in continuous mode, otherwise triggered by poll
+    if (this->mode_ == "Continuous")
+      this->PutCameraData();
   }
 
-  /// publish CameraInfo
+  /// publish CameraInfo if in continuous mode, otherwise triggered by poll
   if (this->infoConnectCount > 0)
-    this->PublishCameraInfo();
+    if (this->mode_ == "Continuous")
+      this->PublishCameraInfo();
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Put laser data to the interface
@@ -651,6 +649,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         this->roiCameraInfoMsg->P[9] = 0.0;
         this->roiCameraInfoMsg->P[10] = 1.0;
         this->roiCameraInfoMsg->P[11] = 0.0;
+        this->camera_info_pub_.publish(*this->roiCameraInfoMsg);
 
         // copy data into imageMsg, then convert to roiImageMsg(image)
         this->imageMsg.header.frame_id    = this->frameName;
