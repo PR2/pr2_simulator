@@ -19,18 +19,15 @@
   <!-- Torso -->
   <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_torso_controller.yaml" />
 
-  <!-- Camera-Projector trigger -->
-  <include file="$(find pr2_controller_configuration)/pr2_camera_projector_trigger_controllers.xml" />
-
   <!-- Controllers that come up started -->
   <node name="default_controllers_spawner"
         pkg="pr2_controller_manager" type="spawner" output="screen"
-        args="--wait-for=/calibrated pr2_base_controller pr2_base_odometry head_traj_controller laser_tilt_controller" />
+        args="--wait-for=/calibrated pr2_base_controller pr2_base_odometry head_traj_controller laser_tilt_controller torso_controller r_gripper_controller l_gripper_controller" />
 
   <!-- Controllers that come up loaded -->
   <node name="default_loaded_controllers_spawner"
         pkg="pr2_controller_manager" type="spawner" output="screen"
-        args="--wait-for=/calibrated --stopped r_arm_controller l_arm_controller r_gripper_controller l_gripper_controller torso_controller" />
+        args="--wait-for=/calibrated --stopped r_arm_controller l_arm_controller" />
   <!--
   <node name="send_default_laser_command"
         pkg="pr2_mechanism_controllers" type="send_periodic_cmd_srv.py"
@@ -38,10 +35,6 @@
   -->
   
   <!-- Nodes on top of the controllers -->
-  <node pkg="pr2_head_controller" type="pr2_head_controller" name="head_controller">
-    <remap from="/head_controller/controller_command" to="/head_traj_controller/command" />
-  </node>
-
   <group ns="r_arm_controller">
     <node name="joint_trajectory_action_node"
           pkg="joint_trajectory_action" type="joint_trajectory_action" />
@@ -50,7 +43,6 @@
     <node name="joint_trajectory_action_node"
           pkg="joint_trajectory_action" type="joint_trajectory_action" />
   </group>
-  
   <group ns="r_gripper_controller">
     <node name="gripper_action_node"
           pkg="pr2_gripper_action" type="pr2_gripper_action" />
@@ -67,5 +59,6 @@
     <node name="position_joint_action_node"
           pkg="single_joint_position_action" type="single_joint_position_action" />
   </group>
-
+  
+        
 </launch>

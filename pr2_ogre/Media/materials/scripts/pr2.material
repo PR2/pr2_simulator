@@ -270,34 +270,6 @@ material PR2/Plug
   }
 }
 
-material PR2/Face
-{
-  technique
-  {
-    pass
-    {
-      texture_unit
-      {
-        texture face_texture.jpg
-      }
-    }
-  }
-}
-
-material PR2/Face2
-{
-  technique
-  {
-    pass
-    {
-      texture_unit
-      {
-        texture face2_texture.jpg
-      }
-    }
-  }
-}
-
 material PR2/Jack
 {
   technique
