@@ -186,6 +186,7 @@ class GazeboRosProsilica : public Controller
   private: ParamT<double> *CxP;            // optical center x
   private: ParamT<double> *CyP;            // optical center y
   private: ParamT<double> *focal_lengthP;  // also known as focal length
+  private: ParamT<double> *hack_baselineP;  // also known as focal length
   private: ParamT<double> *distortion_k1P; // linear distortion
   private: ParamT<double> *distortion_k2P; // quadratic distortion
   private: ParamT<double> *distortion_k3P; // cubic distortion
@@ -204,6 +205,7 @@ class GazeboRosProsilica : public Controller
   private: double Cx;
   private: double Cy;
   private: double focal_length;
+  private: double hack_baseline;
   private: double distortion_k1;
   private: double distortion_k2;
   private: double distortion_k3;
