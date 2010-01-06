@@ -175,6 +175,13 @@ void GazeboRosControllerManager::UpdateChild()
     if (!this->joints_[i])
       continue;
 
+    static double torso_hack_damping_threshold = 1000.0; /// FIXME: if damping is greater than this value, do some unconventional smoothing to prevent instability due to safety controller
+    double damping;
+    if (this->cm_->state_->joint_states_[i].joint_->dynamics)
+      damping = this->cm_->state_->joint_states_[i].joint_->dynamics->damping;
+    else
+      damping = 0;
+
     this->fake_state_->joint_states_[i].measured_effort_ = this->fake_state_->joint_states_[i].commanded_effort_;
 
     switch(this->joints_[i]->GetType())
@@ -188,8 +195,18 @@ void GazeboRosControllerManager::UpdateChild()
     }
     case Joint::SLIDER: {
       SliderJoint *sj = (SliderJoint*)this->joints_[i];
-      this->fake_state_->joint_states_[i].position_ = sj->GetPosition();
-      this->fake_state_->joint_states_[i].velocity_ = sj->GetPositionRate();
+      if (damping > torso_hack_damping_threshold)
+      {
+        this->fake_state_->joint_states_[i].position_ *= (1.0 - torso_hack_damping_threshold / damping);
+        this->fake_state_->joint_states_[i].position_ += (torso_hack_damping_threshold/damping)*sj->GetPosition();
+        this->fake_state_->joint_states_[i].velocity_ *= (1.0 - torso_hack_damping_threshold / damping);
+        this->fake_state_->joint_states_[i].velocity_ += (torso_hack_damping_threshold/damping)*sj->GetPositionRate();
+      }
+      else
+      {
+        this->fake_state_->joint_states_[i].position_ = sj->GetPosition();
+        this->fake_state_->joint_states_[i].velocity_ = sj->GetPositionRate();
+      }
       break;
     }
     default:
@@ -232,55 +249,16 @@ void GazeboRosControllerManager::UpdateChild()
     double damping_force;
     double effort = this->fake_state_->joint_states_[i].commanded_effort_;
     double damping;
-    double effort_command = 0;
 
     if (this->cm_->state_->joint_states_[i].joint_->dynamics)
       damping = this->cm_->state_->joint_states_[i].joint_->dynamics->damping;
     else
       damping = 0;
-#if 0
-    ///-------------------------------------------------
-    /// hack: due to bad interactions between safety controllers with large gains and highly geared joints
-    /// hack: check to see if we are in safety controller region,  if so, back off to prevent oscillations
-    ///-------------------------------------------------
-    double velocity_limit;
-    double effort_limit;
-    double hard_lower_limit;
-    double hard_upper_limit;
-    double soft_lower_limit;
-    double soft_upper_limit;
-    double k_p;
-    double k_v; bool safety_exists;
-    bool limits_exists;
-    double safety_velocity_min;
-    double safety_velocity_max;
-    if (this->cm_->state_->joint_states_[i].joint_->limits)
-    {
-        hard_lower_limit = this->cm_->state_->joint_states_[i].joint_->limits->lower;
-        hard_upper_limit = this->cm_->state_->joint_states_[i].joint_->limits->upper;
-        velocity_limit   = this->cm_->state_->joint_states_[i].joint_->limits->velocity;
-        effort_limit   = this->cm_->state_->joint_states_[i].joint_->limits->velocity;
-        limits_exists = true;
-    }
-    else
-        limits_exists = false;
-
-    if (this->cm_->state_->joint_states_[i].joint_->safety)
-    {
-        soft_lower_limit = this->cm_->state_->joint_states_[i].joint_->safety->soft_lower_limit;
-        soft_upper_limit = this->cm_->state_->joint_states_[i].joint_->safety->soft_upper_limit;
-        k_p = this->cm_->state_->joint_states_[i].joint_->safety->k_position;
-        k_v = this->cm_->state_->joint_states_[i].joint_->safety->k_velocity;
-        safety_exists = true;
-    }
-    else
-        safety_exists = false;
-    double fudge_scale;
-#endif
 
 
     double current_position;
     double current_velocity;
+    double effort_command;
 
     switch (this->joints_[i]->GetType())
     {
@@ -297,33 +275,6 @@ void GazeboRosControllerManager::UpdateChild()
 
       damping_force = damping * current_velocity;
       effort_command = effort-damping_force;
-
-#if 0
-      // hack: if in safety controller region, scale down effort inverse of velocity
-      if (limits_exists && safety_exists && (k_p > 0.0) && (k_v > 0.0))
-      {
-        safety_velocity_min = std::max( -velocity_limit , -k_p * (current_position - soft_lower_limit));
-        safety_velocity_max = std::min(  velocity_limit , -k_p * (current_position - soft_upper_limit));
-        if (((current_position > (soft_upper_limit - velocity_limit / k_p)) ||
-             (current_position < (soft_lower_limit + velocity_limit / k_p))) ||
-            ((current_velocity > safety_velocity_max) ||
-             (current_velocity < safety_velocity_min)) )
-        {
-          fudge_scale = 1.0 - fabs(current_velocity)/velocity_limit;
-          fudge_scale = fudge_scale > 0.0 ? pow(fudge_scale,2.0) : 0.0;
-          effort_command = fudge_scale *effort_command;
-        }
-        if (((current_position > (soft_upper_limit - velocity_limit / k_p)) ||
-             (current_position < (soft_lower_limit + velocity_limit / k_p))))
-          ROS_ERROR("debug slider %s force current_velocity %f %f damping %f cmd %f fudge %f",this->joints_[i]->GetName().c_str(),effort ,current_velocity, damping_force, effort_command,fudge_scale);
-        if ((current_velocity > safety_velocity_max) || (current_velocity < safety_velocity_min))
-          ROS_ERROR("velocity debug slider %s force current_velocity %f %f damping %f cmd %f fudge %f",this->joints_[i]->GetName().c_str(),effort ,current_velocity, damping_force, effort_command,fudge_scale);
-      }
-
-      // below tries to use a motor to quiet down motion, verdict: still unstable
-      sj->SetParam(dParamVel, 0);
-      sj->SetParam(dParamFMax, 1000000);
-#endif
 
       ((SliderJoint*)this->joints_[i])->SetSliderForce(effort_command);
       break;
