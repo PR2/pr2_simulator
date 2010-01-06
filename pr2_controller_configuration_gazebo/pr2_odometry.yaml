@@ -1,4 +1,4 @@
-pr2_base_odometry:
+base_odometry:
   caster_names: fr_caster_rotation_link fl_caster_rotation_link bl_caster_rotation_link br_caster_rotation_link
   type: Pr2Odometry
   odom_publish_rate: 100.0

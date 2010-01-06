@@ -1,4 +1,4 @@
-pr2_base_controller:
+base_controller:
   caster_names: fr_caster_rotation_link fl_caster_rotation_link bl_caster_rotation_link br_caster_rotation_link
 
   type: Pr2BaseController
