@@ -23,17 +23,10 @@
   <node name="default_controllers_spawner"
         pkg="pr2_controller_manager" type="spawner" output="screen"
         args="--wait-for=/calibrated base_controller base_odometry head_traj_controller laser_tilt_controller torso_controller r_gripper_controller l_gripper_controller" />
-
-  <!-- Controllers that come up loaded -->
-  <node name="default_loaded_controllers_spawner"
+  <node name="default_arm_controllers_spawner"
         pkg="pr2_controller_manager" type="spawner" output="screen"
-        args="--wait-for=/calibrated --stopped r_arm_controller l_arm_controller" />
-  <!--
-  <node name="send_default_laser_command"
-        pkg="pr2_mechanism_controllers" type="send_periodic_cmd_srv.py"
-        args="laser_tilt_controller linear 10 .75 .25" />
-  -->
-  
+        args="--wait-for=/calibrated r_arm_controller l_arm_controller" />
+
   <!-- Nodes on top of the controllers -->
   <group ns="r_arm_controller">
     <node name="joint_trajectory_action_node"
