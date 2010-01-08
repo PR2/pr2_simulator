@@ -4,7 +4,7 @@
   <include file="$(find pr2_description)/robots/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="pr2_gazebo_model" pkg="gazebo_tools" type="gazebo_model" args="-z 0.051 -p robot_description spawn" respawn="false" output="screen" />
+  <node name="pr2_gazebo_model" pkg="gazebo_tools" type="gazebo_model" args="-p robot_description spawn" respawn="false" output="screen" />
  
   <!-- Controller Manager -->
   <include file="$(find pr2_controller_manager)/controller_manager.launch" />
@@ -13,6 +13,10 @@
   <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
   <node pkg="rostopic" type="rostopic" name="fake_joint_calibration"
         args="pub /calibrated std_msgs/Bool true" />
+
+  <!-- Stereo image processing -->
+  <include file="$(find stereo_image_proc)/narrow.launch"/>
+  <include file="$(find stereo_image_proc)/wide.launch"/>
 
   <!-- diagnostics aggregator -->
   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diag_agg" args="Robot" >
