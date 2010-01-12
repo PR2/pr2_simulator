@@ -15,3 +15,4 @@ base_odometry:
   cov_x_theta: 0.0
   cov_y_theta: 0.0
   verbose: false
+  publish_tf: false
