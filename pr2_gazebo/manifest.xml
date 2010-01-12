@@ -9,7 +9,6 @@
   <depend package="gazebo_tools"/>
   <depend package="pr2_ogre" />
   <depend package="gazebo_worlds"/>
-  <depend package="pr2_defs"/>
   <depend package="pr2_description"/>
   <depend package="robot_state_publisher"/>
   <depend package="diagnostic_aggregator"/>
