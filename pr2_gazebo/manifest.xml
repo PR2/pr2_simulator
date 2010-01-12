@@ -1,9 +1,9 @@
 <package>
-  <description>Gazebo 3D simulation examples.</description>
+  <description>3D PR2 Simulator Launch Scripts.  Hardware equivalent of pr2.launch is found here.</description>
   <author>John Hsu</author>
   <license>BSD</license>
   <review status="na" notes=""/>
-  <url>http://pr.willowgarage.com/wiki/pr2_simulator</url>
+  <url>http://pr.willowgarage.com/wiki/pr2_gazebo</url>
   <depend package="pr2_gazebo_plugins"/>
   <depend package="gazebo_plugins"/>
   <depend package="gazebo_tools"/>
