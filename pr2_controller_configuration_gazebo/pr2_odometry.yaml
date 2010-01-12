@@ -1,23 +1,18 @@
-pr2_base_odometry:
+base_odometry:
   caster_names: fr_caster_rotation_link fl_caster_rotation_link bl_caster_rotation_link br_caster_rotation_link
-
   type: Pr2Odometry
-
-  expected_publish_time: 0.03
-
+  odom_publish_rate: 100.0
   ils_weight_type: Gaussian
   ils_max_iterations: 3
-
   odom_frame: odom
   base_footprint_frame: base_footprint
   base_link_frame: base_link
-
   base_link_floor_z_offset: 0.051
-
   sigma_x: 0.002
   sigma_y: 0.002
   sigma_theta: 0.017
-
   cov_x_y: 0.0
   cov_x_theta: 0.0
   cov_y_theta: 0.0
+  verbose: false
+  publish_tf: false
