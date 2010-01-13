@@ -198,18 +198,18 @@ void GazeboRosControllerManager::UpdateChild()
     }
     case Joint::SLIDER: {
       static double torso_hack_damping_threshold = 1000.0; /// FIXME: if damping is greater than this value, do some unconventional smoothing to prevent instability due to safety controller
-      SliderJoint *sj = (SliderJoint*)this->joints_[i];
+      Joint *sj = this->joints_[i];
       if (damping_coef > torso_hack_damping_threshold)
       {
         this->fake_state_->joint_states_[i].position_ *= (1.0 - torso_hack_damping_threshold / damping_coef);
-        this->fake_state_->joint_states_[i].position_ += (torso_hack_damping_threshold/damping_coef)*sj->GetPosition();
+        this->fake_state_->joint_states_[i].position_ += (torso_hack_damping_threshold/damping_coef)*sj->GetAngle(0).GetAsRadian();
         this->fake_state_->joint_states_[i].velocity_ *= (1.0 - torso_hack_damping_threshold / damping_coef);
-        this->fake_state_->joint_states_[i].velocity_ += (torso_hack_damping_threshold/damping_coef)*sj->GetPositionRate();
+        this->fake_state_->joint_states_[i].velocity_ += (torso_hack_damping_threshold/damping_coef)*sj->GetVelocity(0);
       }
       else
       {
-        this->fake_state_->joint_states_[i].position_ = sj->GetPosition();
-        this->fake_state_->joint_states_[i].velocity_ = sj->GetPositionRate();
+        this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).GetAsRadian();
+        this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
       }
       break;
     }
@@ -263,20 +263,18 @@ void GazeboRosControllerManager::UpdateChild()
     switch (this->joints_[i]->GetType())
     {
     case Joint::HINGE: {
-      HingeJoint *hj = (HingeJoint*)this->joints_[i];
-      double current_velocity = hj->GetAngleRate();
+      double current_velocity = this->joints_[i]->GetVelocity(0);
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort - damping_force;
-      hj->SetTorque(effort_command);
+      this->joints_[i]->SetForce(0,effort_command);
       break;
     }
     case Joint::SLIDER: {
-      SliderJoint *sj = (SliderJoint*)this->joints_[i];
-      double current_velocity = sj->GetPositionRate();
+      double current_velocity = this->joints_[i]->GetVelocity(0);
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort-damping_force;
 
-      ((SliderJoint*)this->joints_[i])->SetSliderForce(effort_command);
+      this->joints_[i]->SetForce(0,effort_command);
       break;
     }
     default:

@@ -372,7 +372,8 @@ void GazeboRosProsilica::PutCameraData()
     this->lock.lock();
     // copy data into image
     this->imageMsg.header.frame_id = this->frameName;
-    this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+    this->imageMsg.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
+    this->imageMsg.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
 
     //double tmpT1 = Simulator::Instance()->GetWallTime();
     //double tmpT2;
@@ -512,7 +513,8 @@ void GazeboRosProsilica::PublishCameraInfo()
 {
   // fill CameraInfo
   this->cameraInfoMsg.header.frame_id = this->frameName;
-  this->cameraInfoMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+  this->cameraInfoMsg.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
+  this->cameraInfoMsg.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
   this->cameraInfoMsg.height = this->height;
   this->cameraInfoMsg.width  = this->width;
 
@@ -573,7 +575,8 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 /*
   // fill out the cam info part
   info.header.frame_id = this->frameName;
-  info.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+  info.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
+  info.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
   info.height = this->myParent->GetImageHeight();
   info.width  = this->myParent->GetImageWidth() ;
   // distortion
@@ -644,7 +647,8 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         // fill CameraInfo
         this->roiCameraInfoMsg = &info;
         this->roiCameraInfoMsg->header.frame_id = this->frameName;
-        this->roiCameraInfoMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+        this->roiCameraInfoMsg->header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
+        this->roiCameraInfoMsg->header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
         this->roiCameraInfoMsg->width  = req.roi.width; //this->myParent->GetImageWidth() ;
         this->roiCameraInfoMsg->height = req.roi.height; //this->myParent->GetImageHeight();
         // distortion
@@ -690,7 +694,8 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 
         // copy data into imageMsg, then convert to roiImageMsg(image)
         this->imageMsg.header.frame_id    = this->frameName;
-        this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+        this->imageMsg.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
+        this->imageMsg.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
 
         unsigned char dst[this->width*this->height];
 
@@ -830,7 +835,8 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           // copy data into ROI image
           this->roiImageMsg = &image;
           this->roiImageMsg->header.frame_id = this->frameName;
-          this->roiImageMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+          this->roiImageMsg->header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
+          this->roiImageMsg->header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
 
           //sensor_msgs::CvBridge img_bridge_(&this->imageMsg);
           //IplImage* cv_image;
