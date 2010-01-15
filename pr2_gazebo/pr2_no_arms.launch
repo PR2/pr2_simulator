@@ -1,13 +1,17 @@
 <launch>
   
   <!-- send pr2 urdf to param server -->
-  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_description)/robots/pr2_no_arms.urdf.xacro'" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="pr2_gazebo_model" pkg="gazebo_tools" type="gazebo_model" args="$(optenv ROBOT_INITIAL_POSE) -p robot_description spawn" respawn="false" output="screen" />
  
   <!-- Controller Manager -->
   <include file="$(find pr2_controller_manager)/controller_manager.launch" />
+
+  <!-- Default Controllers -->
+  <!-- it tries to start arm controllers nevertheless, so some errors will be printed on startup -->
+  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
 
   <!-- Fake Calibration -->
   <node pkg="rostopic" type="rostopic" name="fake_joint_calibration"
