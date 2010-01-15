@@ -67,3 +67,10 @@ base_controller:
 
   max_translational_velocity: 1.0 
   max_rotational_velocity: 2.0
+
+  caster_velocity_filter:
+   name: caster_velocity_filter
+   type: TransferFunctionFilter<double>
+   params:
+    a: [1.0, -0.98]
+    b: [0.02]
