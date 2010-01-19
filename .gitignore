@@ -1,0 +1,10 @@
+pr2_gazebo_plugins/msg/cpp
+pr2_gazebo_plugins/msg/java
+pr2_gazebo_plugins/msg/lisp
+pr2_gazebo_plugins/msg/oct
+pr2_gazebo_plugins/src/pr2_gazebo_plugins
+pr2_gazebo_plugins/srv/cpp
+pr2_gazebo_plugins/srv/java
+pr2_gazebo_plugins/srv/lisp
+pr2_gazebo_plugins/srv/oct
+pr2_ogre/Media/models
