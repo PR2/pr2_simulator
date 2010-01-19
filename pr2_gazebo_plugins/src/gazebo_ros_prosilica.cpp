@@ -84,7 +84,7 @@ GazeboRosProsilica::GazeboRosProsilica(Entity *parent)
   this->imageTopicNameP = new ParamT<std::string>("imageTopicName","image_raw", 0);
   this->cameraInfoTopicNameP = new ParamT<std::string>("cameraInfoTopicName","camera_info", 0);
   this->pollServiceNameP = new ParamT<std::string>("pollServiceName","request_image", 0);
-  this->frameNameP = new ParamT<std::string>("frameName","prosilica_optical_frame", 0);
+  this->frameNameP = new ParamT<std::string>("frameName","", 0);
   // camera parameters 
   this->CxPrimeP = new ParamT<double>("CxPrime",320, 0); // for 640x480 image
   this->CxP  = new ParamT<double>("Cx" ,320, 0); // for 640x480 image
@@ -178,14 +178,14 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
 
   //ROS_ERROR("before trigger_mode %s %s",mode_param_name.c_str(),this->mode_.c_str());
 
-  if (this->rosnode_->searchParam("/trigger_mode",mode_param_name)) ///\@todo: hardcoded per prosilica_camera wiki api, make this an urdf parameter
+  if (this->rosnode_->searchParam("trigger_mode",mode_param_name)) ///\@todo: hardcoded per prosilica_camera wiki api, make this an urdf parameter
   {
       this->rosnode_->getParam(mode_param_name,this->mode_);
   }
   else
   {
-      ROS_DEBUG("defaults to Triggered");
-      this->mode_ = "Triggered";
+      ROS_DEBUG("defaults to Continuous");
+      this->mode_ = "Continuous";
   }
 
   //this->rosnode_->getParam(mode_param_name,this->mode_);
