@@ -1,24 +1,3 @@
-head_controller:
-  type: HeadPositionController
-  pan_link_name: head_pan_link
-  tilt_link_name: head_tilt_link
-  tilt_controller:
-    type: JointPositionController
-    joint: head_tilt_joint
-    pid:
-      p: 45.0
-      i: 10.0
-      d: 1.0
-      i_clamp: 2.5 
-  pan_controller:
-    type: JointPositionController
-    joint: head_pan_joint
-    pid:
-      p: 10.0
-      i: 12.0
-      d: 0.5
-      i_clamp: 0.5 
-
 head_traj_controller:
   type: JointSplineTrajectoryController
   joints: ['head_pan_joint', 'head_tilt_joint']
