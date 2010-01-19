@@ -1,1 +1,1 @@
-string status
+bool ac_present
