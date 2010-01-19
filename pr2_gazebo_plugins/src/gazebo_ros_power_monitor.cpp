@@ -125,10 +125,20 @@ void GazeboRosPowerMonitor::UpdateChild()
     power_state_.header.stamp.fromSec(curr_time_);
 
     power_state_.power_consumption = charge_rate_;
+
     if (current < 0.0)
-        power_state_.time_remaining = ros::Duration((-charge_ / current) * 60);  // time remaining reported in hours
+        power_state_.time_remaining = ros::Duration((charge_ / -current) * 60);      // time remaining reported in hours
     else
-        power_state_.time_remaining = ros::Duration(65535,65535);
+    {
+        double charge_to_full = full_capacity_param_->GetValue() - charge_;
+        if (charge_to_full == 0.0)
+            power_state_.time_remaining = ros::Duration(0);
+        else if (current == 0.0)
+            power_state_.time_remaining = ros::Duration(65535, 65535);               // zero current - time_remaining is undefined
+        else
+            power_state_.time_remaining = ros::Duration((charge_to_full / current) * 60);
+    }
+
     power_state_.prediction_method = "fuel gauge";
     power_state_.relative_capacity = (int) (100.0 * (charge_ / full_capacity_param_->GetValue()));
 
