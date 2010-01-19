@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PR2_GAZEBO_PLUGINS_ROS_OCEAN_BATTERY_H
-#define PR2_GAZEBO_PLUGINS_ROS_OCEAN_BATTERY_H
+#ifndef PR2_GAZEBO_PLUGINS_ROS_POWER_MONITOR_H
+#define PR2_GAZEBO_PLUGINS_ROS_POWER_MONITOR_H
 
 #include <map>
 #include <vector>
@@ -47,21 +47,21 @@ class XMLConfigNode;
 
 /// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
 /// @{
-/** \defgroup gazebo_ros_ocean_battery GazeboRosOceanBattery class
+/** \defgroup gazebo_ros_power_monitor GazeboRosPowerMonitor class
 
- \brief GazeboRosOceanBattery Plugin
+ \brief GazeboRosPowerMonitor Plugin
 
- This plugin simulates Ocean battery usage.
- GazeboRosOceanBattery requires a model as its parent.
+ This plugin simulates the power_monitor node for reporting the state of the power system (battery charge, time remaining, AC present).
+ GazeboRosPowerMonitor requires a model as its parent.
 
  \verbatim
  <model:physical name="ray_model">
-    <!-- GazeboRosOceanBattery -->
-    <controller:gazebo_ros_ocean_battery name="gazebo_ros_ocean_battery_controller" plugin="libgazebo_ros_ocean_battery.so">
+    <!-- GazeboRosPowerMonitor -->
+    <controller:gazebo_ros_power_monitor name="gazebo_ros_power_monitor_controller" plugin="libgazebo_ros_power_monitor.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>1.0</updateRate>
         <timeout>5</timeout>
-        <interface:audio name="ocean_battery_dummy_interface" />
+        <interface:audio name="power_monitor_dummy_interface" />
         <powerStateTopic>power_state</powerStateTopic>
         <powerStateRate>10.0</powerStateRate>
         <fullChargeCapacity>87.78</fullChargeCapacity>
@@ -69,7 +69,7 @@ class XMLConfigNode;
         <chargeRate>525</chargeRate>
         <dischargeVoltage>15.52</dischargeVoltage>
         <chargeVoltage>16.41</chargeVoltage>
-    </controller:gazebo_ros_ocean_battery>
+    </controller:gazebo_ros_power_monitor>
  </model:physical>
  \endverbatim
  
@@ -78,7 +78,7 @@ class XMLConfigNode;
  */
 
 /**
- * \brief Ocean Battery simulation
+ * \brief power_monitor simulation
  *   \li starts a ROS node if none exists
  *   \li publishes PowerState messages on the /power_state topic
  * .
@@ -86,11 +86,11 @@ class XMLConfigNode;
  \verbatim
  <model:physical name="ray_model">
     <!-- GazeboRosOceanBattery -->
-    <controller:gazebo_ros_ocean_battery name="gazebo_ros_ocean_battery_controller" plugin="libgazebo_ros_ocean_battery.so">
+    <controller:gazebo_ros_power_monitor name="gazebo_ros_power_monitor_controller" plugin="libgazebo_ros_power_monitor.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>1.0</updateRate>
         <timeout>5</timeout>
-        <interface:audio name="ocean_battery_dummy_interface" />
+        <interface:audio name="power_monitor_dummy_interface" />
         <powerStateTopic>power_state</powerStateTopic>
         <powerStateRate>10.0</powerStateRate>
         <fullChargeCapacity>87.78</fullChargeCapacity>
@@ -98,15 +98,15 @@ class XMLConfigNode;
         <chargeRate>525</chargeRate>
         <dischargeVoltage>15.52</dischargeVoltage>
         <chargeVoltage>16.41</chargeVoltage>
-    </controller:gazebo_ros_ocean_battery>
+    </controller:gazebo_ros_power_monitor>
  </model:physical>
  \endverbatim
  **/
-class GazeboRosOceanBattery : public Controller
+class GazeboRosPowerMonitor : public Controller
 {
 public:
-    GazeboRosOceanBattery(Entity* parent);
-    virtual ~GazeboRosOceanBattery();
+    GazeboRosPowerMonitor(Entity* parent);
+    virtual ~GazeboRosPowerMonitor();
 
 protected:
     // Inherited from Controller
@@ -121,8 +121,8 @@ private:
 
 private:
     Model* model_;
-    gazebo::Time curr_time_;
-    gazebo::Time last_time_;
+    double curr_time_;
+    double last_time_;
 
     ParamT<std::string>* robot_namespace_param_;
     ParamT<std::string>* power_state_topic_param_;
