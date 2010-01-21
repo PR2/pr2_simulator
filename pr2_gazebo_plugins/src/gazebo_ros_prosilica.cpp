@@ -84,7 +84,7 @@ GazeboRosProsilica::GazeboRosProsilica(Entity *parent)
   this->imageTopicNameP = new ParamT<std::string>("imageTopicName","image_raw", 0);
   this->cameraInfoTopicNameP = new ParamT<std::string>("cameraInfoTopicName","camera_info", 0);
   this->pollServiceNameP = new ParamT<std::string>("pollServiceName","request_image", 0);
-  this->frameNameP = new ParamT<std::string>("frameName","", 0);
+  this->frameNameP = new ParamT<std::string>("frameName","camera", 0);
   // camera parameters 
   this->CxPrimeP = new ParamT<double>("CxPrime",320, 0); // for 640x480 image
   this->CxP  = new ParamT<double>("Cx" ,320, 0); // for 640x480 image
@@ -184,24 +184,24 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   }
   else
   {
-      ROS_DEBUG("defaults to Continuous");
-      this->mode_ = "Continuous";
+      ROS_DEBUG("defaults to streaming");
+      this->mode_ = "streaming";
   }
 
   //this->rosnode_->getParam(mode_param_name,this->mode_);
   //ROS_ERROR("trigger_mode %s %s",mode_param_name.c_str(),this->mode_.c_str());
 
-  if (this->mode_ == "Triggered")
+  if (this->mode_ == "polled")
   {
       poll_srv_ = polled_camera::advertise(*this->rosnode_,this->pollServiceName,&GazeboRosProsilica::pollCallback,this);
   }
-  else if (this->mode_ == "Continuous")
+  else if (this->mode_ == "streaming")
   {
       ROS_DEBUG("do nothing here,mode: %s",this->mode_.c_str());
   }
   else
   {
-      ROS_ERROR("trigger_mode is invalid: %s, using Continuous mode",this->mode_.c_str());
+      ROS_ERROR("trigger_mode is invalid: %s, using streaming mode",this->mode_.c_str());
   }
   /// advertise topics for image and camera info
   ros::AdvertiseOptions image_ao = ros::AdvertiseOptions::create<sensor_msgs::Image>(
@@ -343,13 +343,13 @@ void GazeboRosProsilica::UpdateChild()
   else
   {
     // publish if in continuous mode, otherwise triggered by poll
-    if (this->mode_ == "Continuous")
+    if (this->mode_ == "streaming")
       this->PutCameraData();
   }
 
   /// publish CameraInfo if in continuous mode, otherwise triggered by poll
   if (this->infoConnectCount > 0)
-    if (this->mode_ == "Continuous")
+    if (this->mode_ == "streaming")
       this->PublishCameraInfo();
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -563,7 +563,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
                                       sensor_msgs::Image& image, sensor_msgs::CameraInfo& info)
 {
 
-  if (this->mode_ != "Triggered")
+  if (this->mode_ != "polled")
   {
     ROS_ERROR("Poll service called but camera is not in triggered mode");
     return false;
