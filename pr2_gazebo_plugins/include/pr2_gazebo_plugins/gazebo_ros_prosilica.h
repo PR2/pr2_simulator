@@ -76,7 +76,7 @@ namespace gazebo
         </controller:gazebo_ros_prosilica>
       </sensor:camera>
     </body:empty>
-  </model:phyiscal>
+  </model:physical>
   \endverbatim
  
 \{
