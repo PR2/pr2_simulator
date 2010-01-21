@@ -9,6 +9,7 @@
   <author>John Hsu</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_ogre</url>
   
   <depend package="convex_decomposition"/>
   <depend package="ivcon"/>
@@ -16,6 +17,5 @@
   <depend package="pr2_description"/>
 
 
-  <url>http://pr.willowgarage.com/wiki/RobotDescriptionFormat</url>
 
 </package>
