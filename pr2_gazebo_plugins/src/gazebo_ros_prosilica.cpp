@@ -178,18 +178,14 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
 
   //ROS_ERROR("before trigger_mode %s %s",mode_param_name.c_str(),this->mode_.c_str());
 
-  if (this->rosnode_->searchParam("trigger_mode",mode_param_name)) ///\@todo: hardcoded per prosilica_camera wiki api, make this an urdf parameter
-  {
-      this->rosnode_->getParam(mode_param_name,this->mode_);
-  }
-  else
-  {
-      ROS_DEBUG("defaults to streaming");
-      this->mode_ = "streaming";
-  }
+  if (!this->rosnode_->searchParam("trigger_mode",mode_param_name)) ///\@todo: hardcoded per prosilica_camera wiki api, make this an urdf parameter
+      mode_param_name = "trigger_mode";
 
-  //this->rosnode_->getParam(mode_param_name,this->mode_);
-  //ROS_ERROR("trigger_mode %s %s",mode_param_name.c_str(),this->mode_.c_str());
+  if (!this->rosnode_->getParam(mode_param_name,this->mode_))
+      this->mode_ = "streaming";
+
+  ROS_INFO("trigger_mode %s %s",mode_param_name.c_str(),this->mode_.c_str());
+
 
   if (this->mode_ == "polled")
   {
