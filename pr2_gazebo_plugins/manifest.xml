@@ -1,11 +1,11 @@
 <package>
   <description brief="Gazebo Plugins for Personal Robots">
-    Gazebo Plugins for various PR2 specific sensors and actuators on the robot.
+    Gazebo Plugins for various PR2-specific sensors and actuators on the robot.
   </description>
   <author>Sachin Chitta, Stu Glaser, John Hsu</author>
   <license>BSD</license>
   <review status="API conditionally cleared" notes="Tully to code review"/>
-  <url>http://pr.willowgarage.com/wiki/pr2_gazebo_plugins</url>
+  <url>http://ros.org/wiki/pr2_gazebo_plugins</url>
   <depend package="gazebo"/>
   <depend package="gazebo_tools"/>
   <depend package="opende"/>
