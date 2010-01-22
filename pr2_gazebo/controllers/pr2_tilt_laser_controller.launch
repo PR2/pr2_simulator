@@ -1,4 +1,0 @@
-<launch>
-  <include file="$(find pr2_alpha)/sim.machine" />
-  <include file="$(find 2dnav_pr2)/config/lasers_and_filters.xml" />
-</launch>
