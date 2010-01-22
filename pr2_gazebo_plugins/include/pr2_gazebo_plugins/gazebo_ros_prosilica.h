@@ -59,24 +59,39 @@ namespace gazebo
 /// @{
 /** \defgroup GazeboRosProsilica Ros Camera Plugin XML Reference and Example
 
-  \brief Ros Camera Plugin Controller.
+  \brief Gazebo ROS Prosilica Camera Plugin Controller.
   
-  This is a controller that collects data from a Camera Sensor and populates a libgazebo camera interface as well as publish a ROS sensor_msgs::Image (under the field \b \<topicName\>). This controller should only be used as a child of a camera sensor (see example below.
+  This is a controller that collects data from a simulated Prosilica camera sensor and makes image data available
+  in the same manner prosilica_camera works.  The controller:gazebo_ros_prosilica block must be inside of a sensor:camera block.
 
   Example Usage:
   \verbatim
-  <model:physical name="camera_model">
-    <body:empty name="camera_body_name">
-      <sensor:camera name="camera_sensor">
-        <controller:gazebo_ros_prosilica name="controller-name" plugin="libgazebo_ros_prosilica.so">
-            <alwaysOn>true</alwaysOn>
-            <updateRate>15.0</updateRate>
-            <topicName>camera_name/image</topicName>
-            <frameName>camera_body_name</frameName>
-        </controller:gazebo_ros_prosilica>
-      </sensor:camera>
-    </body:empty>
-  </model:physical>
+    <sensor:camera name="prosilica_sensor">
+      <imageFormat>R8G8B8</imageFormat>
+      <imageSize>2448 2050</imageSize>
+      <hfov>45</hfov>
+      <nearClip>0.1</nearClip>
+      <farClip>100</farClip>
+      <updateRate>20.0</updateRate>
+      <controller:gazebo_ros_prosilica name="prosilica_controller" plugin="libgazebo_ros_prosilica.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>20.0</updateRate>
+        <imageTopicName>/prosilica/image_raw</imageTopicName>
+        <cameraInfoTopicName>/prosilica/camera_info</cameraInfoTopicName>
+        <pollServiceName>/prosilica/request_image</pollServiceName>
+        <frameName>prosilica_frame</frameName>
+        <CxPrime>1224.5</CxPrime>
+        <Cx>1224.5</Cx>
+        <Cy>1025.5</Cy>
+        <focal_length>2955</focal_length> <!-- image_width / (2*tan(hfov_radian /2)) -->
+        <distortion_k1>0.00000001</distortion_k1>
+        <distortion_k2>0.00000001</distortion_k2>
+        <distortion_k3>0.00000001</distortion_k3>
+        <distortion_t1>0.00000001</distortion_t1>
+        <distortion_t2>0.00000001</distortion_t2>
+        <interface:camera name="prosilica_iface" />
+      </controller:gazebo_ros_prosilica>
+    </sensor:camera>
   \endverbatim
  
 \{
@@ -86,22 +101,36 @@ namespace gazebo
 
 
     \brief GazeboRosProsilica Controller.
-           \li Starts a ROS node if none exists. \n
-           \li Simulates a generic camera and broadcast sensor_msgs::Image topic over ROS.
+           \li This is a controller that collects data from a simulated Prosilica camera sensor and makes image data available
+  in the same manner prosilica_camera works.  The controller:gazebo_ros_prosilica block must be inside of a sensor:camera block.
            \li Example Usage:
   \verbatim
-  <model:physical name="camera_model">
-    <body:empty name="camera_body_name">
-      <sensor:camera name="camera_sensor">
-        <controller:gazebo_ros_prosilica name="controller-name" plugin="libgazebo_ros_prosilica.so">
-            <alwaysOn>true</alwaysOn>
-            <updateRate>15.0</updateRate>
-            <topicName>camera_name/image</topicName>
-            <frameName>camera_body_name</frameName>
-        </controller:gazebo_ros_prosilica>
-      </sensor:camera>
-    </body:empty>
-  </model:phyiscal>
+    <sensor:camera name="prosilica_sensor">
+      <imageFormat>R8G8B8</imageFormat>
+      <imageSize>2448 2050</imageSize>
+      <hfov>45</hfov>
+      <nearClip>0.1</nearClip>
+      <farClip>100</farClip>
+      <updateRate>20.0</updateRate>
+      <controller:gazebo_ros_prosilica name="prosilica_controller" plugin="libgazebo_ros_prosilica.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>20.0</updateRate>
+        <imageTopicName>/prosilica/image_raw</imageTopicName>
+        <cameraInfoTopicName>/prosilica/camera_info</cameraInfoTopicName>
+        <pollServiceName>/prosilica/request_image</pollServiceName>
+        <frameName>prosilica_frame</frameName>
+        <CxPrime>1224.5</CxPrime>
+        <Cx>1224.5</Cx>
+        <Cy>1025.5</Cy>
+        <focal_length>2955</focal_length> <!-- image_width / (2*tan(hfov_radian /2)) -->
+        <distortion_k1>0.00000001</distortion_k1>
+        <distortion_k2>0.00000001</distortion_k2>
+        <distortion_k3>0.00000001</distortion_k3>
+        <distortion_t1>0.00000001</distortion_t1>
+        <distortion_t2>0.00000001</distortion_t2>
+        <interface:camera name="prosilica_iface" />
+      </controller:gazebo_ros_prosilica>
+    </sensor:camera>
   \endverbatim
            .
  
