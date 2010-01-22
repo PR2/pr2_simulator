@@ -1,9 +1,9 @@
 <package>
-  <description>3D PR2 Simulator Launch Scripts.  Hardware equivalent of pr2.launch is found here.</description>
+  <description>3D PR2 Simulator Launch Scripts.  The simulation equivalent of pr2.launch is found here.</description>
   <author>John Hsu</author>
   <license>BSD</license>
-  <review status="na" notes=""/>
-  <url>http://pr.willowgarage.com/wiki/pr2_gazebo</url>
+  <review status="Doc reviewed" notes="2010/01/21"/>
+  <url>http://ros.org/wiki/pr2_gazebo</url>
   <depend package="pr2_gazebo_plugins"/>
   <depend package="gazebo_plugins"/>
   <depend package="gazebo_tools"/>

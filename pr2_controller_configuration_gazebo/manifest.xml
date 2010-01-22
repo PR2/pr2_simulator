@@ -1,12 +1,14 @@
 <package>
   <description brief="pr2_controller_configuration_gazebo">
 
-     a clone of pr2_controller_configuration for PR2 Simulator
+  A copy of the pr2_controller_configuration package, for use in 
+  the PR2 simulator.  We maintain two copies to allow for controller
+  gains to be set differently between hardware and simulation.
 
   </description>
   <author>Wim Meeussen,John Hsu</author>
   <license>BSD</license>
-  <review status="unreviewed" notes=""/>
+  <review status="Doc reviewed" notes="2010/01/21"/>
   <url>http://ros.org/wiki/pr2_controller_configuration_gazebo</url>
 
 </package>
