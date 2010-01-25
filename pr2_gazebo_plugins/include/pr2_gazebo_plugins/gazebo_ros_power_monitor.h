@@ -52,10 +52,9 @@ class XMLConfigNode;
  \brief GazeboRosPowerMonitor Plugin
 
  This plugin simulates the power_monitor node for reporting the state of the power system (battery charge, time remaining, AC present).
- GazeboRosPowerMonitor requires a model as its parent.
+ controller:gazebo_ros_power requires a model as its parent.
 
  \verbatim
- <model:physical name="ray_model">
     <!-- GazeboRosPowerMonitor -->
     <controller:gazebo_ros_power_monitor name="gazebo_ros_power_monitor_controller" plugin="libgazebo_ros_power_monitor.so">
         <alwaysOn>true</alwaysOn>
@@ -70,7 +69,6 @@ class XMLConfigNode;
         <dischargeVoltage>15.52</dischargeVoltage>
         <chargeVoltage>16.41</chargeVoltage>
     </controller:gazebo_ros_power_monitor>
- </model:physical>
  \endverbatim
  
  \{
@@ -79,13 +77,12 @@ class XMLConfigNode;
 
 /**
  * \brief power_monitor simulation
- *   \li starts a ROS node if none exists
- *   \li publishes PowerState messages on the /power_state topic
+ *   \li This plugin simulates the power_monitor node for reporting the state of the power system (battery charge, time remaining, AC present).
+ *   \li controller:gazebo_ros_power requires a model as its parent.
  * .
  *
  \verbatim
- <model:physical name="ray_model">
-    <!-- GazeboRosOceanBattery -->
+    <!-- GazeboRosPowerMonitor -->
     <controller:gazebo_ros_power_monitor name="gazebo_ros_power_monitor_controller" plugin="libgazebo_ros_power_monitor.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>1.0</updateRate>
@@ -99,7 +96,6 @@ class XMLConfigNode;
         <dischargeVoltage>15.52</dischargeVoltage>
         <chargeVoltage>16.41</chargeVoltage>
     </controller:gazebo_ros_power_monitor>
- </model:physical>
  \endverbatim
  **/
 class GazeboRosPowerMonitor : public Controller

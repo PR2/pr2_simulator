@@ -54,24 +54,23 @@ class XMLConfigNode;
 
 /// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
 /// @{
-/** \defgroup gazebo_ros_controller_manager GazeboMechanismControl class
+/** \defgroup gazebo_ros_controller_manager GazeboRosControllerMangager class
 
-  \brief GazeboMechanismControl Plugin
+  \brief GazeboRosControllerMangager Plugin
   
-  This is a controller that provides interface between simulator and the Robot Mechanism Control.
-  GazeboMechanismControl requires model as its parent.
+  This is a controller plugin that provides interface between simulated robot and pr2_controller_manager.
+  controller:gazebo_ros_controller_manager XML extension requires a model as its parent.  Please see pr2_description for
+  example usages in the pr2_simulator.
 
   Example Usage:
   \verbatim
-  <model:physical name="ray_model">
-    <!-- GazeboMechanismControl -->
+    <!-- GazeboRosControllerMangager -->
     <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>1000.0</updateRate>
-      <robot filename="pr2.xml" /> <!-- gazebo_ros_controller_manager use this file to extract mechanism model -->
-      <gazebo_physics filename="gazebo_joints.xml" /> <!-- for simulator/physics specific settigs, currently just damping -->
+      <robotParam>robot_description</robotParam>
+      <robotNamespace>/</robotNamespace>
     </controller:gazebo_ros_controller_manager>
-  </model:phyiscal>
   \endverbatim
  
 \{
@@ -79,47 +78,23 @@ class XMLConfigNode;
 
 /**
 
+  This is a controller plugin that provides interface between simulated robot and pr2_controller_manager.
+  controller:gazebo_ros_controller_manager XML extension requires a model as its parent.  Please see pr2_description for
+  example usages in the pr2_simulator.
 
-   Gazebo simulator provides joint level control for mechanisms.  In order to work with mechanisms in real life
-   at the level of actuators, a plugin is required.
-   As implemented here in GazeboMechanismControl, this plugin abstracts the definitions of
-   actuators and transmissions.  It parses the \e robot.xml, \e actuators.xml
-   and \e transmissions.xml, then sets up an abstract layer of actuators.  The entire chain of command from
-   controllers to actuators to simulated mechanism joints and back are implemented in this plugin.
-  
-   - On the software/controller side:
-     -# The plugin maintians a list of \c fake-actuators as described by \e actuators.xml, from which
-        the actuator's \b encoder-value is transmitted to \b joint-state via \e transmissions.xml
-     -# The controller reads \b joint-state from \c Mechanism-State and sends \b joint-error-value
-        to the PID controller, then issues the resulting \b joint-torque-command to \c Mechanism-Model
-     -# \b joint-torque-command is converted to \b actuator-current-command
-        via transmission definition from \e transmissions.xml
-   - On the Hardware side in the simulator
-     -# The plugin maintains a list of \c fake-actuators as described by \e actuators.xml,
-        from which the simulator reads the \b actuator-current-command, reverse maps to \b joint-torque-command
-        and stores in a set of \c fake-mechanism-states
-     -# The \b Joint-torque-command is sent to simulated joint in ODE
-     -# \b Simulator-joint-state is obtained from ODE and stored in \c fake-mechanism-states.
-     -# \c Fake-mechanism-state's \b joint-state is converted to
-        \b actuator-encoder values and stored in \c fake-actuators as defined by \e transmissions.xml
-   - On the software/controller side:
-     -# [loops around] \b Actuator-encoder-value is transmitted to \b joint-state via \e transmissions.xml
-     -# Controller reads \b joint-state and issues a \b joint-torque-command
-   .
-  
-   @image html "http://pr.willowgarage.com/wiki/pr2_gazebo_plugins?action=AttachFile&do=get&target=gazebo_mcn.jpg" "Gazebo Mechanism Control Model"
+  Gazebo simulator provides joint force/torque control for simulated joints and links.
+  This plugin exposes a set of pseudo-actuator states to pr2_controller_manager through ros by
+  the use of inverse transmissions as defined in pr2_mechanism_controllers.
   
    - Example Usage:
   \verbatim
-  <model:physical name="ray_model">
-    <!-- GazeboMechanismControl -->
+    <!-- GazeboRosControllerMangager -->
     <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>1000.0</updateRate>
-      <robot filename="pr2.xml" /> <!-- gazebo_ros_controller_manager use this file to extract mechanism model -->
-      <gazebo_physics filename="gazebo_joints.xml" /> <!-- for simulator/physics specific settigs, currently just damping -->
+      <robotParam>robot_description</robotParam>
+      <robotNamespace>/</robotNamespace>
     </controller:gazebo_ros_controller_manager>
-  </model:phyiscal>
   \endverbatim
    .
 **/
