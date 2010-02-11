@@ -378,8 +378,9 @@ void GazeboRosProsilica::PutCameraData()
     if (this->image_pub_.getNumSubscribers() > 0)
     {
 
-      // do last minute conversion if Bayer pattern is requested, go from R8G8B8
-      if (this->myParent->GetImageFormat() == "BAYER_RGGB8")
+      // do last minute conversion if Bayer pattern is requested but not provided, go from R8G8B8
+      // deprecated in gazebo2 branch, keep for backwards compatibility
+      if (this->myParent->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
       {
         for (int i=0;i<this->width;i++)
         {
@@ -404,7 +405,7 @@ void GazeboRosProsilica::PutCameraData()
         }
         src=dst;
       }
-      else if (this->myParent->GetImageFormat() == "BAYER_BGGR8")
+      else if (this->myParent->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
       {
         for (int i=0;i<this->width;i++)
         {
@@ -429,7 +430,7 @@ void GazeboRosProsilica::PutCameraData()
         }
         src=dst;
       }
-      else if (this->myParent->GetImageFormat() == "BAYER_GBRG8")
+      else if (this->myParent->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
       {
         for (int i=0;i<this->width;i++)
         {
@@ -454,7 +455,7 @@ void GazeboRosProsilica::PutCameraData()
         }
         src=dst;
       }
-      else if (this->myParent->GetImageFormat() == "BAYER_GRBG8")
+      else if (this->myParent->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
       {
         for (int i=0;i<this->width;i++)
         {
@@ -697,8 +698,9 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 
         /// @todo: don't bother if there are no subscribers
 
-        // do last minute conversion if Bayer pattern is requested, go from R8G8B8
-        if (this->myParent->GetImageFormat() == "BAYER_RGGB8")
+        // do last minute conversion if Bayer pattern is requested but not provided, go from R8G8B8
+        // deprecated in gazebo2 branch, keep for backwards compatibility
+        if (this->myParent->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
         {
           for (int i=0;i<this->width;i++)
           {
@@ -723,7 +725,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           }
           src=dst;
         }
-        else if (this->myParent->GetImageFormat() == "BAYER_BGGR8")
+        else if (this->myParent->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
         {
           for (int i=0;i<this->width;i++)
           {
@@ -748,7 +750,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           }
           src=dst;
         }
-        else if (this->myParent->GetImageFormat() == "BAYER_GBRG8")
+        else if (this->myParent->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
         {
           for (int i=0;i<this->width;i++)
           {
@@ -773,7 +775,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           }
           src=dst;
         }
-        else if (this->myParent->GetImageFormat() == "BAYER_GRBG8")
+        else if (this->myParent->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
         {
           for (int i=0;i<this->width;i++)
           {
@@ -811,10 +813,14 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 
         this->image_pub_.publish(this->imageMsg);
 
-        if ((this->myParent->GetImageFormat() == "BAYER_RGGB8") ||
-            (this->myParent->GetImageFormat() == "BAYER_BGGR8") ||
-            (this->myParent->GetImageFormat() == "BAYER_GBRG8") ||
-            (this->myParent->GetImageFormat() == "BAYER_GRBG8") )
+        // error if Bayer pattern is requested but not provided, roi not supported in this case
+        // not supported in old image_pipeline as well, this might change, but ultimately
+        // this is deprecated in gazebo2 branch, keep for backwards compatibility
+        if (((this->myParent->GetImageFormat() == "BAYER_RGGB8") ||
+             (this->myParent->GetImageFormat() == "BAYER_BGGR8") ||
+             (this->myParent->GetImageFormat() == "BAYER_GBRG8") ||
+             (this->myParent->GetImageFormat() == "BAYER_GRBG8") ) &&
+            this->depth == 3)
         {
           ROS_ERROR("prosilica does not support bayer roi, using full image");
 
