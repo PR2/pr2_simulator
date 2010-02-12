@@ -15,10 +15,16 @@
 
   <!-- Stereo image processing -->
   <node ns="wide_stereo" name="wide_stereo_proc" pkg="stereo_image_proc" type="stereo_image_proc" respawn="false" output="screen">
-    <param name="num_disp" type="int" value="128"/>
+    <param name="disparity_range" type="int" value="128"/>
+    <param name="texture_threshold" type="int" value="4000"/>
+    <param name="speckle_size" type="int" value="240"/>
+    <param name="speckle_range" type="int" value="4"/>
   </node>
   <node ns="narrow_stereo" name="narrow_stereo_proc" pkg="stereo_image_proc" type="stereo_image_proc" respawn="false" output="screen">
-    <param name="num_disp" type="int" value="128"/>
+    <param name="disparity_range" type="int" value="128"/>
+    <param name="texture_threshold" type="int" value="4000"/>
+    <param name="speckle_size" type="int" value="240"/>
+    <param name="speckle_range" type="int" value="4"/>
   </node>
 
   <!-- diagnostics aggregator -->
@@ -32,7 +38,7 @@
     <param name="sensor_timeout" value="1.0"/>
     <param name="publish_tf" value="true"/>
     <param name="odom_used" value="true"/>
-    <param name="imu_used" value="false"/>
+    <param name="imu_used" value="true"/>
     <param name="vo_used" value="false"/>
     <remap from="odom" to="base_odometry/odom" />
     <remap from="imu_data" to="torso_lift_imu/data" />
