@@ -27,6 +27,16 @@
     <param name="speckle_range" type="int" value="4"/>
   </node>
 
+  <!-- Start image_proc inside camera namespace-->
+  <group ns="forearm_camera_r">
+    <node name="image_proc" pkg="image_proc" type="image_proc" />
+  </group>
+
+  <!-- Start image_proc inside camera namespace-->
+  <group ns="forearm_camera_l">
+    <node name="image_proc" pkg="image_proc" type="image_proc" />
+  </group>
+
   <!-- diagnostics aggregator -->
   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diag_agg" args="Robot" >
     <rosparam command="load" file="$(find pr2_gazebo)/controllers/diagnostic_aggregator.yaml" />
