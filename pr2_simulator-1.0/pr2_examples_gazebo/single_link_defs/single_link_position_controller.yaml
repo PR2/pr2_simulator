@@ -1,8 +1,0 @@
-test_controller:
-  type: JointPositionController
-  joint: link1_joint
-  pid:
-    p: 20
-    i: 0.1
-    d: 1
-    i_clamp: 1

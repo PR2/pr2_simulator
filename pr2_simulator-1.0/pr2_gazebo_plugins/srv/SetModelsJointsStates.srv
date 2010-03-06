@@ -1,5 +1,0 @@
-string[] model_names                                      # name of the model
-pr2_gazebo_plugins/ModelJointsState[] model_joints_states # model pose and joint positions
----
-bool success                                              # return true if spawn successful
-string status_message                                     # comments if available
