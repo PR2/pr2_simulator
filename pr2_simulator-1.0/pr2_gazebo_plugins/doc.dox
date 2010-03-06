@@ -1,0 +1,11 @@
+/**
+@mainpage
+
+@htmlinclude manifest.html
+
+Here are the gazebo plugins which are currently implemented:
+ \li \ref gazebo::GazeboRosControllerManager "Gazebo-ROS Mechanism Controls Plugin pr2_controller_manager"
+ \li \ref gazebo::GazeboRosProsilica "Gazebo-ROS Prosilica Camera plugin"
+ \li \ref gazebo::GazeboRosPowerMonitor "Gazebo-ROS plugin for power_monitor"
+
+**/

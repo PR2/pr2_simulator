@@ -1,0 +1,1 @@
+bool ac_present
