@@ -96,7 +96,11 @@ void GazeboRosPowerMonitor::LoadChild(XMLConfigNode* configNode)
 
 void GazeboRosPowerMonitor::InitChild()
 {
+#ifdef GAZEBO_VERSION
     last_time_ = curr_time_ = Simulator::Instance()->GetSimTime().Double();
+#else
+    last_time_ = curr_time_ = Simulator::Instance()->GetSimTime();
+#endif
 
     // Initialize battery to full capacity
     charge_      = full_capacity_param_->GetValue();
@@ -107,7 +111,11 @@ void GazeboRosPowerMonitor::InitChild()
 void GazeboRosPowerMonitor::UpdateChild()
 {
     // Update time
+#ifdef GAZEBO_VERSION
     curr_time_ = Simulator::Instance()->GetSimTime().Double();
+#else
+    curr_time_ = Simulator::Instance()->GetSimTime();
+#endif
     double dt = curr_time_ - last_time_;
     last_time_ = curr_time_;
 

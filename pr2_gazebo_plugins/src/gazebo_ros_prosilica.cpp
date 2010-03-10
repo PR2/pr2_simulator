@@ -368,8 +368,11 @@ void GazeboRosProsilica::PutCameraData()
     this->lock.lock();
     // copy data into image
     this->imageMsg.header.frame_id = this->frameName;
-    this->imageMsg.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
-    this->imageMsg.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
+#ifdef GAZEBO_VERSION
+    this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+#else
+    this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+#endif
 
     //double tmpT1 = Simulator::Instance()->GetWallTime();
     //double tmpT2;
@@ -510,8 +513,11 @@ void GazeboRosProsilica::PublishCameraInfo()
 {
   // fill CameraInfo
   this->cameraInfoMsg.header.frame_id = this->frameName;
-  this->cameraInfoMsg.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
-  this->cameraInfoMsg.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
+#ifdef GAZEBO_VERSION
+  this->cameraInfoMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+#else
+  this->cameraInfoMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+#endif
   this->cameraInfoMsg.height = this->height;
   this->cameraInfoMsg.width  = this->width;
 
@@ -572,8 +578,11 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 /*
   // fill out the cam info part
   info.header.frame_id = this->frameName;
-  info.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
-  info.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
+#ifdef GAZEBO_VERSION
+  info.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+#else
+  info.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+#endif
   info.height = this->myParent->GetImageHeight();
   info.width  = this->myParent->GetImageWidth() ;
   // distortion
@@ -644,8 +653,11 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         // fill CameraInfo
         this->roiCameraInfoMsg = &info;
         this->roiCameraInfoMsg->header.frame_id = this->frameName;
-        this->roiCameraInfoMsg->header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
-        this->roiCameraInfoMsg->header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
+#ifdef GAZEBO_VERSION
+        this->roiCameraInfoMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+#else
+        this->roiCameraInfoMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+#endif
         this->roiCameraInfoMsg->width  = req.roi.width; //this->myParent->GetImageWidth() ;
         this->roiCameraInfoMsg->height = req.roi.height; //this->myParent->GetImageHeight();
         // distortion
@@ -691,8 +703,11 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 
         // copy data into imageMsg, then convert to roiImageMsg(image)
         this->imageMsg.header.frame_id    = this->frameName;
-        this->imageMsg.header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
-        this->imageMsg.header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
+#ifdef GAZEBO_VERSION
+        this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+#else
+        this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+#endif
 
         unsigned char dst[this->width*this->height];
 
@@ -837,8 +852,11 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           // copy data into ROI image
           this->roiImageMsg = &image;
           this->roiImageMsg->header.frame_id = this->frameName;
-          this->roiImageMsg->header.stamp.sec = (Simulator::Instance()->GetSimTime()).sec;
-          this->roiImageMsg->header.stamp.nsec = (Simulator::Instance()->GetSimTime()).nsec;
+#ifdef GAZEBO_VERSION
+          this->roiImageMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+#else
+          this->roiImageMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+#endif
 
           //sensor_msgs::CvBridge img_bridge_(&this->imageMsg);
           //IplImage* cv_image;
