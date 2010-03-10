@@ -242,14 +242,14 @@ void GazeboRosControllerManager::UpdateChild()
       if (damping_coef > torso_hack_damping_threshold)
       {
         this->fake_state_->joint_states_[i].position_ *= (1.0 - torso_hack_damping_threshold / damping_coef);
-        this->fake_state_->joint_states_[i].position_ += (torso_hack_damping_threshold/damping_coef)*sj->GetAngle(0).GetAsRadian();
+        this->fake_state_->joint_states_[i].position_ += (torso_hack_damping_threshold/damping_coef)*sj->GetPosition();
         this->fake_state_->joint_states_[i].velocity_ *= (1.0 - torso_hack_damping_threshold / damping_coef);
-        this->fake_state_->joint_states_[i].velocity_ += (torso_hack_damping_threshold/damping_coef)*sj->GetVelocity(0);
+        this->fake_state_->joint_states_[i].velocity_ += (torso_hack_damping_threshold/damping_coef)*sj->GetPositionRate();
       }
       else
       {
-        this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).GetAsRadian();
-        this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
+        this->fake_state_->joint_states_[i].position_ = sj->GetPosition();
+        this->fake_state_->joint_states_[i].velocity_ = sj->GetPositionRate();
       }
       break;
 #endif
@@ -317,7 +317,7 @@ void GazeboRosControllerManager::UpdateChild()
       double current_velocity = hj->GetAngleRate();
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort - damping_force;
-      this->joints_[i]->SetForce(0,effort_command);
+      hj->SetTorque(effort_command);
 #endif
       break;
     }
@@ -333,7 +333,7 @@ void GazeboRosControllerManager::UpdateChild()
       double current_velocity = sj->GetPositionRate();
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort-damping_force;
-      this->joints_[i]->SetForce(0,effort_command);
+      sj->SetSliderForce(effort_command);
 #endif
       break;
     }
