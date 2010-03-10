@@ -96,7 +96,7 @@ void GazeboRosPowerMonitor::LoadChild(XMLConfigNode* configNode)
 
 void GazeboRosPowerMonitor::InitChild()
 {
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
     last_time_ = curr_time_ = Simulator::Instance()->GetSimTime().Double();
 #else
     last_time_ = curr_time_ = Simulator::Instance()->GetSimTime();
@@ -111,7 +111,7 @@ void GazeboRosPowerMonitor::InitChild()
 void GazeboRosPowerMonitor::UpdateChild()
 {
     // Update time
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
     curr_time_ = Simulator::Instance()->GetSimTime().Double();
 #else
     curr_time_ = Simulator::Instance()->GetSimTime();

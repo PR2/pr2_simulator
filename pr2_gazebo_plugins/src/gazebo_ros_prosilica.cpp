@@ -368,7 +368,7 @@ void GazeboRosProsilica::PutCameraData()
     this->lock.lock();
     // copy data into image
     this->imageMsg.header.frame_id = this->frameName;
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
     this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
 #else
     this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
@@ -513,7 +513,7 @@ void GazeboRosProsilica::PublishCameraInfo()
 {
   // fill CameraInfo
   this->cameraInfoMsg.header.frame_id = this->frameName;
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
   this->cameraInfoMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
 #else
   this->cameraInfoMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
@@ -578,7 +578,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 /*
   // fill out the cam info part
   info.header.frame_id = this->frameName;
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
   info.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
 #else
   info.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
@@ -653,7 +653,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         // fill CameraInfo
         this->roiCameraInfoMsg = &info;
         this->roiCameraInfoMsg->header.frame_id = this->frameName;
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
         this->roiCameraInfoMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
 #else
         this->roiCameraInfoMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
@@ -703,7 +703,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 
         // copy data into imageMsg, then convert to roiImageMsg(image)
         this->imageMsg.header.frame_id    = this->frameName;
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
         this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
 #else
         this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
@@ -852,7 +852,7 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           // copy data into ROI image
           this->roiImageMsg = &image;
           this->roiImageMsg->header.frame_id = this->frameName;
-#ifdef GAZEBO_VERSION
+#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
           this->roiImageMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
 #else
           this->roiImageMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
