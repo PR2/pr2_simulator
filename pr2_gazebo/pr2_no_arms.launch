@@ -9,26 +9,25 @@
   <!-- Controller Manager -->
   <include file="$(find pr2_controller_manager)/controller_manager.launch" />
 
-  <!-- Default Controllers -->
-  <!-- it tries to start arm controllers nevertheless, so some errors will be printed on startup -->
-  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
-
   <!-- Fake Calibration -->
   <node pkg="rostopic" type="rostopic" name="fake_joint_calibration"
         args="pub /calibrated std_msgs/Bool true" />
 
   <!-- Stereo image processing -->
-  <node ns="wide_stereo" name="wide_stereo_proc" pkg="stereo_image_proc" type="stereo_image_proc" respawn="false" output="screen">
-    <param name="num_disp" type="int" value="128"/>
-  </node>
-  <node ns="narrow_stereo" name="narrow_stereo_proc" pkg="stereo_image_proc" type="stereo_image_proc" respawn="false" output="screen">
-    <param name="num_disp" type="int" value="128"/>
-  </node>
+  <include file="$(find pr2_gazebo)/config/dualstereo_camera.launch" />
+
 
   <!-- diagnostics aggregator -->
-  <node pkg="diagnostic_aggregator" type="aggregator_node" name="diag_agg" args="Robot" >
-    <rosparam command="load" file="$(find pr2_gazebo)/controllers/diagnostic_aggregator.yaml" />
-  </node>
+  <node pkg="diagnostic_aggregator" type="aggregator_node" name="diag_agg" args="Robot" />
+  <group ns="diag_agg">
+    <include file="$(find pr2_gazebo)/config/no_arms/pr2_analyzers_no_arms_diff_simple.launch" />
+    <!--
+    <include file="$(find pr2_gazebo)/config/no_arms/pr2_analyzers_no_arms_diff_.launch" />
+    -->
+  </group>
+
+  <!-- Dashboard aggregation -->
+  <node pkg="pr2_dashboard_aggregator" type="dashboard_aggregator.py" name="pr2_dashboard_aggregator"/>
 
   <!-- Robot pose ekf -->
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf" output="screen">
@@ -41,6 +40,10 @@
     <remap from="odom" to="base_odometry/odom" />
     <remap from="imu_data" to="torso_lift_imu/data" />
   </node>
+
+  <!-- Default Controllers -->
+  <!-- it tries to start arm controllers nevertheless, so some errors will be printed on startup -->
+  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
 
 </launch>
 

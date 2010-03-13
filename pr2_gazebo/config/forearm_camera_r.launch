@@ -1,0 +1,6 @@
+<launch>
+  <!-- Start image_proc inside camera namespace-->
+  <group ns="r_forearm_cam">
+    <node name="image_proc" pkg="image_proc" type="image_proc" />
+  </group>
+</launch>
