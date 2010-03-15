@@ -25,5 +25,6 @@
   <depend stack="simulator_gazebo" /> <!-- gazebo_tools, gazebo, gazebo_plugins, gazebo_worlds -->
   <depend stack="vision_opencv" /> <!-- opencv2, cv_bridge -->
   <depend stack="visualization_common" /> <!-- ogre_tools -->
+  <depend stack="pr2_robot" /> <!-- pr2_dashboard_aggregator -->
 
 </stack>
