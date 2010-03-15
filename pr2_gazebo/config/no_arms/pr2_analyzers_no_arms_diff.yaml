@@ -3,6 +3,10 @@
 
 analyzers:
   motors:
+    type: GenericAnalyzer
+    path: Motors
+    startswith: [
+      'EtherCAT Device']
     expected: [
       'EtherCAT Master',
       'EtherCAT Device (bl_caster_l_wheel_motor)',
@@ -24,6 +28,10 @@ analyzers:
       'EtherCAT Device (torso_lift_motor)']
 
   joints:
+    type: GenericAnalyzer
+    path: Joints
+    startswith: [
+      'Joint']
     expected: [
       'Joint (bl_caster_l_wheel_joint)',
       'Joint (bl_caster_r_wheel_joint)',
@@ -43,16 +51,29 @@ analyzers:
       'Joint (torso_lift_joint)']
 
   controllers:
+    type: GenericAnalyzer
+    path: 'Realtime Controllers'
     expected: [ 
       'Realtime Control Loop',
       'Controller (head_camera_trigger)',
       'Controller (projector_controller)',
       'Controller (projector_trigger)',
       'Controller (prosilica_inhibit_projector_controller)' ]
+    startswith: [
+      'Controller']
+    discard_stale: true
 
   cameras:
+    type: AnalyzerGroup
+    path: Cameras
     analyzes:
       forearm_l:
+        type: GenericAnalyzer
+        path: Forearm (Left)
+        find_and_remove_prefix: forearm_camera_l
         num_items: 0
       forearm_r:
+        type: GenericAnalyzer
+        path: Forearm (Right)
+        find_and_remove_prefix: forearm_camera_r
         num_items: 0
