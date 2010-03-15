@@ -3,6 +3,10 @@
 
 analyzers:
   joints:
+    type: GenericAnalyzer
+    path: Joints
+    startswith: [
+      'Joint']
     expected: [
       'Joint (bl_caster_l_wheel_joint)',
       'Joint (bl_caster_r_wheel_joint)',
