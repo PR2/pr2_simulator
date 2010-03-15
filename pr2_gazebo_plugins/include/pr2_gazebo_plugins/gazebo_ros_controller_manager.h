@@ -49,7 +49,6 @@
 
 namespace gazebo
 {
-class HingeJoint;
 class XMLConfigNode;
 
 /// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
@@ -150,7 +149,7 @@ private:
   /*
    *  \brief tmp vars for performance checking
    */
-  double wall_start, sim_start;
+  double wall_start_, sim_start_;
 
   /// \brief set topic name of robot description parameter
   ParamT<std::string> *robotParamP;

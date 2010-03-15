@@ -1,0 +1,79 @@
+# Note that pr2_analyzers_no_arms_diff.launch also contains some deletions
+# that need to be done.
+
+analyzers:
+  motors:
+    type: GenericAnalyzer
+    path: Motors
+    startswith: [
+      'EtherCAT Device']
+    expected: [
+      'EtherCAT Master',
+      'EtherCAT Device (bl_caster_l_wheel_motor)',
+      'EtherCAT Device (bl_caster_r_wheel_motor)',
+      'EtherCAT Device (bl_caster_rotation_motor)',
+      'EtherCAT Device (br_caster_l_wheel_motor)',
+      'EtherCAT Device (br_caster_r_wheel_motor)',
+      'EtherCAT Device (br_caster_rotation_motor)',
+      'EtherCAT Device (fl_caster_l_wheel_motor)',
+      'EtherCAT Device (fl_caster_r_wheel_motor)',
+      'EtherCAT Device (fl_caster_rotation_motor)',
+      'EtherCAT Device (fr_caster_l_wheel_motor)',
+      'EtherCAT Device (fr_caster_r_wheel_motor)',
+      'EtherCAT Device (fr_caster_rotation_motor)',
+      'EtherCAT Device (laser_tilt_mount_motor)',
+      'EtherCAT Device (head_pan_motor)',
+      'EtherCAT Device (head_tilt_motor)',
+      'EtherCAT Device (led_projector)',
+      'EtherCAT Device (torso_lift_motor)']
+
+  joints:
+    type: GenericAnalyzer
+    path: Joints
+    startswith: [
+      'Joint']
+    expected: [
+      'Joint (bl_caster_l_wheel_joint)',
+      'Joint (bl_caster_r_wheel_joint)',
+      'Joint (bl_caster_rotation_joint)',
+      'Joint (br_caster_l_wheel_joint)',
+      'Joint (br_caster_r_wheel_joint)',
+      'Joint (br_caster_rotation_joint)',
+      'Joint (fl_caster_l_wheel_joint)',
+      'Joint (fl_caster_r_wheel_joint)',
+      'Joint (fl_caster_rotation_joint)',
+      'Joint (fr_caster_l_wheel_joint)',
+      'Joint (fr_caster_r_wheel_joint)',
+      'Joint (fr_caster_rotation_joint)',
+      'Joint (laser_tilt_mount_joint)',
+      'Joint (head_pan_joint)',
+      'Joint (head_tilt_joint)',
+      'Joint (torso_lift_joint)']
+
+  controllers:
+    type: GenericAnalyzer
+    path: 'Realtime Controllers'
+    expected: [ 
+      'Realtime Control Loop',
+      'Controller (head_camera_trigger)',
+      'Controller (projector_controller)',
+      'Controller (projector_trigger)',
+      'Controller (prosilica_inhibit_projector_controller)' ]
+    startswith: [
+      'Controller']
+    discard_stale: true
+
+  cameras:
+    type: AnalyzerGroup
+    path: Cameras
+    analyzes:
+      forearm_l:
+        type: GenericAnalyzer
+        path: Forearm (Left)
+        find_and_remove_prefix: forearm_camera_l
+        num_items: 0
+      forearm_r:
+        type: GenericAnalyzer
+        path: Forearm (Right)
+        find_and_remove_prefix: forearm_camera_r
+        num_items: 0
