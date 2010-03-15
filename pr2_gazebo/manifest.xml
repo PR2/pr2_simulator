@@ -12,6 +12,7 @@
   <depend package="pr2_description"/>
   <depend package="robot_state_publisher"/>
   <depend package="diagnostic_aggregator"/>
+  <depend package="pr2_dashboard_aggregator"/>
 
   <depend package="pr2_controller_configuration_gazebo"/>
   <depend package="robot_mechanism_controllers"/>
