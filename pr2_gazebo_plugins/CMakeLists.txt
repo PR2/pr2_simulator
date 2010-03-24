@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-set(ROS_BUILD_TYPE Release)
+set(ROS_BUILD_TYPE RelWithDeb)
 rosbuild_init(pr2_gazebo_plugins)
 
 rosbuild_genmsg()
