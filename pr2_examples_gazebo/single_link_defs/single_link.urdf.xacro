@@ -26,13 +26,13 @@
     </inertial> 
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry name="base_block_visual_geom">
+      <geometry>
         <box size="0.001 0.001 0.001" />
       </geometry>
     </visual> 
     <collision>
       <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
-      <geometry name="base_block_collision_geom">
+      <geometry>
         <box size="0.001 0.001 0.001" />
       </geometry>
     </collision>
@@ -56,13 +56,13 @@
     </inertial>
     <visual >
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry name="sholder_roll_mesh_file">
+      <geometry>
         <box size="1.0 0.3 0.3" />
       </geometry>
     </visual>
     <collision >
       <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
-      <geometry name="link1_collision_geom">
+      <geometry>
         <box size="1.0 0.3 0.3" />
       </geometry>
     </collision>

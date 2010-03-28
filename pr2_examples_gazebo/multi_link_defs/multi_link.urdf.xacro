@@ -17,7 +17,7 @@
   <!-- joint blocks -->
   <joint name="base_block_joint" type="fixed" > 
     <parent link="world" />
-    <origin xyz="0 0 0.002 " rpy="0 0 0" />
+    <origin xyz="0 0 0.002" rpy="0 0 0" />
     <child link="base_block" />
   </joint>
   <link name="base_block">
@@ -28,13 +28,13 @@
     </inertial> 
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry name="base_block_visual_geom">
+      <geometry>
         <box size="0.001 0.001 0.001" />
       </geometry>
     </visual> 
     <collision>
       <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
-      <geometry name="base_block_collision_geom">
+      <geometry>
         <box size="0.001 0.001 0.001" />
       </geometry>
     </collision>
@@ -61,13 +61,13 @@
     </inertial>
     <visual >
       <origin xyz="0 0 -0.5" rpy="0 0 0" />
-      <geometry name="link1_visual_geom">
+      <geometry>
         <box size="0.1 0.1 1.0" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0 0 -0.5" rpy="0.0 0.0 0.0 " />
-      <geometry name="link1_collision_geom">
+      <origin xyz="0 0 -0.5" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="0.1 0.1 1.0" />
       </geometry>
     </collision>
@@ -96,13 +96,13 @@
     </inertial>
     <visual >
       <origin xyz="0.5 0 0" rpy="0 0 0" />
-      <geometry name="link2_visual_geom">
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
-      <geometry name="link2_collision_geom">
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </collision>
@@ -130,13 +130,13 @@
     </inertial>
     <visual >
       <origin xyz="0.5 0 0" rpy="0 0 0" />
-      <geometry name="link3_visual_geom">
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
-      <geometry name="link3_collision_geom">
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </collision>
@@ -165,13 +165,13 @@
     </inertial>
     <visual >
       <origin xyz="0.5 0 0" rpy="0 0 0" />
-      <geometry name="link4_visual_geom">
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
-      <geometry name="link4_collision_geom">
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </collision>
@@ -200,13 +200,13 @@
     </inertial>
     <visual >
       <origin xyz="0.5 0 0" rpy="0 0 0" />
-      <geometry name="link5_visual_geom">
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
-      <geometry name="link5_collision_geom">
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </collision>
@@ -235,13 +235,13 @@
     </inertial>
     <visual >
       <origin xyz="0.5 0 0" rpy="0 0 0" />
-      <geometry name="link6_visual_geom">
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
-      <geometry name="link6_collision_geom">
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </collision>
@@ -270,13 +270,13 @@
     </inertial>
     <visual >
       <origin xyz="0.5 0 0" rpy="0 0 0" />
-      <geometry name="link7_visual_geom">
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0 " />
-      <geometry name="link7_collision_geom">
+      <origin xyz="0.5 0 0" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="1.0 0.1 0.1" />
       </geometry>
     </collision>
