@@ -16,6 +16,8 @@
   <depend package="ogre_tools"/>
   <depend package="pr2_description"/>
 
-
+  <export>
+    <gazebo gazebo_media_path="${prefix}" />
+  </export>
 
 </package>
