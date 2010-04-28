@@ -12,6 +12,7 @@
   <url>http://ros.org/wiki/pr2_ogre</url>
   
   <depend package="convex_decomposition"/>
+  <depend package="gazebo"/>
   <depend package="ivcon"/>
   <depend package="ogre_tools"/>
   <depend package="pr2_description"/>
