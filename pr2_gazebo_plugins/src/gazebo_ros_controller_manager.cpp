@@ -347,18 +347,11 @@ void GazeboRosControllerManager::FiniChild()
 {
   ROS_DEBUG("Calling FiniChild in GazeboRosControllerManager");
 
-  pr2_hardware_interface::ActuatorMap::const_iterator it;
-  for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
-    delete it->second;
+  //pr2_hardware_interface::ActuatorMap::const_iterator it;
+  //for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
+  //  delete it->second; // why is this causing double free corrpution?
   this->cm_->~ControllerManager();
-
-  for (unsigned int i=0; i<this->joints_.size(); i++){
-    if (this->joints_[i]){
-      delete this->joints_[i];
-      this->joints_[i] = NULL;
-    }
-  }
-  delete this->fake_state_;
+  //delete this->fake_state_;  // why is this causing double free corrpution?
 #ifdef USE_CBQ
   this->controller_manager_queue_.clear();
   this->controller_manager_queue_.disable();
