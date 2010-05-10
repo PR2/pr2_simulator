@@ -258,6 +258,7 @@ class GazeboRosProsilica : public Controller
   private: void ProsilicaQueueThread();
   private: boost::thread* prosilica_callback_queue_thread_;
 #else
+  private: void ProsilicaROSThread();
   private: boost::thread* ros_spinner_thread_;
 #endif
 

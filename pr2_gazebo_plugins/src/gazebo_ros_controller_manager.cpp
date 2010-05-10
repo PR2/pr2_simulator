@@ -110,9 +110,12 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
   this->robotNamespaceP->Load(node);
   this->robotNamespace = this->robotNamespaceP->GetValue();
 
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  if (~ros::isInitialized())
+  {
+    int argc = 0;
+    char** argv = NULL;
+    ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  }
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from gazebo_model spawner
   ROS_INFO("starting gazebo_ros_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
@@ -164,7 +167,7 @@ void GazeboRosControllerManager::InitChild()
 #endif
 
   // pr2_etherCAT calls ros::spin(), we'll thread out one spinner here to mimic that
-  this->ros_spinner_thread_ = new boost::thread( boost::bind( &ros::spin ) );
+  this->ros_spinner_thread_ = new boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerROSThread,this ) );
 
 }
 
@@ -352,10 +355,10 @@ void GazeboRosControllerManager::FiniChild()
   //  delete it->second; // why is this causing double free corrpution?
   this->cm_->~ControllerManager();
   //delete this->fake_state_;  // why is this causing double free corrpution?
+  this->rosnode_->shutdown();
 #ifdef USE_CBQ
   this->controller_manager_queue_.clear();
   this->controller_manager_queue_.disable();
-  ros::requestShutdown();
   this->controller_manager_callback_queue_thread_->join();
 #endif
   this->ros_spinner_thread_->join();
@@ -448,4 +451,17 @@ void GazeboRosControllerManager::ControllerManagerQueueThread()
 }
 #endif
 
+void GazeboRosControllerManager::ControllerManagerROSThread()
+{
+  ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
+
+  //ros::Rate rate(1000);
+
+  while (this->rosnode_->ok())
+  {
+    //rate.sleep(); // using rosrate gets stuck on model delete
+    usleep(1000);
+    ros::spinOnce();
+  }
+}
 } // namespace gazebo

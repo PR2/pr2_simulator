@@ -123,7 +123,7 @@ private:
     ParamT<std::string>* robot_namespace_param_;
     ParamT<std::string>* power_state_topic_param_;
 
-    ros::NodeHandle* ros_node_;
+    ros::NodeHandle* rosnode_;
     ros::Subscriber  plugged_in_sub_;
     ros::Publisher   power_state_pub_;
 
