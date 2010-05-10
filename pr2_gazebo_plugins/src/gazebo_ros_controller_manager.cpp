@@ -110,7 +110,7 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
   this->robotNamespaceP->Load(node);
   this->robotNamespace = this->robotNamespaceP->GetValue();
 
-  if (~ros::isInitialized())
+  if (!ros::isInitialized())
   {
     int argc = 0;
     char** argv = NULL;

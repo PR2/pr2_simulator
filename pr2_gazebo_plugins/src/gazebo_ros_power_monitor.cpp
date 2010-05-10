@@ -85,7 +85,7 @@ void GazeboRosPowerMonitor::LoadChild(XMLConfigNode* configNode)
     discharge_voltage_param_->Load(configNode);
     charge_voltage_param_->Load(configNode);
 
-    if (~ros::isInitialized())
+    if (!ros::isInitialized())
     {
       int argc = 0;
       char** argv = NULL;
