@@ -85,9 +85,12 @@ void GazeboRosPowerMonitor::LoadChild(XMLConfigNode* configNode)
     discharge_voltage_param_->Load(configNode);
     charge_voltage_param_->Load(configNode);
 
-    int argc = 0;
-    char* argv = NULL;
-    ros::init(argc, &argv, "gazebo_ros_power_monitor", ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+    if (!ros::isInitialized())
+    {
+      int argc = 0;
+      char** argv = NULL;
+      ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+    }
 
     rosnode_        = new ros::NodeHandle(robot_namespace_param_->GetValue());
     power_state_pub_ = rosnode_->advertise<pr2_msgs::PowerState>(power_state_topic_param_->GetValue(), 10);

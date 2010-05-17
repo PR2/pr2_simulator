@@ -136,9 +136,12 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
 {
   this->robotNamespaceP->Load(node);
   this->robotNamespace = this->robotNamespaceP->GetValue();
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  if (!ros::isInitialized())
+  {
+    int argc = 0;
+    char** argv = NULL;
+    ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  }
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
   this->rosnode_->setCallbackQueue(&this->prosilica_queue_);
 
