@@ -164,7 +164,7 @@ void GazeboRosControllerManager::InitChild()
 #endif
 
   // pr2_etherCAT calls ros::spin(), we'll thread out one spinner here to mimic that
-  this->ros_spinner_thread_ = new boost::thread( boost::bind( &ros::spin ) );
+  this->ros_spinner_thread_ = new boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerROSThread,this ) );
 
 }
 
@@ -359,10 +359,10 @@ void GazeboRosControllerManager::FiniChild()
     }
   }
   delete this->fake_state_;
+  this->rosnode_->shutdown();
 #ifdef USE_CBQ
   this->controller_manager_queue_.clear();
   this->controller_manager_queue_.disable();
-  ros::requestShutdown();
   this->controller_manager_callback_queue_thread_->join();
 #endif
   this->ros_spinner_thread_->join();
@@ -455,4 +455,17 @@ void GazeboRosControllerManager::ControllerManagerQueueThread()
 }
 #endif
 
+void GazeboRosControllerManager::ControllerManagerROSThread()
+{
+  ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
+
+  //ros::Rate rate(1000);
+
+  while (this->rosnode_->ok())
+  {
+    //rate.sleep(); // using rosrate gets stuck on model delete
+    usleep(1000);
+    ros::spinOnce();
+  }
+}
 } // namespace gazebo

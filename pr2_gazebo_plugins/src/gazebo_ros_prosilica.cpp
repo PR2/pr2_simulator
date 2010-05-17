@@ -893,10 +893,10 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 void GazeboRosProsilica::FiniChild()
 {
   this->myParent->SetActive(false);
+  this->rosnode_->shutdown();
 #ifdef USE_CBQ
   this->prosilica_queue_.clear();
   this->prosilica_queue_.disable();
-  ros::requestShutdown();
   this->prosilica_callback_queue_thread_->join();
 #else
   this->ros_spinner_thread_->join();
