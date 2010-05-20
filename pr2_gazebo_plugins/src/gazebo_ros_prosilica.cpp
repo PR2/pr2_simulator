@@ -136,9 +136,12 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
 {
   this->robotNamespaceP->Load(node);
   this->robotNamespace = this->robotNamespaceP->GetValue();
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  if (!ros::isInitialized())
+  {
+    int argc = 0;
+    char** argv = NULL;
+    ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  }
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
   this->rosnode_->setCallbackQueue(&this->prosilica_queue_);
 
@@ -283,7 +286,7 @@ void GazeboRosProsilica::InitChild()
   this->prosilica_callback_queue_thread_ = new boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaQueueThread,this ) );
 #else
   // start ros spinner as it is done in prosilica node
-  this->ros_spinner_thread_ = new boost::thread( boost::bind( &ros::spin ) );
+  this->ros_spinner_thread_ = new boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaROSThread,this ) );
 #endif
 
 }
@@ -893,10 +896,10 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 void GazeboRosProsilica::FiniChild()
 {
   this->myParent->SetActive(false);
+  this->rosnode_->shutdown();
 #ifdef USE_CBQ
   this->prosilica_queue_.clear();
   this->prosilica_queue_.disable();
-  ros::requestShutdown();
   this->prosilica_callback_queue_thread_->join();
 #else
   this->ros_spinner_thread_->join();
@@ -918,6 +921,20 @@ void GazeboRosProsilica::ProsilicaQueueThread()
   while (this->rosnode_->ok())
   {
     this->prosilica_queue_.callAvailable(ros::WallDuration(timeout));
+  }
+}
+#else
+void GazeboRosProsilica::ProsilicaROSThread()
+{
+  ROS_INFO_STREAM("Callback thread id=" << boost::this_thread::get_id());
+
+  ros::Rate rate(1000);
+
+  while (this->rosnode_->ok())
+  {
+    //rate.sleep(); // using rosrate gets stuck on model delete
+    usleep(1000);
+    ros::spinOnce();
   }
 }
 #endif

@@ -70,10 +70,10 @@ analyzers:
       forearm_l:
         type: GenericAnalyzer
         path: Forearm (Left)
-        find_and_remove_prefix: forearm_camera_l
+        find_and_remove_prefix: l_forearm_cam
         num_items: 0
       forearm_r:
         type: GenericAnalyzer
         path: Forearm (Right)
-        find_and_remove_prefix: forearm_camera_r
+        find_and_remove_prefix: r_forearm_cam
         num_items: 0

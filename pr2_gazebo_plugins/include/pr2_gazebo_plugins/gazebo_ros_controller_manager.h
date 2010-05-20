@@ -162,6 +162,7 @@ private:
   private: void ControllerManagerQueueThread();
   private: boost::thread* controller_manager_callback_queue_thread_;
 #endif
+  private: void ControllerManagerROSThread();
   private: boost::thread* ros_spinner_thread_;
 };
 

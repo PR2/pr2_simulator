@@ -1,4 +1,7 @@
 <launch>
+  <!-- start world -->
+  <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
+
   <!-- send single_link.urdf to param server -->
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_examples_gazebo)/single_link_defs/single_link.urdf.xacro'" />
 

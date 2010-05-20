@@ -30,13 +30,13 @@
     </inertial> 
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry name="base_block_visual_geom">
+      <geometry>
         <box size="0.001 0.001 0.001" />
       </geometry>
     </visual> 
     <collision>
       <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
-      <geometry name="base_block_collision_geom">
+      <geometry>
         <box size="0.001 0.001 0.001" />
       </geometry>
     </collision>
@@ -60,13 +60,13 @@
     </inertial>
     <visual >
       <origin xyz="0 0 -0.5" rpy="0 0 0" />
-      <geometry name="link1_visual_geom">
+      <geometry>
         <box size="0.1 0.1 1.0" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0 0 -0.5" rpy="0.0 0.0 0.0 " />
-      <geometry name="link1_collision_geom">
+      <origin xyz="0 0 -0.5" rpy="0.0 0.0 0.0" />
+      <geometry>
         <box size="0.1 0.1 1.0" />
       </geometry>
     </collision>
@@ -93,13 +93,13 @@
     </inertial>
     <visual >
       <origin xyz="0 0 0.5" rpy="0 0 0" />
-      <geometry name="link2_visual_geom">
+      <geometry>
         <cylinder radius="0.05" length="1.0" />
       </geometry>
     </visual>
     <collision >
-      <origin xyz="0 0 0.5" rpy="0 0 0 " />
-      <geometry name="link2_collision_geom">
+      <origin xyz="0 0 0.5" rpy="0 0 0" />
+      <geometry>
         <cylinder radius="0.05" length="1.0" />
       </geometry>
     </collision>

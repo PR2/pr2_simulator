@@ -38,5 +38,25 @@
     <remap from="imu_data" to="torso_lift_imu/data" />
   </node>
 
+  <!-- Base Laser dynamic_reconfigure -->
+  <node pkg="gazebo_plugins" type="hokuyo_node" name="base_hokuyo_node">
+    <param name="port" type="string" value="/etc/ros/sensors/base_hokuyo" />
+    <param name="frame_id" type="string" value="base_laser_link" />
+    <param name="min_ang" type="double" value="-2.2689" />
+    <param name="max_ang" type="double" value="2.2689" />
+    <param name="skip" type="int" value="1" />
+    <param name="intensity" value="false" />
+  </node>
+
+  <!-- Tilt Laser dynamic_reconfigure -->
+  <node pkg="gazebo_plugins" type="hokuyo_node" name="tilt_hokuyo_node">
+    <param name="port" type="string" value="/etc/ros/sensors/tilt_hokuyo" />
+    <param name="frame_id" type="string" value="laser_tilt_link" />
+    <param name="min_ang" type="double" value="-0.829" />
+    <param name="max_ang" type="double" value="0.829" />
+    <param name="skip" type="int" value="1" />
+    <param name="intensity" value="true" />
+  </node>
+
 </launch>
 

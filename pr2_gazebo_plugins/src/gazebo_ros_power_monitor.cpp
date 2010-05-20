@@ -61,7 +61,7 @@ GazeboRosPowerMonitor::GazeboRosPowerMonitor(Entity* parent) : Controller(parent
 
 GazeboRosPowerMonitor::~GazeboRosPowerMonitor()
 {
-    delete ros_node_;
+    delete rosnode_;
 
     delete robot_namespace_param_;
     delete power_state_topic_param_;
@@ -85,13 +85,16 @@ void GazeboRosPowerMonitor::LoadChild(XMLConfigNode* configNode)
     discharge_voltage_param_->Load(configNode);
     charge_voltage_param_->Load(configNode);
 
-    int argc = 0;
-    char* argv = NULL;
-    ros::init(argc, &argv, "gazebo_ros_power_monitor", ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+    if (!ros::isInitialized())
+    {
+      int argc = 0;
+      char** argv = NULL;
+      ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+    }
 
-    ros_node_        = new ros::NodeHandle(robot_namespace_param_->GetValue());
-    power_state_pub_ = ros_node_->advertise<pr2_msgs::PowerState>(power_state_topic_param_->GetValue(), 10);
-    plugged_in_sub_  = ros_node_->subscribe("plugged_in", 10, &GazeboRosPowerMonitor::SetPlug, this);
+    rosnode_        = new ros::NodeHandle(robot_namespace_param_->GetValue());
+    power_state_pub_ = rosnode_->advertise<pr2_msgs::PowerState>(power_state_topic_param_->GetValue(), 10);
+    plugged_in_sub_  = rosnode_->subscribe("plugged_in", 10, &GazeboRosPowerMonitor::SetPlug, this);
 }
 
 void GazeboRosPowerMonitor::InitChild()
@@ -158,6 +161,7 @@ void GazeboRosPowerMonitor::UpdateChild()
 void GazeboRosPowerMonitor::FiniChild()
 {
     // Do nothing
+    this->rosnode_->shutdown();
 }
 
 void GazeboRosPowerMonitor::SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg)

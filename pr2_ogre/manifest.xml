@@ -12,10 +12,16 @@
   <url>http://ros.org/wiki/pr2_ogre</url>
   
   <depend package="convex_decomposition"/>
+  <depend package="gazebo"/>
   <depend package="ivcon"/>
   <depend package="ogre_tools"/>
   <depend package="pr2_description"/>
 
+  <export>
+    <gazebo gazebo_media_path="${prefix}" />
+  </export>
 
-
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
 </package>

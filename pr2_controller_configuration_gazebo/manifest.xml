@@ -11,6 +11,9 @@
   <review status="Doc reviewed" notes="2010/01/21"/>
   <url>http://ros.org/wiki/pr2_controller_configuration_gazebo</url>
 
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
 </package>
 
 
