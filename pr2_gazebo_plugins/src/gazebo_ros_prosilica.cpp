@@ -136,9 +136,12 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
 {
   this->robotNamespaceP->Load(node);
   this->robotNamespace = this->robotNamespaceP->GetValue();
-  int argc = 0;
-  char** argv = NULL;
-  ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  if (!ros::isInitialized())
+  {
+    int argc = 0;
+    char** argv = NULL;
+    ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
+  }
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
   this->rosnode_->setCallbackQueue(&this->prosilica_queue_);
 
@@ -893,10 +896,10 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 void GazeboRosProsilica::FiniChild()
 {
   this->myParent->SetActive(false);
+  this->rosnode_->shutdown();
 #ifdef USE_CBQ
   this->prosilica_queue_.clear();
   this->prosilica_queue_.disable();
-  ros::requestShutdown();
   this->prosilica_callback_queue_thread_->join();
 #else
   this->ros_spinner_thread_->join();
