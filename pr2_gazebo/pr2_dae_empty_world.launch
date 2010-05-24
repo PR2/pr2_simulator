@@ -1,0 +1,10 @@
+<launch>
+
+  <!-- start up empty world -->
+  <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
+
+  <!-- start pr2 robot -->
+  <include file="$(find pr2_gazebo)/pr2_dae.launch"/>
+
+</launch>
+
