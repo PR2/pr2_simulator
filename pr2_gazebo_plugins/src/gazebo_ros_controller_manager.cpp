@@ -309,17 +309,27 @@ void GazeboRosControllerManager::UpdateChild()
     switch (this->joints_[i]->GetType())
     {
     case Joint::HINGE: {
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
+#if GAZEBO_MAJOR_VERSION >= 0 && GAZEBO_MINOR_VERSION >= 10
       Joint *hj = this->joints_[i];
+#if GAZEBO_PATCH_VERSION >= 1
+      // skip explicit damping force addition, taken care of in gazebo
+      double effort_command = effort;
+#else
       double current_velocity = hj->GetVelocity(0);
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort - damping_force;
+#endif
       hj->SetForce(0,effort_command);
 #else
       HingeJoint *hj = (HingeJoint*)this->joints_[i];
+#if GAZEBO_PATCH_VERSION >= 1
+      // skip explicit damping force addition, taken care of in gazebo
+      double effort_command = effort;
+#else
       double current_velocity = hj->GetAngleRate();
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort - damping_force;
+#endif
       hj->SetTorque(effort_command);
 #endif
       break;
