@@ -370,8 +370,10 @@ void GazeboRosControllerManager::FiniChild()
   this->controller_manager_queue_.clear();
   this->controller_manager_queue_.disable();
   this->controller_manager_callback_queue_thread_->join();
+  delete this->controller_manager_callback_queue_thread_;
 #endif
   this->ros_spinner_thread_->join();
+  delete this->ros_spinner_thread_;
 }
 
 void GazeboRosControllerManager::ReadPr2Xml(XMLConfigNode *node)
