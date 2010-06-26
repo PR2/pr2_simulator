@@ -901,8 +901,10 @@ void GazeboRosProsilica::FiniChild()
   this->prosilica_queue_.clear();
   this->prosilica_queue_.disable();
   this->prosilica_callback_queue_thread_->join();
+  delete this->prosilica_callback_queue_thread_;
 #else
   this->ros_spinner_thread_->join();
+  delete this->ros_spinner_thread_;
 #endif
 
   this->poll_srv_.shutdown();

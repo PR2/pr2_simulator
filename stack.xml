@@ -17,14 +17,13 @@
   <depend stack="image_pipeline" /> <!-- stereo_image_proc -->
   <depend stack="navigation" /> <!-- robot_pose_ekf -->
   <depend stack="physics_ode" /> <!-- opende -->
-  <depend stack="pr2_common" /> <!-- pr2_description, pr2_msgs -->
+  <depend stack="pr2_common" /> <!-- pr2_description, pr2_dashboard_aggregator, pr2_msgs -->
   <depend stack="pr2_controllers" /> <!-- single_joint_position_action, joint_trajectory_action, robot_mechanism_controllers, pr2_mechanism_controllers, pr2_gripper_action, pr2_head_action -->
   <depend stack="pr2_mechanism" /> <!-- pr2_hardware_interface, pr2_mechanism_model, pr2_controller_manager -->
-  <depend stack="robot_model" /> <!-- convex_decomposition, ivcon, urdf, robot_state_publisher -->
+  <depend stack="robot_model" /> <!-- convex_decomposition, robot_state_publisher, urdf, ivcon -->
   <depend stack="ros" /> <!-- std_msgs, rospy, roscpp -->
   <depend stack="simulator_gazebo" /> <!-- gazebo_tools, gazebo, gazebo_plugins, gazebo_worlds -->
   <depend stack="vision_opencv" /> <!-- opencv2, cv_bridge -->
   <depend stack="visualization_common" /> <!-- ogre_tools -->
-  <depend stack="pr2_robot" /> <!-- pr2_dashboard_aggregator -->
 
 </stack>

@@ -309,17 +309,27 @@ void GazeboRosControllerManager::UpdateChild()
     switch (this->joints_[i]->GetType())
     {
     case Joint::HINGE: {
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
+#if GAZEBO_MAJOR_VERSION >= 0 && GAZEBO_MINOR_VERSION >= 10
       Joint *hj = this->joints_[i];
-      double current_velocity = hj->GetVelocity(0);
-      double damping_force = damping_coef * current_velocity;
-      double effort_command = effort - damping_force;
+      #if GAZEBO_PATCH_VERSION >= 1
+            // skip explicit damping force addition, taken care of in gazebo
+            double effort_command = effort;
+      #else
+            double current_velocity = hj->GetVelocity(0);
+            double damping_force = damping_coef * current_velocity;
+            double effort_command = effort - damping_force;
+      #endif
       hj->SetForce(0,effort_command);
 #else
       HingeJoint *hj = (HingeJoint*)this->joints_[i];
-      double current_velocity = hj->GetAngleRate();
-      double damping_force = damping_coef * current_velocity;
-      double effort_command = effort - damping_force;
+      #if GAZEBO_PATCH_VERSION >= 1
+            // skip explicit damping force addition, taken care of in gazebo
+            double effort_command = effort;
+      #else
+            double current_velocity = hj->GetAngleRate();
+            double damping_force = damping_coef * current_velocity;
+            double effort_command = effort - damping_force;
+      #endif
       hj->SetTorque(effort_command);
 #endif
       break;
@@ -327,15 +337,23 @@ void GazeboRosControllerManager::UpdateChild()
     case Joint::SLIDER: {
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
       Joint *sj = this->joints_[i];
-      double current_velocity = sj->GetVelocity(0);
-      double damping_force = damping_coef * current_velocity;
-      double effort_command = effort-damping_force;
+      #if GAZEBO_PATCH_VERSION >= 1
+          double effort_command = effort;
+      #else
+          double current_velocity = sj->GetVelocity(0);
+          double damping_force = damping_coef * current_velocity;
+          double effort_command = effort-damping_force;
+      #endif
       (this->joints_[i])->SetForce(0,effort_command);
 #else
       SliderJoint *sj = (SliderJoint*)this->joints_[i];
-      double current_velocity = sj->GetPositionRate();
-      double damping_force = damping_coef * current_velocity;
-      double effort_command = effort-damping_force;
+      #if GAZEBO_PATCH_VERSION >= 1
+          double effort_command = effort;
+      #else
+          double current_velocity = sj->GetPositionRate();
+          double damping_force = damping_coef * current_velocity;
+          double effort_command = effort-damping_force;
+      #endif
       sj->SetSliderForce(effort_command);
 #endif
       break;
@@ -360,8 +378,10 @@ void GazeboRosControllerManager::FiniChild()
   this->controller_manager_queue_.clear();
   this->controller_manager_queue_.disable();
   this->controller_manager_callback_queue_thread_->join();
+  delete this->controller_manager_callback_queue_thread_;
 #endif
   this->ros_spinner_thread_->join();
+  delete this->ros_spinner_thread_;
 }
 
 void GazeboRosControllerManager::ReadPr2Xml(XMLConfigNode *node)

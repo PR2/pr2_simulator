@@ -17,6 +17,7 @@
   
 
 
+  <link name="world"/>
   <joint name="base_block_joint" type="fixed">
     <parent link="world" />
     <origin xyz="0 0 0" rpy="0 0 0" />
