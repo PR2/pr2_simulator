@@ -39,6 +39,7 @@ namespace gazebo {
 JointCalibrationSimulator::JointCalibrationSimulator(boost::shared_ptr<const urdf::Joint> jnt)
   : calibration_rising_edge_valid_(false), 
     calibration_falling_edge_valid_(false),
+    initialized_(false),
     has_rising_(false), 
     has_falling_(false),
     continuous_(false),
@@ -68,8 +69,8 @@ JointCalibrationSimulator::JointCalibrationSimulator(boost::shared_ptr<const urd
       has_rising_ = true;
       rising_ = falling_ + M_PI;
     }
-    rising_ = angles::two_pi_complement(rising_);
-    falling_ = angles::two_pi_complement(falling_);
+    rising_ = angles::normalize_angle(rising_);
+    falling_ = angles::normalize_angle(falling_);
     if (rising_ < falling_)
       bump_ = true;
     else
@@ -87,12 +88,21 @@ void JointCalibrationSimulator::setJointPosition(double pos)
 {
   // compute calibration reading
   if (continuous_){
-    double pos_c = angles::two_pi_complement(pos);
-    if (pos_c > rising_ && pos_c < falling_)
-      calibration_reading_ = bump_;
-    else
-      calibration_reading_ = !bump_;
+    double pos_c = angles::normalize_angle(pos);
+    if (bump_){
+      if (pos_c > rising_ && pos_c < falling_)
+        calibration_reading_ = true;
+      else
+        calibration_reading_ = false;
+    }
+    else{
+      if (pos_c < rising_ && pos_c > falling_)
+        calibration_reading_ = false;
+      else
+        calibration_reading_ = true;
+    }
   }
+
   else{
     if (has_rising_)
       calibration_reading_ = pos > rising_;
@@ -100,33 +110,30 @@ void JointCalibrationSimulator::setJointPosition(double pos)
       calibration_reading_ = pos < falling_;
   }
 
+  if (initialized_){
+    // tripped calibration flag
+    if (old_calibration_reading_ != calibration_reading_){
+      if (calibration_reading_){
+        calibration_rising_edge_valid_ = true;
+        if (pos > old_pos_)
+          last_calibration_rising_edge_ = rising_;
+        else
+          last_calibration_rising_edge_ = falling_;
+      }
+      else{
+        calibration_falling_edge_valid_ = true;
+        if (pos > old_pos_)
+          last_calibration_falling_edge_ = falling_;
+        else
+          last_calibration_falling_edge_ = rising_;
+      }
+    }
+  }
+
   // store state
   old_calibration_reading_ = calibration_reading_;
   old_pos_ = pos;
-
-  // initialize
-  if (!initialized_){
-    initialized_ = true;
-    return;
-  }
-
-  // tripped calibration flag
-  if (old_calibration_reading_ != calibration_reading_){
-    if (calibration_reading_){
-      calibration_rising_edge_valid_ = true;
-      if (pos > old_pos_)
-        last_calibration_rising_edge_ = rising_;
-      else
-        last_calibration_rising_edge_ = falling_;
-    }
-    else{
-      calibration_falling_edge_valid_ = true;
-      if (pos > old_pos_)
-        last_calibration_falling_edge_ = falling_;
-      else
-        last_calibration_falling_edge_ = rising_;
-    }
-  }
+  initialized_ = true;
 }
 
 

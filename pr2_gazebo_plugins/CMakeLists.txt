@@ -24,3 +24,7 @@ else(${glx_val} EQUAL 0)
   message(STATUS "no test here")
 endif(${glx_val} EQUAL 0)
 
+rosbuild_add_executable(test_joint_calibration_simulator test/test_joint_calibration_simulator.cpp )
+target_link_libraries(test_joint_calibration_simulator gazebo_ros_controller_manager)
+rosbuild_add_gtest_build_flags(test_joint_calibration_simulator)
+rosbuild_add_rostest(test/test_joint_calibration_simulator.launch)

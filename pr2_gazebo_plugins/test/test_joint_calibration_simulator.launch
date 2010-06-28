@@ -1,0 +1,4 @@
+<launch>
+  <test test-name="test_joint_calibration_simulator" pkg="pr2_gazebo_plugins" type="test_joint_calibration_simulator" args="$(find pr2_gazebo_plugins)/test/robot.xml" />
+</launch>
+ 
