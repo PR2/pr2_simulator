@@ -10,7 +10,7 @@ add_definitions(-fPIC)
 
 rosbuild_add_boost_directories()
 
-rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
+rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp src/joint_calibration_simulator.cpp)
 rosbuild_link_boost(gazebo_ros_controller_manager thread)
 rosbuild_add_library(gazebo_ros_power_monitor src/gazebo_ros_power_monitor.cpp)
 rosbuild_link_boost(gazebo_ros_power_monitor thread)
