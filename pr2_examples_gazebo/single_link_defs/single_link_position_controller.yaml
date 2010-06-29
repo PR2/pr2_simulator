@@ -1,5 +1,5 @@
 test_controller:
-  type: JointPositionController
+  type: robot_mechanism_controllers/JointPositionController
   joint: link1_joint
   pid:
     p: 1.0
