@@ -55,7 +55,7 @@ namespace gazebo {
 GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_ros_controller_manager", GazeboRosControllerManager);
 
 GazeboRosControllerManager::GazeboRosControllerManager(Entity *parent)
-  : Controller(parent), hw_(), fake_state_(NULL)
+  : Controller(parent), hw_(), fake_state_(NULL), fake_calibration_(true)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
@@ -120,6 +120,8 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
   ROS_INFO("starting gazebo_ros_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
   this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);
+
+  this->rosnode_->param("gazebo/start_robot_calibrated",this->fake_calibration_,true);
 
   // read pr2 urdf
   // setup actuators, then setup mechanism control node
@@ -452,7 +454,7 @@ void GazeboRosControllerManager::ReadPr2Xml(XMLConfigNode *node)
   this->cm_->initXml(doc.RootElement());
 
   for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
-    this->cm_->state_->joint_states_[i].calibrated_ = true;
+    this->cm_->state_->joint_states_[i].calibrated_ = fake_calibration_;
 }
 
 #ifdef USE_CBQ

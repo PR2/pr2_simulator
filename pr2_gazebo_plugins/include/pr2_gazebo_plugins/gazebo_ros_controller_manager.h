@@ -157,6 +157,8 @@ private:
   std::string robotParam;
   std::string robotNamespace;
 
+  bool fake_calibration_;
+
 #ifdef USE_CBQ
   private: ros::CallbackQueue controller_manager_queue_;
   private: void ControllerManagerQueueThread();

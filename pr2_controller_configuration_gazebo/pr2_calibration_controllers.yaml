@@ -133,11 +133,12 @@ cal_r_gripper:
     - r_gripper_r_finger_joint
     - r_gripper_r_finger_tip_joint
   velocity: -0.01
+  stopped_velocity_tolerance: 0.01
   pid:
-    p: 10000
+    p: 100
     d: 0
-    i: 10000.0
-    i_clamp: 15.0
+    i: 1.0
+    i_clamp: 5.0
 
 
 cal_l_forearm_roll:
@@ -175,11 +176,12 @@ cal_l_gripper:
     - l_gripper_r_finger_joint
     - l_gripper_r_finger_tip_joint
   velocity: -0.01
+  stopped_velocity_tolerance: 0.01
   pid:
-    p: 10000
+    p: 100
     d: 0
-    i: 10000.0
-    i_clamp: 15.0
+    i: 1.0
+    i_clamp: 5.0
 
 
 
