@@ -10,7 +10,7 @@ add_definitions(-fPIC)
 
 rosbuild_add_boost_directories()
 
-rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp src/joint_calibration_simulator.cpp)
+rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
 rosbuild_link_boost(gazebo_ros_controller_manager thread)
 rosbuild_add_library(gazebo_ros_power_monitor src/gazebo_ros_power_monitor.cpp)
 rosbuild_link_boost(gazebo_ros_power_monitor thread)
@@ -24,7 +24,3 @@ else(${glx_val} EQUAL 0)
   message(STATUS "no test here")
 endif(${glx_val} EQUAL 0)
 
-rosbuild_add_executable(test_joint_calibration_simulator test/test_joint_calibration_simulator.cpp )
-target_link_libraries(test_joint_calibration_simulator gazebo_ros_controller_manager)
-rosbuild_add_gtest_build_flags(test_joint_calibration_simulator)
-rosbuild_add_rostest(test/test_joint_calibration_simulator.launch)
