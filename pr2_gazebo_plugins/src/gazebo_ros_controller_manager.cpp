@@ -394,7 +394,7 @@ void GazeboRosControllerManager::ReadPr2Xml(XMLConfigNode *node)
   // search and wait for robot_description on param server
   while(urdf_string.empty())
   {
-    ROS_WARN("gazebo controller manager plugin is waiting for urdf: %s on the param server.", this->robotParam.c_str());
+    ROS_INFO("gazebo controller manager plugin is waiting for urdf: %s on the param server.", this->robotParam.c_str());
     if (this->rosnode_->searchParam(this->robotParam,urdf_param_name))
     {
       this->rosnode_->getParam(urdf_param_name,urdf_string);
