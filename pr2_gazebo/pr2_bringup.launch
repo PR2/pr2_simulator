@@ -58,5 +58,8 @@
     <param name="intensity" value="true" />
   </node>
 
+  <!-- Spawns the synchronizer -->
+  <node type="camera_synchronizer" name="camera_synchronizer_node" pkg="gazebo_plugins" output="screen" />
+
 </launch>
 
