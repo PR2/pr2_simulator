@@ -34,6 +34,8 @@
 #include <unistd.h>
 #include <set>
 #include <gazebo/Global.hh>
+#include <gazebo/World.hh>
+#include <gazebo/PhysicsEngine.hh>
 #include <gazebo/XMLConfig.hh>
 #include <gazebo/Model.hh>
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
@@ -78,6 +80,13 @@ GazeboRosControllerManager::GazeboRosControllerManager(Entity *parent)
     sim_start_  = Simulator::Instance()->GetSimTime();
 #endif
   }
+
+  // check update rate against world physics update rate
+  // should be equal or higher to guarantee the wrench applied is not "diluted"
+  if (this->updatePeriod > 0 &&
+      (gazebo::World::Instance()->GetPhysicsEngine()->GetUpdateRate() > 1.0/this->updatePeriod))
+    ROS_ERROR("gazebo_ros_force controller update rate is less than physics update rate, wrench applied will be diluted (applied intermittently)");
+
 
 }
 
