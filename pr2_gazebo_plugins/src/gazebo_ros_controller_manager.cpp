@@ -383,7 +383,7 @@ void GazeboRosControllerManager::FiniChild()
   //for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
   //  delete it->second; // why is this causing double free corrpution?
   this->cm_->~ControllerManager();
-  //delete this->fake_state_;  // why is this causing double free corrpution?
+  if (this->fake_state_) delete this->fake_state_;
   this->rosnode_->shutdown();
 #ifdef USE_CBQ
   this->controller_manager_queue_.clear();

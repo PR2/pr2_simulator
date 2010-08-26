@@ -5,7 +5,7 @@
 
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="pr2_gazebo_model" pkg="gazebo_tools" type="gazebo_model" args="$(optenv ROBOT_INITIAL_POSE) -p robot_description spawn" respawn="false" output="screen" />
+  <node name="pr2_gazebo_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model pr2" respawn="false" output="screen" />
  
   <!-- default bringup script -->
   <include file="$(find pr2_gazebo)/pr2_bringup.launch" />
