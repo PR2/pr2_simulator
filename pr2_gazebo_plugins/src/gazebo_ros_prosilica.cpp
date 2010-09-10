@@ -122,11 +122,6 @@ GazeboRosProsilica::~GazeboRosProsilica()
   delete this->distortion_k3P;
   delete this->distortion_t1P;
   delete this->distortion_t2P;
-#ifdef USE_CBQ
-  delete this->prosilica_callback_queue_thread_;
-#else
-  delete this->ros_spinner_thread_;
-#endif
 
 }
 
@@ -283,10 +278,10 @@ void GazeboRosProsilica::InitChild()
 
 #ifdef USE_CBQ
   // start custom queue for prosilica
-  this->prosilica_callback_queue_thread_ = new boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaQueueThread,this ) );
+  this->prosilica_callback_queue_thread_ = boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaQueueThread,this ) );
 #else
   // start ros spinner as it is done in prosilica node
-  this->ros_spinner_thread_ = new boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaROSThread,this ) );
+  this->ros_spinner_thread_ = boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaROSThread,this ) );
 #endif
 
 }
@@ -900,11 +895,9 @@ void GazeboRosProsilica::FiniChild()
 #ifdef USE_CBQ
   this->prosilica_queue_.clear();
   this->prosilica_queue_.disable();
-  this->prosilica_callback_queue_thread_->join();
-  delete this->prosilica_callback_queue_thread_;
+  this->prosilica_callback_queue_thread_.join();
 #else
-  this->ros_spinner_thread_->join();
-  delete this->ros_spinner_thread_;
+  this->ros_spinner_thread_.join();
 #endif
 
   this->poll_srv_.shutdown();

@@ -162,10 +162,10 @@ private:
 #ifdef USE_CBQ
   private: ros::CallbackQueue controller_manager_queue_;
   private: void ControllerManagerQueueThread();
-  private: boost::thread* controller_manager_callback_queue_thread_;
+  private: boost::thread controller_manager_callback_queue_thread_;
 #endif
   private: void ControllerManagerROSThread();
-  private: boost::thread* ros_spinner_thread_;
+  private: boost::thread ros_spinner_thread_;
 };
 
 /** \} */
