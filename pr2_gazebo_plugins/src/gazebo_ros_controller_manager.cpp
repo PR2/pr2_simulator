@@ -57,7 +57,7 @@ namespace gazebo {
 GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_ros_controller_manager", GazeboRosControllerManager);
 
 GazeboRosControllerManager::GazeboRosControllerManager(Entity *parent)
-  : Controller(parent), hw_(), fake_state_(NULL), fake_calibration_(true)
+  : Controller(parent), hw_(), fake_calibration_(true)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
@@ -105,6 +105,13 @@ GazeboRosControllerManager::~GazeboRosControllerManager()
   delete this->robotNamespaceP;
   delete this->cm_; 
   delete this->rosnode_;
+
+  if (this->fake_state_)
+  {
+    // why does this cause double free corrpution in destruction of RobotState?
+    //this->fake_state_->~RobotState();
+    delete this->fake_state_;
+  }
 }
 
 void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
@@ -385,11 +392,6 @@ void GazeboRosControllerManager::FiniChild()
   //pr2_hardware_interface::ActuatorMap::const_iterator it;
   //for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
   //  delete it->second; // why is this causing double free corrpution?
-  if (this->fake_state_)
-  {
-    this->fake_state_->~RobotState();
-    //delete this->fake_state_; // why does this cause double free corrpution in destruction of RobotState?
-  }
   this->cm_->~ControllerManager();
   this->rosnode_->shutdown();
 #ifdef USE_CBQ

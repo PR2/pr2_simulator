@@ -47,6 +47,8 @@
 #include <ros/callback_queue.h>
 #endif
 
+#include "boost/thread/mutex.hpp"
+
 namespace gazebo
 {
 class XMLConfigNode;
@@ -166,6 +168,7 @@ private:
 #endif
   private: void ControllerManagerROSThread();
   private: boost::thread ros_spinner_thread_;
+
 };
 
 /** \} */
