@@ -194,8 +194,9 @@ class GazeboRosProsilica : public Controller
                               prosilica_camera::PolledImage::Response &res);
 */
 
-  private: bool pollCallback(polled_camera::GetPolledImage::Request& req,
-                            sensor_msgs::Image& image, sensor_msgs::CameraInfo& info);
+  private: void pollCallback(polled_camera::GetPolledImage::Request& req,
+                             polled_camera::GetPolledImage::Response& rsp,
+                             sensor_msgs::Image& image, sensor_msgs::CameraInfo& info);
 
   /// \brief ros message
   /// \brief construct raw stereo message

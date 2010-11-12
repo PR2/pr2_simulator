@@ -563,14 +563,26 @@ void GazeboRosProsilica::PublishCameraInfo()
 
 ////////////////////////////////////////////////////////////////////////////////
 // new prosilica interface.
-bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& req,
+void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& req,
+                                      polled_camera::GetPolledImage::Response& rsp,
                                       sensor_msgs::Image& image, sensor_msgs::CameraInfo& info)
 {
+  /// @todo Support binning (maybe just cv::resize)
+  /// @todo Don't adjust K, P for ROI, set CameraInfo.roi fields instead
+  /// @todo D parameter order is k1, k2, t1, t2, k3
 
   if (this->mode_ != "polled")
   {
-    ROS_ERROR("Poll service called but camera is not in triggered mode");
-    return false;
+    rsp.success = false;
+    rsp.status_message = "Camera is not in triggered mode";
+    return;
+  }
+
+  if (req.binning_x > 1 || req.binning_y > 1)
+  {
+    rsp.success = false;
+    rsp.status_message = "Gazebo Prosilica plugin does not support binning";
+    return;
   }
 
 /*
@@ -883,7 +895,8 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
     usleep(100000);
   }
   this->ImageDisconnect();
-  return true;
+  rsp.success = true;
+  return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
