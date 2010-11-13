@@ -122,11 +122,6 @@ GazeboRosProsilica::~GazeboRosProsilica()
   delete this->distortion_k3P;
   delete this->distortion_t1P;
   delete this->distortion_t2P;
-#ifdef USE_CBQ
-  delete this->prosilica_callback_queue_thread_;
-#else
-  delete this->ros_spinner_thread_;
-#endif
 
 }
 
@@ -283,10 +278,10 @@ void GazeboRosProsilica::InitChild()
 
 #ifdef USE_CBQ
   // start custom queue for prosilica
-  this->prosilica_callback_queue_thread_ = new boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaQueueThread,this ) );
+  this->prosilica_callback_queue_thread_ = boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaQueueThread,this ) );
 #else
   // start ros spinner as it is done in prosilica node
-  this->ros_spinner_thread_ = new boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaROSThread,this ) );
+  this->ros_spinner_thread_ = boost::thread( boost::bind( &GazeboRosProsilica::ProsilicaROSThread,this ) );
 #endif
 
 }
@@ -568,14 +563,26 @@ void GazeboRosProsilica::PublishCameraInfo()
 
 ////////////////////////////////////////////////////////////////////////////////
 // new prosilica interface.
-bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& req,
+void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& req,
+                                      polled_camera::GetPolledImage::Response& rsp,
                                       sensor_msgs::Image& image, sensor_msgs::CameraInfo& info)
 {
+  /// @todo Support binning (maybe just cv::resize)
+  /// @todo Don't adjust K, P for ROI, set CameraInfo.roi fields instead
+  /// @todo D parameter order is k1, k2, t1, t2, k3
 
   if (this->mode_ != "polled")
   {
-    ROS_ERROR("Poll service called but camera is not in triggered mode");
-    return false;
+    rsp.success = false;
+    rsp.status_message = "Camera is not in triggered mode";
+    return;
+  }
+
+  if (req.binning_x > 1 || req.binning_y > 1)
+  {
+    rsp.success = false;
+    rsp.status_message = "Gazebo Prosilica plugin does not support binning";
+    return;
   }
 
 /*
@@ -888,7 +895,8 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
     usleep(100000);
   }
   this->ImageDisconnect();
-  return true;
+  rsp.success = true;
+  return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -900,11 +908,9 @@ void GazeboRosProsilica::FiniChild()
 #ifdef USE_CBQ
   this->prosilica_queue_.clear();
   this->prosilica_queue_.disable();
-  this->prosilica_callback_queue_thread_->join();
-  delete this->prosilica_callback_queue_thread_;
+  this->prosilica_callback_queue_thread_.join();
 #else
-  this->ros_spinner_thread_->join();
-  delete this->ros_spinner_thread_;
+  this->ros_spinner_thread_.join();
 #endif
 
   this->poll_srv_.shutdown();

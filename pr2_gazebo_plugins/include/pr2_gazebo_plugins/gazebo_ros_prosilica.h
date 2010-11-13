@@ -194,8 +194,9 @@ class GazeboRosProsilica : public Controller
                               prosilica_camera::PolledImage::Response &res);
 */
 
-  private: bool pollCallback(polled_camera::GetPolledImage::Request& req,
-                            sensor_msgs::Image& image, sensor_msgs::CameraInfo& info);
+  private: void pollCallback(polled_camera::GetPolledImage::Request& req,
+                             polled_camera::GetPolledImage::Response& rsp,
+                             sensor_msgs::Image& image, sensor_msgs::CameraInfo& info);
 
   /// \brief ros message
   /// \brief construct raw stereo message
@@ -256,10 +257,10 @@ class GazeboRosProsilica : public Controller
 #ifdef USE_CBQ
   private: ros::CallbackQueue prosilica_queue_;
   private: void ProsilicaQueueThread();
-  private: boost::thread* prosilica_callback_queue_thread_;
+  private: boost::thread prosilica_callback_queue_thread_;
 #else
   private: void ProsilicaROSThread();
-  private: boost::thread* ros_spinner_thread_;
+  private: boost::thread ros_spinner_thread_;
 #endif
 
 };
