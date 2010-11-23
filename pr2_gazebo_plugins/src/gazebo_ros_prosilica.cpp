@@ -520,15 +520,15 @@ void GazeboRosProsilica::PublishCameraInfo()
   this->cameraInfoMsg.width  = this->width;
 
   // distortion
-  if (!this->cameraInfoMsg.D.empty()) {
-    if (this->cameraInfoMsg.D.size() == 5) {
-      this->cameraInfoMsg.D[0] = this->distortion_k1;
-      this->cameraInfoMsg.D[1] = this->distortion_k2;
-      this->cameraInfoMsg.D[2] = this->distortion_k3;
-      this->cameraInfoMsg.D[3] = this->distortion_t1;
-      this->cameraInfoMsg.D[4] = this->distortion_t2;
-    }
-  }
+#if ROS_VERSION_MINIMUM(1, 3, 0)
+  this->cameraInfoMsg.distortion_model = "plumb_bob";
+  this->cameraInfoMsg.D.resize(5);
+#endif
+  this->cameraInfoMsg.D[0] = this->distortion_k1;
+  this->cameraInfoMsg.D[1] = this->distortion_k2;
+  this->cameraInfoMsg.D[2] = this->distortion_k3;
+  this->cameraInfoMsg.D[3] = this->distortion_t1;
+  this->cameraInfoMsg.D[4] = this->distortion_t2;
   // original camera matrix
   this->cameraInfoMsg.K[0] = this->focal_length;
   this->cameraInfoMsg.K[1] = 0.0;
@@ -588,15 +588,15 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
   info.height = this->myParent->GetImageHeight();
   info.width  = this->myParent->GetImageWidth() ;
   // distortion
-  if (!info.D.empty()) {
-    if (info.D.size() == 5) {
-      info.D[0] = this->distortion_k1;
-      info.D[1] = this->distortion_k2;
-      info.D[2] = this->distortion_k3;
-      info.D[3] = this->distortion_t1;
-      info.D[4] = this->distortion_t2;
-    }
-  }
+#if ROS_VERSION_MINIMUM(1, 3, 0)
+  info.distortion_model = "plumb_bob";
+  info.D.resize(5);
+#endif
+  info.D[0] = this->distortion_k1;
+  info.D[1] = this->distortion_k2;
+  info.D[2] = this->distortion_k3;
+  info.D[3] = this->distortion_t1;
+  info.D[4] = this->distortion_t2;
   // original camera matrix
   info.K[0] = this->focal_length;
   info.K[1] = 0.0;
@@ -667,15 +667,15 @@ bool GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         this->roiCameraInfoMsg->width  = req.roi.width; //this->myParent->GetImageWidth() ;
         this->roiCameraInfoMsg->height = req.roi.height; //this->myParent->GetImageHeight();
         // distortion
-        if (!this->roiCameraInfoMsg->D.empty()) {
-          if (this->roiCameraInfoMsg->D.size() == 5) {
-            this->roiCameraInfoMsg->D[0] = this->distortion_k1;
-            this->roiCameraInfoMsg->D[1] = this->distortion_k2;
-            this->roiCameraInfoMsg->D[2] = this->distortion_k3;
-            this->roiCameraInfoMsg->D[3] = this->distortion_t1;
-            this->roiCameraInfoMsg->D[4] = this->distortion_t2;
-          }
-        }
+#if ROS_VERSION_MINIMUM(1, 3, 0)
+        this->roiCameraInfoMsg->distortion_model = "plumb_bob";
+        this->roiCameraInfoMsg->D.resize(5);
+#endif
+        this->roiCameraInfoMsg->D[0] = this->distortion_k1;
+        this->roiCameraInfoMsg->D[1] = this->distortion_k2;
+        this->roiCameraInfoMsg->D[2] = this->distortion_k3;
+        this->roiCameraInfoMsg->D[3] = this->distortion_t1;
+        this->roiCameraInfoMsg->D[4] = this->distortion_t2;
         // original camera matrix
         this->roiCameraInfoMsg->K[0] = this->focal_length;
         this->roiCameraInfoMsg->K[1] = 0.0;
