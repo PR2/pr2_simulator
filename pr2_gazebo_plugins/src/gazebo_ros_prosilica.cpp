@@ -520,6 +520,10 @@ void GazeboRosProsilica::PublishCameraInfo()
   this->cameraInfoMsg.width  = this->width;
 
   // distortion
+#if ROS_VERSION_MINIMUM(1, 3, 0)
+  this->cameraInfoMsg.distortion_model = "plumb_bob";
+  this->cameraInfoMsg.D.resize(5);
+#endif
   this->cameraInfoMsg.D[0] = this->distortion_k1;
   this->cameraInfoMsg.D[1] = this->distortion_k2;
   this->cameraInfoMsg.D[2] = this->distortion_k3;
@@ -596,6 +600,10 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
   info.height = this->myParent->GetImageHeight();
   info.width  = this->myParent->GetImageWidth() ;
   // distortion
+#if ROS_VERSION_MINIMUM(1, 3, 0)
+  info.distortion_model = "plumb_bob";
+  info.D.resize(5);
+#endif
   info.D[0] = this->distortion_k1;
   info.D[1] = this->distortion_k2;
   info.D[2] = this->distortion_k3;
@@ -671,6 +679,10 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         this->roiCameraInfoMsg->width  = req.roi.width; //this->myParent->GetImageWidth() ;
         this->roiCameraInfoMsg->height = req.roi.height; //this->myParent->GetImageHeight();
         // distortion
+#if ROS_VERSION_MINIMUM(1, 3, 0)
+        this->roiCameraInfoMsg->distortion_model = "plumb_bob";
+        this->roiCameraInfoMsg->D.resize(5);
+#endif
         this->roiCameraInfoMsg->D[0] = this->distortion_k1;
         this->roiCameraInfoMsg->D[1] = this->distortion_k2;
         this->roiCameraInfoMsg->D[2] = this->distortion_k3;
