@@ -53,7 +53,7 @@ GazeboRosPowerMonitor::GazeboRosPowerMonitor(Entity* parent) : Controller(parent
     power_state_rate_param_  = new ParamT<double>("powerStateRate",        1.0,        0);
     full_capacity_param_     = new ParamT<double>("fullChargeCapacity",   80.0,        0);
     discharge_rate_param_    = new ParamT<double>("dischargeRate",      -500.0,        0);
-    charge_rate_param_       = new ParamT<double>("chargeRate",          500.0,        0);
+    charge_rate_param_       = new ParamT<double>("chargeRate",         1000.0,        0);
     discharge_voltage_param_ = new ParamT<double>("dischargeVoltage",     16.0,        0);
     charge_voltage_param_    = new ParamT<double>("chargeVoltage",        16.0,        0);
     Param::End();
@@ -167,6 +167,20 @@ void GazeboRosPowerMonitor::FiniChild()
 void GazeboRosPowerMonitor::SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg)
 {
     lock_.lock();
+
+    if (plug_msg->charge_rate > 0.0)
+    {
+      charge_rate_param_->SetValue(plug_msg->charge_rate);
+      ROS_DEBUG("debug: charge rate %f",charge_rate_param_->GetValue());
+    }
+    if (plug_msg->discharge_rate < 0.0)
+    {
+      discharge_rate_param_->SetValue(plug_msg->discharge_rate);
+      ROS_DEBUG("debug: discharge rate %f",discharge_rate_param_->GetValue());
+    }
+
+    charge_ = plug_msg->charge;
+    ROS_DEBUG("debug: charge %f",charge_);
 
     if (plug_msg->ac_present)
     {

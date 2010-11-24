@@ -57,7 +57,7 @@ namespace gazebo {
 GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_ros_controller_manager", GazeboRosControllerManager);
 
 GazeboRosControllerManager::GazeboRosControllerManager(Entity *parent)
-  : Controller(parent), hw_(), fake_state_(NULL), fake_calibration_(true)
+  : Controller(parent), hw_(), fake_calibration_(true)
 {
   this->parent_model_ = dynamic_cast<Model*>(this->parent);
 
@@ -105,10 +105,13 @@ GazeboRosControllerManager::~GazeboRosControllerManager()
   delete this->robotNamespaceP;
   delete this->cm_; 
   delete this->rosnode_;
-#ifdef USE_CBQ
-  delete this->controller_manager_callback_queue_thread_;
-#endif
-  delete this->ros_spinner_thread_;
+
+  if (this->fake_state_)
+  {
+    // why does this cause double free corrpution in destruction of RobotState?
+    //this->fake_state_->~RobotState();
+    delete this->fake_state_;
+  }
 }
 
 void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
@@ -125,7 +128,7 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
     char** argv = NULL;
     ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
   }
-  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);  // namespace comes from gazebo_model spawner
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
   ROS_INFO("starting gazebo_ros_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
   this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);
@@ -140,22 +143,25 @@ void GazeboRosControllerManager::LoadChild(XMLConfigNode *node)
   this->fake_state_ = new pr2_mechanism_model::RobotState(&this->cm_->model_);
 
   // The gazebo joints and mechanism joints should match up.
-  for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
+  if (this->cm_->state_ != NULL) // could be NULL if ReadPr2Xml is unsuccessful
   {
-    std::string joint_name = this->cm_->state_->joint_states_[i].joint_->name;
-
-    // fill in gazebo joints pointer
-    gazebo::Joint *joint = this->parent_model_->GetJoint(joint_name);
-    if (joint)
+    for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
     {
-      this->joints_.push_back(joint);
-    }
-    else
-    {
-      //ROS_WARN("A joint named \"%s\" is not part of Mechanism Controlled joints.\n", joint_name.c_str());
-      this->joints_.push_back(NULL);
-    }
+      std::string joint_name = this->cm_->state_->joint_states_[i].joint_->name;
 
+      // fill in gazebo joints pointer
+      gazebo::Joint *joint = this->parent_model_->GetJoint(joint_name);
+      if (joint)
+      {
+        this->joints_.push_back(joint);
+      }
+      else
+      {
+        //ROS_WARN("A joint named \"%s\" is not part of Mechanism Controlled joints.\n", joint_name.c_str());
+        this->joints_.push_back(NULL);
+      }
+
+    }
   }
 
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
@@ -174,11 +180,11 @@ void GazeboRosControllerManager::InitChild()
 #endif
 #ifdef USE_CBQ
   // start custom queue for controller manager
-  this->controller_manager_callback_queue_thread_ = new boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerQueueThread,this ) );
+  this->controller_manager_callback_queue_thread_ = boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerQueueThread,this ) );
 #endif
 
   // pr2_etherCAT calls ros::spin(), we'll thread out one spinner here to mimic that
-  this->ros_spinner_thread_ = new boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerROSThread,this ) );
+  this->ros_spinner_thread_ = boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerROSThread,this ) );
 
 }
 
@@ -286,7 +292,8 @@ void GazeboRosControllerManager::UpdateChild()
 #endif
   try
   {
-    this->cm_->update();
+    if (this->cm_->state_ != NULL) // could be NULL if ReadPr2Xml is unsuccessful
+      this->cm_->update();
   }
   catch (const char* c)
   {
@@ -312,10 +319,13 @@ void GazeboRosControllerManager::UpdateChild()
     double effort = this->fake_state_->joint_states_[i].commanded_effort_;
 
     double damping_coef;
-    if (this->cm_->state_->joint_states_[i].joint_->dynamics)
-      damping_coef = this->cm_->state_->joint_states_[i].joint_->dynamics->damping;
-    else
-      damping_coef = 0;
+    if (this->cm_->state_ != NULL) // could be NULL if ReadPr2Xml is unsuccessful
+    {
+      if (this->cm_->state_->joint_states_[i].joint_->dynamics)
+        damping_coef = this->cm_->state_->joint_states_[i].joint_->dynamics->damping;
+      else
+        damping_coef = 0;
+    }
 
     switch (this->joints_[i]->GetType())
     {
@@ -383,16 +393,13 @@ void GazeboRosControllerManager::FiniChild()
   //for (it = hw_.actuators_.begin(); it != hw_.actuators_.end(); ++it)
   //  delete it->second; // why is this causing double free corrpution?
   this->cm_->~ControllerManager();
-  if (this->fake_state_) delete this->fake_state_;
   this->rosnode_->shutdown();
 #ifdef USE_CBQ
   this->controller_manager_queue_.clear();
   this->controller_manager_queue_.disable();
-  this->controller_manager_callback_queue_thread_->join();
-  delete this->controller_manager_callback_queue_thread_;
+  this->controller_manager_callback_queue_thread_.join();
 #endif
-  this->ros_spinner_thread_->join();
-  delete this->ros_spinner_thread_;
+  this->ros_spinner_thread_.join();
 }
 
 void GazeboRosControllerManager::ReadPr2Xml(XMLConfigNode *node)
@@ -420,46 +427,49 @@ void GazeboRosControllerManager::ReadPr2Xml(XMLConfigNode *node)
 
   // initialize TiXmlDocument doc with a string
   TiXmlDocument doc;
-  if (!doc.Parse(urdf_string.c_str()))
+  if (!doc.Parse(urdf_string.c_str()) && doc.Error())
   {
     ROS_ERROR("Could not load the gazebo controller manager plugin's configuration file: %s\n",
             urdf_string.c_str());
-    abort();
   }
-  //std::cout << *(doc.RootElement()) << std::endl;
-
-  // Pulls out the list of actuators used in the robot configuration.
-  struct GetActuators : public TiXmlVisitor
+  else
   {
-    std::set<std::string> actuators;
-    virtual bool VisitEnter(const TiXmlElement &elt, const TiXmlAttribute *)
+    //doc.Print();
+    //std::cout << *(doc.RootElement()) << std::endl;
+
+    // Pulls out the list of actuators used in the robot configuration.
+    struct GetActuators : public TiXmlVisitor
     {
-      if (elt.ValueStr() == std::string("actuator") && elt.Attribute("name"))
-        actuators.insert(elt.Attribute("name"));
-      else if (elt.ValueStr() == std::string("rightActuator") && elt.Attribute("name"))
-        actuators.insert(elt.Attribute("name"));
-      else if (elt.ValueStr() == std::string("leftActuator") && elt.Attribute("name"))
-        actuators.insert(elt.Attribute("name"));
-      return true;
+      std::set<std::string> actuators;
+      virtual bool VisitEnter(const TiXmlElement &elt, const TiXmlAttribute *)
+      {
+        if (elt.ValueStr() == std::string("actuator") && elt.Attribute("name"))
+          actuators.insert(elt.Attribute("name"));
+        else if (elt.ValueStr() == std::string("rightActuator") && elt.Attribute("name"))
+          actuators.insert(elt.Attribute("name"));
+        else if (elt.ValueStr() == std::string("leftActuator") && elt.Attribute("name"))
+          actuators.insert(elt.Attribute("name"));
+        return true;
+      }
+    } get_actuators;
+    doc.RootElement()->Accept(&get_actuators);
+
+    // Places the found actuators into the hardware interface.
+    std::set<std::string>::iterator it;
+    for (it = get_actuators.actuators.begin(); it != get_actuators.actuators.end(); ++it)
+    {
+      //std::cout << " adding actuator " << (*it) << std::endl;
+      pr2_hardware_interface::Actuator* pr2_actuator = new pr2_hardware_interface::Actuator(*it);
+      pr2_actuator->state_.is_enabled_ = true;
+      this->hw_.addActuator(pr2_actuator);
     }
-  } get_actuators;
-  doc.RootElement()->Accept(&get_actuators);
 
-  // Places the found actuators into the hardware interface.
-  std::set<std::string>::iterator it;
-  for (it = get_actuators.actuators.begin(); it != get_actuators.actuators.end(); ++it)
-  {
-    //std::cout << " adding actuator " << (*it) << std::endl;
-    pr2_hardware_interface::Actuator* pr2_actuator = new pr2_hardware_interface::Actuator(*it);
-    pr2_actuator->state_.is_enabled_ = true;
-    this->hw_.addActuator(pr2_actuator);
+    // Setup mechanism control node
+    this->cm_->initXml(doc.RootElement());
+
+    for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
+      this->cm_->state_->joint_states_[i].calibrated_ = fake_calibration_;
   }
-
-  // Setup mechanism control node
-  this->cm_->initXml(doc.RootElement());
-
-  for (unsigned int i = 0; i < this->cm_->state_->joint_states_.size(); ++i)
-    this->cm_->state_->joint_states_[i].calibrated_ = fake_calibration_;
 }
 
 #ifdef USE_CBQ
