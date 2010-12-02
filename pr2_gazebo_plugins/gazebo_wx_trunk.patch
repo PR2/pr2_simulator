@@ -1,0 +1,253 @@
+Index: src/gazebo_ros_prosilica.cpp
+===================================================================
+--- src/gazebo_ros_prosilica.cpp	(revision 46818)
++++ src/gazebo_ros_prosilica.cpp	(working copy)
+@@ -220,41 +220,41 @@
+   this->myParent->SetActive(false);
+ 
+   // set buffer size
+-  this->width            = this->myParent->GetImageWidth();
+-  this->height           = this->myParent->GetImageHeight();
+-  this->depth            = this->myParent->GetImageDepth();
++  this->width            = this->myParent->GetCamera()->GetImageWidth();
++  this->height           = this->myParent->GetCamera()->GetImageHeight();
++  this->depth            = this->myParent->GetCamera()->GetImageDepth();
+   //ROS_INFO("image format in urdf is %s\n",this->myParent->GetImageFormat().c_str());
+-  if (this->myParent->GetImageFormat() == "L8")
++  if (this->myParent->GetCamera()->GetImageFormat() == "L8")
+   {
+     this->type = sensor_msgs::image_encodings::MONO8;
+     this->skip = 1;
+   }
+-  else if (this->myParent->GetImageFormat() == "R8G8B8")
++  else if (this->myParent->GetCamera()->GetImageFormat() == "R8G8B8")
+   {
+     this->type = sensor_msgs::image_encodings::RGB8;
+     this->skip = 3;
+   }
+-  else if (this->myParent->GetImageFormat() == "B8G8R8")
++  else if (this->myParent->GetCamera()->GetImageFormat() == "B8G8R8")
+   {
+     this->type = sensor_msgs::image_encodings::BGR8;
+     this->skip = 3;
+   }
+-  else if (this->myParent->GetImageFormat() == "BAYER_RGGB8")
++  else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_RGGB8")
+   {
+     this->type = sensor_msgs::image_encodings::BAYER_RGGB8;
+     this->skip = 1;
+   }
+-  else if (this->myParent->GetImageFormat() == "BAYER_BGGR8")
++  else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_BGGR8")
+   {
+     this->type = sensor_msgs::image_encodings::BAYER_BGGR8;
+     this->skip = 1;
+   }
+-  else if (this->myParent->GetImageFormat() == "BAYER_GBRG8")
++  else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GBRG8")
+   {
+     this->type = sensor_msgs::image_encodings::BAYER_GBRG8;
+     this->skip = 1;
+   }
+-  else if (this->myParent->GetImageFormat() == "BAYER_GRBG8")
++  else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GRBG8")
+   {
+     this->type = sensor_msgs::image_encodings::BAYER_GRBG8;
+     this->skip = 1;
+@@ -274,7 +274,7 @@
+   if (this->Cy == 0)
+     this->Cy = ((double)this->height+1.0) /2.0;
+   if (this->focal_length == 0)
+-    this->focal_length = ((double)this->width) / (2.0 *tan(this->myParent->GetHFOV().GetAsRadian()/2.0));
++    this->focal_length = ((double)this->width) / (2.0 *tan(this->myParent->GetCamera()->GetHFOV().GetAsRadian()/2.0));
+ 
+ #ifdef USE_CBQ
+   // start custom queue for prosilica
+@@ -355,7 +355,7 @@
+   //boost::recursive_mutex::scoped_lock mr_lock(*Simulator::Instance()->GetMRMutex());
+ 
+   // Get a pointer to image data
+-  src = this->myParent->GetImageData(0);
++  src = this->myParent->GetCamera()->GetImageData(0);
+ 
+   if (src)
+   {
+@@ -381,7 +381,7 @@
+ 
+       // do last minute conversion if Bayer pattern is requested but not provided, go from R8G8B8
+       // deprecated in gazebo2 branch, keep for backwards compatibility
+-      if (this->myParent->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
++      if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
+       {
+         for (int i=0;i<this->width;i++)
+         {
+@@ -406,7 +406,7 @@
+         }
+         src=dst;
+       }
+-      else if (this->myParent->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
++      else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
+       {
+         for (int i=0;i<this->width;i++)
+         {
+@@ -431,7 +431,7 @@
+         }
+         src=dst;
+       }
+-      else if (this->myParent->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
++      else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
+       {
+         for (int i=0;i<this->width;i++)
+         {
+@@ -456,7 +456,7 @@
+         }
+         src=dst;
+       }
+-      else if (this->myParent->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
++      else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
+       {
+         for (int i=0;i<this->width;i++)
+         {
+@@ -651,7 +651,7 @@
+     {
+       boost::recursive_mutex::scoped_lock lock(*Simulator::Instance()->GetMRMutex());
+       // Get a pointer to image data
+-      src = this->myParent->GetImageData(0);
++      src = this->myParent->GetCamera()->GetImageData(0);
+ 
+       if (src)
+       {
+@@ -725,7 +725,7 @@
+ 
+         // do last minute conversion if Bayer pattern is requested but not provided, go from R8G8B8
+         // deprecated in gazebo2 branch, keep for backwards compatibility
+-        if (this->myParent->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
++        if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
+         {
+           for (int i=0;i<this->width;i++)
+           {
+@@ -750,7 +750,7 @@
+           }
+           src=dst;
+         }
+-        else if (this->myParent->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
++        else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
+         {
+           for (int i=0;i<this->width;i++)
+           {
+@@ -775,7 +775,7 @@
+           }
+           src=dst;
+         }
+-        else if (this->myParent->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
++        else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
+         {
+           for (int i=0;i<this->width;i++)
+           {
+@@ -800,7 +800,7 @@
+           }
+           src=dst;
+         }
+-        else if (this->myParent->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
++        else if (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
+         {
+           for (int i=0;i<this->width;i++)
+           {
+@@ -841,10 +841,10 @@
+         // error if Bayer pattern is requested but not provided, roi not supported in this case
+         // not supported in old image_pipeline as well, this might change, but ultimately
+         // this is deprecated in gazebo2 branch, keep for backwards compatibility
+-        if (((this->myParent->GetImageFormat() == "BAYER_RGGB8") ||
+-             (this->myParent->GetImageFormat() == "BAYER_BGGR8") ||
+-             (this->myParent->GetImageFormat() == "BAYER_GBRG8") ||
+-             (this->myParent->GetImageFormat() == "BAYER_GRBG8") ) &&
++        if (((this->myParent->GetCamera()->GetImageFormat() == "BAYER_RGGB8") ||
++             (this->myParent->GetCamera()->GetImageFormat() == "BAYER_BGGR8") ||
++             (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GBRG8") ||
++             (this->myParent->GetCamera()->GetImageFormat() == "BAYER_GRBG8") ) &&
+             this->depth == 3)
+         {
+           ROS_ERROR("prosilica does not support bayer roi, using full image");
+Index: src/gazebo_ros_controller_manager.cpp
+===================================================================
+--- src/gazebo_ros_controller_manager.cpp	(revision 46818)
++++ src/gazebo_ros_controller_manager.cpp	(working copy)
+@@ -224,9 +224,7 @@
+ 
+     this->fake_state_->joint_states_[i].measured_effort_ = this->fake_state_->joint_states_[i].commanded_effort_;
+ 
+-    switch(this->joints_[i]->GetType())
+-    {
+-    case Joint::HINGE: {
++    if (this->joints_[i]->HasType(HINGE_JOINT)) {
+ #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
+       Joint *hj = this->joints_[i];
+       this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
+@@ -238,9 +236,9 @@
+                     angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle());
+       this->fake_state_->joint_states_[i].velocity_ = hj->GetAngleRate();
+ #endif
+-      break;
+     }
+-    case Joint::SLIDER: {
++
++    if (this->joints_[i]->HasType(SLIDER_JOINT)) {
+       static double torso_hack_damping_threshold = 1000.0; /// FIXME: if damping is greater than this value, do some unconventional smoothing to prevent instability due to safety controller
+ #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
+       Joint *sj = this->joints_[i];
+@@ -256,7 +254,6 @@
+         this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).GetAsRadian();
+         this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
+       }
+-      break;
+ #else
+       SliderJoint *sj = (SliderJoint*)this->joints_[i];
+       if (damping_coef > torso_hack_damping_threshold)
+@@ -271,12 +268,8 @@
+         this->fake_state_->joint_states_[i].position_ = sj->GetPosition();
+         this->fake_state_->joint_states_[i].velocity_ = sj->GetPositionRate();
+       }
+-      break;
+ #endif
+     }
+-    default:
+-      abort();
+-    }
+   }
+ 
+   // Reverses the transmissions to propagate the joint position into the actuators.
+@@ -327,9 +320,7 @@
+         damping_coef = 0;
+     }
+ 
+-    switch (this->joints_[i]->GetType())
+-    {
+-    case Joint::HINGE: {
++    if (this->joints_[i]->HasType(HINGE_JOINT)) {
+ #if GAZEBO_MAJOR_VERSION >= 0 && GAZEBO_MINOR_VERSION >= 10
+       Joint *hj = this->joints_[i];
+       #if GAZEBO_PATCH_VERSION >= 1
+@@ -353,9 +344,9 @@
+       #endif
+       hj->SetTorque(effort_command);
+ #endif
+-      break;
+     }
+-    case Joint::SLIDER: {
++
++    if (this->joints_[i]->HasType(SLIDER_JOINT)) {
+ #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
+       Joint *sj = this->joints_[i];
+       #if GAZEBO_PATCH_VERSION >= 1
+@@ -377,11 +368,7 @@
+       #endif
+       sj->SetSliderForce(effort_command);
+ #endif
+-      break;
+     }
+-    default:
+-      abort();
+-    }
+   }
+ }
+ 
