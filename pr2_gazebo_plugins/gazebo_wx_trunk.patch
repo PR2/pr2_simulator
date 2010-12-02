@@ -1,6 +1,6 @@
 Index: src/gazebo_ros_prosilica.cpp
 ===================================================================
---- src/gazebo_ros_prosilica.cpp	(revision 46639)
+--- src/gazebo_ros_prosilica.cpp	(revision 46818)
 +++ src/gazebo_ros_prosilica.cpp	(working copy)
 @@ -220,41 +220,41 @@
    this->myParent->SetActive(false);
@@ -108,7 +108,7 @@ Index: src/gazebo_ros_prosilica.cpp
        {
          for (int i=0;i<this->width;i++)
          {
-@@ -663,7 +663,7 @@
+@@ -651,7 +651,7 @@
      {
        boost::recursive_mutex::scoped_lock lock(*Simulator::Instance()->GetMRMutex());
        // Get a pointer to image data
@@ -117,7 +117,7 @@ Index: src/gazebo_ros_prosilica.cpp
  
        if (src)
        {
-@@ -737,7 +737,7 @@
+@@ -725,7 +725,7 @@
  
          // do last minute conversion if Bayer pattern is requested but not provided, go from R8G8B8
          // deprecated in gazebo2 branch, keep for backwards compatibility
@@ -126,7 +126,7 @@ Index: src/gazebo_ros_prosilica.cpp
          {
            for (int i=0;i<this->width;i++)
            {
-@@ -762,7 +762,7 @@
+@@ -750,7 +750,7 @@
            }
            src=dst;
          }
@@ -135,7 +135,7 @@ Index: src/gazebo_ros_prosilica.cpp
          {
            for (int i=0;i<this->width;i++)
            {
-@@ -787,7 +787,7 @@
+@@ -775,7 +775,7 @@
            }
            src=dst;
          }
@@ -144,7 +144,7 @@ Index: src/gazebo_ros_prosilica.cpp
          {
            for (int i=0;i<this->width;i++)
            {
-@@ -812,7 +812,7 @@
+@@ -800,7 +800,7 @@
            }
            src=dst;
          }
@@ -153,7 +153,7 @@ Index: src/gazebo_ros_prosilica.cpp
          {
            for (int i=0;i<this->width;i++)
            {
-@@ -853,10 +853,10 @@
+@@ -841,10 +841,10 @@
          // error if Bayer pattern is requested but not provided, roi not supported in this case
          // not supported in old image_pipeline as well, this might change, but ultimately
          // this is deprecated in gazebo2 branch, keep for backwards compatibility
@@ -170,7 +170,7 @@ Index: src/gazebo_ros_prosilica.cpp
            ROS_ERROR("prosilica does not support bayer roi, using full image");
 Index: src/gazebo_ros_controller_manager.cpp
 ===================================================================
---- src/gazebo_ros_controller_manager.cpp	(revision 46639)
+--- src/gazebo_ros_controller_manager.cpp	(revision 46818)
 +++ src/gazebo_ros_controller_manager.cpp	(working copy)
 @@ -224,9 +224,7 @@
  
@@ -179,7 +179,7 @@ Index: src/gazebo_ros_controller_manager.cpp
 -    switch(this->joints_[i]->GetType())
 -    {
 -    case Joint::HINGE: {
-+    if (this->joints_[i]->HasType("common:joint:hinge")) {
++    if (this->joints_[i]->HasType(HINGE_JOINT)) {
  #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
        Joint *hj = this->joints_[i];
        this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
@@ -191,7 +191,7 @@ Index: src/gazebo_ros_controller_manager.cpp
      }
 -    case Joint::SLIDER: {
 +
-+    if (this->joints_[i]->HasType("common:joint:slider")) {
++    if (this->joints_[i]->HasType(SLIDER_JOINT)) {
        static double torso_hack_damping_threshold = 1000.0; /// FIXME: if damping is greater than this value, do some unconventional smoothing to prevent instability due to safety controller
  #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
        Joint *sj = this->joints_[i];
@@ -223,7 +223,7 @@ Index: src/gazebo_ros_controller_manager.cpp
 -    switch (this->joints_[i]->GetType())
 -    {
 -    case Joint::HINGE: {
-+    if (this->joints_[i]->HasType("common:joint:hinge")) {
++    if (this->joints_[i]->HasType(HINGE_JOINT)) {
  #if GAZEBO_MAJOR_VERSION >= 0 && GAZEBO_MINOR_VERSION >= 10
        Joint *hj = this->joints_[i];
        #if GAZEBO_PATCH_VERSION >= 1
@@ -235,7 +235,7 @@ Index: src/gazebo_ros_controller_manager.cpp
      }
 -    case Joint::SLIDER: {
 +
-+    if (this->joints_[i]->HasType("common:joint:slider")) {
++    if (this->joints_[i]->HasType(SLIDER_JOINT)) {
  #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
        Joint *sj = this->joints_[i];
        #if GAZEBO_PATCH_VERSION >= 1
