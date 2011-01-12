@@ -1,0 +1,17 @@
+<package>
+  <description brief="sim_contact_translator">
+
+     sim_contact_translator
+
+  </description>
+  <author>Kaijen Hsiao</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/sim_contact_translator</url>
+  <depend package="gazebo_plugins"/>
+  <depend package="pr2_msgs"/>
+  <depend package="geometry_msgs"/>
+
+</package>
+
+

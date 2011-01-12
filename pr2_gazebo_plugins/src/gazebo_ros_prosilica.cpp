@@ -672,9 +672,9 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         this->roiCameraInfoMsg = &info;
         this->roiCameraInfoMsg->header.frame_id = this->frameName;
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-        this->roiCameraInfoMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+        this->roiCameraInfoMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime().Double());
 #else
-        this->roiCameraInfoMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+        this->roiCameraInfoMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime());
 #endif
         this->roiCameraInfoMsg->width  = req.roi.width; //this->myParent->GetImageWidth() ;
         this->roiCameraInfoMsg->height = req.roi.height; //this->myParent->GetImageHeight();
@@ -726,9 +726,9 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         // copy data into imageMsg, then convert to roiImageMsg(image)
         this->imageMsg.header.frame_id    = this->frameName;
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-        this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+        this->imageMsg.header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime().Double());
 #else
-        this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+        this->imageMsg.header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime());
 #endif
 
         unsigned char dst[this->width*this->height];
@@ -875,9 +875,9 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           this->roiImageMsg = &image;
           this->roiImageMsg->header.frame_id = this->frameName;
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-          this->roiImageMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
+          this->roiImageMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime().Double());
 #else
-          this->roiImageMsg->header.stamp.fromSec(Simulator::Instance()->GetSimTime());
+          this->roiImageMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime());
 #endif
 
           //sensor_msgs::CvBridge img_bridge_(&this->imageMsg);
