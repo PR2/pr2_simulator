@@ -58,6 +58,11 @@
     <param name="intensity" value="true" />
   </node>
 
+  <!-- Buffer Server -->
+  <node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" output="screen">
+    <param name="buffer_size" value="120.0"/>
+  </node>
+
   <!-- Spawns the synchronizer -->
   <node type="camera_synchronizer" name="camera_synchronizer_node" pkg="gazebo_plugins" output="screen" />
 
