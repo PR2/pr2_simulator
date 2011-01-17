@@ -1,5 +1,5 @@
 <package>
-  <description>3D PR2 Simulator Launch Scripts.  The simulation equivalent of pr2.launch is found here.</description>
+  <description> Launch scripts for simulating the PR2 in [[gazebo]]. The simulation equivalent of pr2.launch is found here.</description>
   <author>John Hsu</author>
   <license>BSD</license>
   <review status="Doc reviewed" notes="2010/01/21"/>
