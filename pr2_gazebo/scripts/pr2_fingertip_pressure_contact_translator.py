@@ -54,7 +54,7 @@ import threading
 import pdb
 import time
 
-import sensor_info
+from fingertip_pressure import fingertip_geometry
 
 DEBUG = 0
 
@@ -93,16 +93,18 @@ class SensorArrayInfo:
     def __init__(self, tip):
 
         if tip == 'l':
+            l_msg = fingertip_geometry.pressureInformation('', 1)
             (self.force_per_unit, self.center, self.halfside1, self.halfside2) = \
-                sensor_info.pressureInformation(1)
+                (l_msg.force_per_unit, l_msg.center, l_msg.halfside1, l_msg.halfside2)
         else:
+            r_msg = fingertip_geometry.pressureInformation('', -1)
             (self.force_per_unit, self.center, self.halfside1, self.halfside2) = \
-                sensor_info.pressureInformation(-1)
+                (r_msg.force_per_unit, r_msg.center, r_msg.halfside1, r_msg.halfside2)
 
         #convert to numpy arrays 
-        self.center = [numpy.array(x) for x in self.center]
-        self.halfside1 = [numpy.array(x) for x in self.halfside1]
-        self.halfside2 = [numpy.array(x) for x in self.halfside2]
+        self.center = [numpy.array([v.x, v.y, v.z]) for v in self.center]
+        self.halfside1 = [numpy.array([v.x, v.y, v.z]) for v in self.halfside1]
+        self.halfside2 = [numpy.array([v.x, v.y, v.z]) for v in self.halfside2]
         
         #compute sensor element normals
         self.normal = numpy.cross(self.halfside1, self.halfside2)
@@ -296,7 +298,7 @@ class contactArraySimulator:
 
 if __name__ == '__main__':
 
-    rospy.init_node('sensor_info', anonymous=True)
+    rospy.init_node('sim_contact_translator', anonymous=True)
 
     s1 = contactArraySimulator('r')
     s2 = contactArraySimulator('l')
