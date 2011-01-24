@@ -41,7 +41,7 @@
 # publishes PressureState messages
 
 import roslib
-roslib.load_manifest('sim_contact_translator')
+roslib.load_manifest('pr2_gazebo')
 import rospy
 import tf
 from pr2_msgs.msg import PressureState
@@ -296,7 +296,7 @@ class contactArraySimulator:
 
 if __name__ == '__main__':
 
-    rospy.init_node('sim_contact_translator', anonymous=True)
+    rospy.init_node('sensor_info', anonymous=True)
 
     s1 = contactArraySimulator('r')
     s2 = contactArraySimulator('l')
