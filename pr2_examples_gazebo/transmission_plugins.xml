@@ -1,0 +1,3 @@
+<library path="lib/libpr2_examples_gazebo">
+  <class name="pr2_examples_gazebo/SpringTransmission" type="pr2_examples_gazebo::SpringTransmission" base_class_type="pr2_mechanism_model::Transmission" />
+</library>

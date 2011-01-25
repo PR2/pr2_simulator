@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<robot name="pr2"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <link name="world"/>
+  <joint name="base_block_joint" type="fixed"> 
+    <parent link="world" />
+    <origin xyz="0 0 0.002 " rpy="0 0 0" />
+    <child link="base_block" />
+  </joint>
+  <link name="base_block">
+    <inertial>
+      <mass value="1000" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+    </inertial> 
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.001 0.001 0.001" />
+      </geometry>
+    </visual> 
+    <collision>
+      <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+      <geometry>
+        <box size="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="base_block">
+    <material>Gazebo/GrassFloor</material>
+  </gazebo>
+  
+  <joint name="motor_output_joint" type="revolute" >
+    <axis xyz="0 0 1" />
+    <limit upper="2" lower="-2" effort="100" velocity="5" />
+    <parent link="base_block" />
+    <origin xyz="0 0 1" rpy="0 0 0" />
+    <child link="motor_output" />
+  </joint>
+  <link name="motor_output">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0 0 0" /> 
+      <inertia  ixx="0.1" ixy="0.0"  ixz="0.0"  iyy="0.1"  iyz="0.0"  izz="0.1" />
+    </inertial>
+    <visual >
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.3 0.3 0.3" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.3 0.3 0.3" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="motor_output">
+    <material>Gazebo/Red</material>
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+
+  <joint name="leg_joint" type="revolute" >
+    <axis xyz="0 0 1" />
+    <limit upper="2" lower="-2" effort="100" velocity="5" />
+    <parent link="motor_output" />
+    <origin xyz="0 0 0.2" rpy="0 0 0" />
+    <child link="leg" />
+  </joint>
+  <link name="leg">
+    <inertial >
+      <mass value="1" />
+      <origin xyz="0.5 0 0" /> 
+      <inertia  ixx="0.1" ixy="0.0"  ixz="0.0"  iyy="0.1"  iyz="0.0"  izz="0.1" />
+    </inertial>
+    <visual >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="1.0 0.3 0.3" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0.5 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="1.0 0.3 0.3" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="leg">
+    <material>Gazebo/Blue</material>
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+
+  <gazebo>
+      <!-- PR2_ACTARRAY -->
+      <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1000.0</updateRate>
+      </controller:gazebo_ros_controller_manager>
+
+      <!-- gazebo_ros_p3d for position groundtruth -->
+      <controller:gazebo_ros_p3d name="p3d_motor_output_controller" plugin="libgazebo_ros_p3d.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>1000.0</updateRate>
+          <bodyName>motor_output</bodyName>
+          <topicName>motor_output_pose</topicName>
+          <frameName>map</frameName>
+          <interface:position name="p3d_motor_output_position"/>
+      </controller:gazebo_ros_p3d>
+  </gazebo>
+  <!-- mechanism controls -->
+  <include filename="$(find pr2_examples_gazebo)/spring_transmission_defs/spring_transmission.transmission.xacro" />
+
+</robot>

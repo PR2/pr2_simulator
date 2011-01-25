@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot name="pr2"><!-- name of the robot-->
+  <transmission type="pr2_mechanism_model/SimpleTransmission" name="motor_output_trans">
+    <actuator name="motor_output_motor" />
+    <joint name="motor_output_joint" />
+    <mechanicalReduction>1</mechanicalReduction>
+  </transmission>
+  <transmission type="pr2_examples_gazebo/SpringTransmission" name="leg_trans">
+    <actuator name="leg_motor" />
+    <joint name="leg_joint" />
+    <springStiffness>1</springStiffness>
+  </transmission>
+</robot>
+
+
