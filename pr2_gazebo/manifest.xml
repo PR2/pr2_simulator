@@ -27,6 +27,7 @@
   <depend package="single_joint_position_action"/>
   <depend package="stereo_image_proc"/>
   <depend package="robot_pose_ekf"/>
+  <depend package="tf2_ros"/>
 
   <!-- added for fingertip_pressure simulation -->
   <depend package="pr2_msgs"/>
