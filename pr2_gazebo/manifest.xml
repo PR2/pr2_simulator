@@ -28,7 +28,6 @@
   <depend package="stereo_image_proc"/>
   <depend package="robot_pose_ekf"/>
   <depend package="tf2_ros"/>
-  <depend package="topic_tools"/>
 
   <!-- added for fingertip_pressure simulation -->
   <depend package="pr2_msgs"/>
