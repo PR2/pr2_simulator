@@ -169,6 +169,10 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   this->distortion_k3 = this->distortion_k3P->GetValue();
   this->distortion_t1 = this->distortion_t1P->GetValue();
   this->distortion_t2 = this->distortion_t2P->GetValue();
+  if ((this->distortion_k1 != 0.0) || (this->distortion_k2 != 0.0) ||
+      (this->distortion_k3 != 0.0) || (this->distortion_t1 != 0.0) ||
+      (this->distortion_t2 != 0.0))
+    ROS_WARN("gazebo_ros_prosilica simulation does not support non-zero distortion parameters right now, your simulation maybe wrong.");
 
   // camera mode for prosilica:
   // prosilica::AcquisitionMode mode_; /// @todo Make this property of Camera
