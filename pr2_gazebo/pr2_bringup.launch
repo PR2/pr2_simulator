@@ -66,5 +66,8 @@
   <!-- Spawns the synchronizer -->
   <node type="camera_synchronizer" name="camera_synchronizer_node" pkg="gazebo_plugins" output="screen" />
 
+  <!-- simulate torso counter weight spring to reduce load on the torso joint -->
+  <node name="simulate_torso_spring" pkg="pr2_gazebo" type="pr2_simulate_torso_spring.py" respawn="false" output="screen" />
+
 </launch>
 
