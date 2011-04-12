@@ -8,6 +8,16 @@ rosbuild_gensrv()
 
 add_definitions(-fPIC)
 
+# dynamic reconfigure for gazebo ros camera nodes
+# does not exist until simulator_gazebo 1.2.9
+execute_process(COMMAND rosversion simulator_gazebo OUTPUT_VARIABLE simulator_gazebo_version)
+if (${simulator_gazebo_version} VERSION_GREATER "1.2.8")
+  MESSAGE(STATUS "OUTPUT_VARIABLE: ${simulator_gazebo_version}Enabling gazebo ros camera dynamic reconfigure")
+  add_definitions(-DSIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE)
+else (${simulator_gazebo_version} VERSION_GREATER "1.2.8")
+  MESSAGE(STATUS "OUTPUT_VARIABLE: ${simulator_gazebo_version}Disabling gazebo ros camera dynamic reconfigure")
+endif (${simulator_gazebo_version} VERSION_GREATER "1.2.8")
+
 rosbuild_add_boost_directories()
 
 rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
