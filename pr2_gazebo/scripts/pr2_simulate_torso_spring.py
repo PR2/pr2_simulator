@@ -42,12 +42,14 @@
 import roslib
 roslib.load_manifest('pr2_gazebo')
 import rospy
+import time
 from gazebo.msg import *
 from gazebo.srv import *
 
 if __name__ == '__main__':
   rospy.init_node('pr2_simulate_torso_spring')
   rospy.wait_for_service('/gazebo/apply_joint_effort')
+  time.sleep(10);
   apply_joint_effort = rospy.ServiceProxy('/gazebo/apply_joint_effort', ApplyJointEffort)
   joint_name = "torso_lift_joint"
   effort = 462.56
