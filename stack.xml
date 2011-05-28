@@ -12,10 +12,11 @@
   <depend stack="common" /> <!-- tinyxml -->
   <depend stack="common_msgs" /> <!-- nav_msgs, geometry_msgs, sensor_msgs, diagnostic_msgs -->
   <depend stack="diagnostics" /> <!-- diagnostic_updater, diagnostic_aggregator -->
+  <depend stack="driver_common" /> <!-- dynamic_reconfigure -->
   <depend stack="geometry" /> <!-- bullet, angles -->
   <depend stack="geometry_experimental" /> <!-- tf2_ros -->
   <depend stack="image_common" /> <!-- polled_camera -->
-  <depend stack="image_pipeline" /> <!-- stereo_image_proc -->
+  <depend stack="image_pipeline" /> <!-- stereo_image_proc, image_proc -->
   <depend stack="navigation" /> <!-- robot_pose_ekf -->
   <depend stack="physics_ode" /> <!-- opende -->
   <depend stack="pr2_common" /> <!-- pr2_description, pr2_dashboard_aggregator, pr2_msgs -->

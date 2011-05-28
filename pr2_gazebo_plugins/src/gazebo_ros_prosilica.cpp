@@ -84,6 +84,7 @@ GazeboRosProsilica::GazeboRosProsilica(Entity *parent)
   this->imageTopicNameP = new ParamT<std::string>("imageTopicName","image_raw", 0);
   this->cameraInfoTopicNameP = new ParamT<std::string>("cameraInfoTopicName","camera_info", 0);
   this->pollServiceNameP = new ParamT<std::string>("pollServiceName","request_image", 0);
+  this->cameraNameP = new ParamT<std::string>("cameraName","", 0);
   this->frameNameP = new ParamT<std::string>("frameName","camera", 0);
   // camera parameters 
   this->CxPrimeP = new ParamT<double>("CxPrime",320, 0); // for 640x480 image
@@ -214,7 +215,30 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
     boost::bind( &GazeboRosProsilica::InfoDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
   this->camera_info_pub_ = this->rosnode_->advertise(camera_info_ao);
 
+  this->cameraNameP->Load(node);
+  this->cameraName = this->cameraNameP->GetValue();
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace+"/"+this->cameraName);
+
+#ifdef SIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE
+  if (!this->cameraName.empty()) {
+    dyn_srv_ = new dynamic_reconfigure::Server<gazebo_plugins::GazeboRosCameraConfig>(*this->rosnode_);
+    dynamic_reconfigure::Server<gazebo_plugins::GazeboRosCameraConfig>::CallbackType f = boost::bind(&GazeboRosProsilica::configCallback, this, _1, _2);
+    dyn_srv_->setCallback(f);
+  }
+#endif
+
 }
+
+#ifdef SIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE
+////////////////////////////////////////////////////////////////////////////////
+// Dynamic Reconfigure Callback
+void GazeboRosProsilica::configCallback(gazebo_plugins::GazeboRosCameraConfig &config, uint32_t level)
+{
+  ROS_INFO("Reconfigure request for the gazebo ros camera: %s. New rate: %.2f", this->cameraName.c_str(), config.imager_rate);
+
+  (dynamic_cast<OgreCamera*>(this->myParent))->SetUpdateRate(config.imager_rate);
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize the controller

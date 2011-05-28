@@ -1,0 +1,19 @@
+<launch>
+
+  <!-- start up empty world -->
+  <include file="$(find pr2_gazebo)/empty_world_paused.launch"/>
+
+  <!-- send pr2 urdf to param server -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo)/robots/pr2_with_kinect.urdf.xacro'" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_pr2_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model pr2" respawn="false" output="screen" />
+ 
+  <!-- default bringup script -->
+  <include file="$(find pr2_gazebo)/pr2_bringup.launch" />
+
+  <!-- Load and Start Default Controllers -->
+  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
+
+
+</launch>

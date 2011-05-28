@@ -241,9 +241,12 @@ void GazeboRosControllerManager::UpdateChild()
       break;
     }
     case Joint::SLIDER: {
+#ifndef ODE_SCREW_JOINT
       static double torso_hack_damping_threshold = 1000.0; /// FIXME: if damping is greater than this value, do some unconventional smoothing to prevent instability due to safety controller
+#endif
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
       Joint *sj = this->joints_[i];
+#ifndef ODE_SCREW_JOINT
       if (damping_coef > torso_hack_damping_threshold)
       {
         this->fake_state_->joint_states_[i].position_ *= (1.0 - torso_hack_damping_threshold / damping_coef);
@@ -252,6 +255,7 @@ void GazeboRosControllerManager::UpdateChild()
         this->fake_state_->joint_states_[i].velocity_ += (torso_hack_damping_threshold/damping_coef)*sj->GetVelocity(0);
       }
       else
+#endif
       {
         this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).GetAsRadian();
         this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
@@ -259,6 +263,7 @@ void GazeboRosControllerManager::UpdateChild()
       break;
 #else
       SliderJoint *sj = (SliderJoint*)this->joints_[i];
+#ifndef ODE_SCREW_JOINT
       if (damping_coef > torso_hack_damping_threshold)
       {
         this->fake_state_->joint_states_[i].position_ *= (1.0 - torso_hack_damping_threshold / damping_coef);
@@ -267,6 +272,7 @@ void GazeboRosControllerManager::UpdateChild()
         this->fake_state_->joint_states_[i].velocity_ += (torso_hack_damping_threshold/damping_coef)*sj->GetPositionRate();
       }
       else
+#endif
       {
         this->fake_state_->joint_states_[i].position_ = sj->GetPosition();
         this->fake_state_->joint_states_[i].velocity_ = sj->GetPositionRate();

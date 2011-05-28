@@ -49,7 +49,10 @@
 #include <polled_camera/publication_server.h>
 #include <polled_camera/GetPolledImage.h>
 
-
+#ifdef SIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE
+#include <gazebo_plugins/GazeboRosCameraConfig.h>
+#include <dynamic_reconfigure/server.h>
+#endif
 
 namespace gazebo
 {
@@ -211,6 +214,7 @@ class GazeboRosProsilica : public Controller
   private: ParamT<std::string> *cameraInfoTopicNameP;
   private: ParamT<std::string> *pollServiceNameP;
   private: ParamT<std::string> *frameNameP;
+  private: ParamT<std::string> *cameraNameP;
 
   private: ParamT<double> *CxPrimeP;           // rectified optical center x, for sim, CxPrime == Cx
   private: ParamT<double> *CxP;            // optical center x
@@ -226,6 +230,9 @@ class GazeboRosProsilica : public Controller
   /// \brief for setting ROS name space
   private: ParamT<std::string> *robotNamespaceP;
   private: std::string robotNamespace;
+
+  /// \brief ROS camera name
+  private: std::string cameraName;
 
   /// \brief ROS image topic name
   private: std::string imageTopicName;
@@ -253,6 +260,16 @@ class GazeboRosProsilica : public Controller
   private: int height, width, depth;
   private: std::string type;
   private: int skip;
+
+#ifdef SIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE
+  // Allow dynamic reconfiguration of camera params
+  dynamic_reconfigure::Server<gazebo_plugins::GazeboRosCameraConfig> *dyn_srv_;
+
+  void configCallback(gazebo_plugins::GazeboRosCameraConfig &config, uint32_t level);
+
+  // Name of camera
+  std::string dynamicReconfigureName;
+#endif
 
 #ifdef USE_CBQ
   private: ros::CallbackQueue prosilica_queue_;
