@@ -37,7 +37,7 @@
 #ifndef SIMPLE_TRANSMISSION_H
 #define SIMPLE_TRANSMISSION_H
 
-#include <tinyxml/tinyxml.h>
+#include <tinyxml.h>
 #include "pr2_mechanism_model/transmission.h"
 #include "pr2_mechanism_model/joint.h"
 #include "pr2_hardware_interface/hardware_interface.h"

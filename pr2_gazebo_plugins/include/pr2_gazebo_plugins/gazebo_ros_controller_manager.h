@@ -39,7 +39,7 @@
 #include "pr2_controller_manager/controller_manager.h"
 #include "pr2_gazebo_plugins/SetModelsJointsStates.h"
 #include "pr2_mechanism_model/robot.h"
-#include "tinyxml/tinyxml.h"
+#include <tinyxml.h>
 #include <gazebo/Param.hh>
 #include <ros/ros.h>
 #undef USE_CBQ
