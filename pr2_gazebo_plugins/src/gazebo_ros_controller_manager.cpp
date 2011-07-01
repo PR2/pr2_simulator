@@ -73,10 +73,10 @@ GazeboRosControllerManager::GazeboRosControllerManager(Entity *parent)
   if (getenv("CHECK_SPEEDUP"))
   {
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-    wall_start_ = Simulator::Instance()->GetWallTime().Double();
+    wall_start_ = Simulator::Instance()->GetRealTime().Double();
     sim_start_  = Simulator::Instance()->GetSimTime().Double();
 #else
-    wall_start_ = Simulator::Instance()->GetWallTime();
+    wall_start_ = Simulator::Instance()->GetRealTime();
     sim_start_  = Simulator::Instance()->GetSimTime();
 #endif
   }
@@ -193,10 +193,10 @@ void GazeboRosControllerManager::UpdateChild()
   if (getenv("CHECK_SPEEDUP"))
   {
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-    double wall_elapsed = Simulator::Instance()->GetWallTime().Double() - wall_start_;
+    double wall_elapsed = Simulator::Instance()->GetRealTime().Double() - wall_start_;
     double sim_elapsed  = Simulator::Instance()->GetSimTime().Double()  - sim_start_;
 #else
-    double wall_elapsed = Simulator::Instance()->GetWallTime() - wall_start_;
+    double wall_elapsed = Simulator::Instance()->GetRealTime() - wall_start_;
     double sim_elapsed  = Simulator::Instance()->GetSimTime()  - sim_start_;
 #endif
     std::cout << " real time: " <<  wall_elapsed
