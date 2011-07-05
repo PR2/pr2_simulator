@@ -26,7 +26,6 @@
   <depend package="pr2_hardware_interface" />
   <depend package="pr2_controller_manager" />
   <depend package="pr2_mechanism_model" />
-  <depend package="tinyxml" />
   <depend package="bullet" />
   <depend package="urdf" />
   <depend package="polled_camera" />
@@ -36,6 +35,7 @@
     <gazebo plugin_path="${prefix}/lib" />
   </export>
   <rosdep name="python-numpy"/>
+  <rosdep name="tinyxml" />
   <platform os="ubuntu" version="9.04"/>
   <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>

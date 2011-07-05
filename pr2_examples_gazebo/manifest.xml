@@ -19,4 +19,6 @@
     <pr2_mechanism_model plugin="${prefix}/transmission_plugins.xml" />
   </export>
 
+  <rosdep name="tinyxml" />
+
 </package>
