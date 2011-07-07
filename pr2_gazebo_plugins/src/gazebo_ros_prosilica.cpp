@@ -138,7 +138,10 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
     char** argv = NULL;
     ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
   }
-  this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
+
+  this->cameraNameP->Load(node);
+  this->cameraName = this->cameraNameP->GetValue();
+  this->rosnode_ = new ros::NodeHandle(this->robotNamespace+"/"+this->cameraName);
   this->rosnode_->setCallbackQueue(&this->prosilica_queue_);
 
   this->imageTopicNameP->Load(node);
@@ -202,6 +205,7 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   {
       ROS_ERROR("trigger_mode is invalid: %s, using streaming mode",this->mode_.c_str());
   }
+
   /// advertise topics for image and camera info
   ros::AdvertiseOptions image_ao = ros::AdvertiseOptions::create<sensor_msgs::Image>(
     this->imageTopicName,1,
@@ -214,10 +218,6 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
     boost::bind( &GazeboRosProsilica::InfoConnect,this),
     boost::bind( &GazeboRosProsilica::InfoDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
   this->camera_info_pub_ = this->rosnode_->advertise(camera_info_ao);
-
-  this->cameraNameP->Load(node);
-  this->cameraName = this->cameraNameP->GetValue();
-  this->rosnode_ = new ros::NodeHandle(this->robotNamespace+"/"+this->cameraName);
 
 #ifdef SIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE
   if (!this->cameraName.empty()) {
