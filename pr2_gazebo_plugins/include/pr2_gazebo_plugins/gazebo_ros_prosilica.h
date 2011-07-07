@@ -186,7 +186,8 @@ class GazeboRosProsilica : public Controller
 
   private: std::string mode_;
 
-  private: ros::Publisher image_pub_;
+  private: image_transport::ImageTransport* itnode_;
+  private: image_transport::Publisher image_pub_;
   private: ros::Publisher camera_info_pub_;
 
 /*

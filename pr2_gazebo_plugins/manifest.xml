@@ -29,6 +29,7 @@
   <depend package="bullet" />
   <depend package="urdf" />
   <depend package="polled_camera" />
+  <depend package="image_transport" />
   <depend package="dynamic_reconfigure" />
   <export>
     <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" />

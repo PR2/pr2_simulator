@@ -14,7 +14,7 @@
   <depend stack="driver_common" /> <!-- dynamic_reconfigure -->
   <depend stack="geometry" /> <!-- bullet, angles -->
   <depend stack="geometry_experimental" /> <!-- tf2_ros -->
-  <depend stack="image_common" /> <!-- polled_camera -->
+  <depend stack="image_common" /> <!-- image_transport, polled_camera -->
   <depend stack="image_pipeline" /> <!-- stereo_image_proc, image_proc -->
   <depend stack="navigation" /> <!-- robot_pose_ekf -->
   <depend stack="physics_ode" /> <!-- opende -->

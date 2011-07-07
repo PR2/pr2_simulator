@@ -143,6 +143,7 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   this->cameraName = this->cameraNameP->GetValue();
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace+"/"+this->cameraName);
   this->rosnode_->setCallbackQueue(&this->prosilica_queue_);
+  this->itnode_ = new image_transport::ImageTransport(*this->rosnode_);
 
   this->imageTopicNameP->Load(node);
   this->cameraInfoTopicNameP->Load(node);
@@ -207,11 +208,10 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
   }
 
   /// advertise topics for image and camera info
-  ros::AdvertiseOptions image_ao = ros::AdvertiseOptions::create<sensor_msgs::Image>(
+  this->image_pub_ = this->itnode_->advertise(
     this->imageTopicName,1,
     boost::bind( &GazeboRosProsilica::ImageConnect,this),
     boost::bind( &GazeboRosProsilica::ImageDisconnect,this), ros::VoidPtr(), &this->prosilica_queue_);
-  this->image_pub_ = this->rosnode_->advertise(image_ao);
 
   ros::AdvertiseOptions camera_info_ao = ros::AdvertiseOptions::create<sensor_msgs::CameraInfo>(
     this->cameraInfoTopicName,1,
