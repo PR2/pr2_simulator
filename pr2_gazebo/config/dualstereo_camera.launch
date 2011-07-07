@@ -15,6 +15,22 @@
       <param name="disparity_range" type="int" value="128"/>
     </node>
   </group>
+
+
+  <!-- relay image_raw and cmaera_info into textured topics -->
+  <node name="left_image_raw_relay" pkg="topic_tools" type="relay" args="/narrow_stereo/left/image_raw /narrow_stereo_textured/left/image_raw" respawn="false" output="screen">
+    <param name="lazy" type="bool" value="True"/>
+  </node>
+  <node name="right_image_raw_relay" pkg="topic_tools" type="relay" args="/narrow_stereo/right/image_raw /narrow_stereo_textured/right/image_raw" respawn="false" output="screen">
+    <param name="lazy" type="bool" value="True"/>
+  </node>
+  <node name="left_camera_info_relay" pkg="topic_tools" type="relay" args="/narrow_stereo/left/camera_info /narrow_stereo_textured/left/camera_info" respawn="false" output="screen">
+    <param name="lazy" type="bool" value="True"/>
+  </node>
+  <node name="right_camera_info_relay" pkg="topic_tools" type="relay" args="/narrow_stereo/right/camera_info /narrow_stereo_textured/right/camera_info" respawn="false" output="screen">
+    <param name="lazy" type="bool" value="True"/>
+  </node>
+
 </launch>
 
 
