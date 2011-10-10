@@ -33,8 +33,6 @@
 #include <ros/callback_queue.h>
 #endif
 #include "boost/thread/mutex.hpp"
-#include <gazebo/Param.hh>
-#include <gazebo/Controller.hh>
 
 // image components
 #include "cv_bridge/CvBridge.h"
@@ -54,90 +52,17 @@
 #include <dynamic_reconfigure/server.h>
 #endif
 
+// gazebo stuff
+#include "gazebo.h"
+#include "sdf/interface/Param.hh"
+#include "physics/physics.h"
+#include "transport/TransportTypes.hh"
+#include "msgs/MessageTypes.hh"
+#include "common/Time.hh"
+#include "sensors/SensorTypes.hh"
+
 namespace gazebo
 {
-  class MonoCameraSensor;
-
-/// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
-/// @{
-/** \defgroup GazeboRosProsilica Ros Camera Plugin XML Reference and Example
-
-  \brief Gazebo ROS Prosilica Camera Plugin Controller.
-  
-  This is a controller that collects data from a simulated Prosilica camera sensor and makes image data available
-  in the same manner prosilica_camera works.  The controller:gazebo_ros_prosilica block must be inside of a sensor:camera block.
-
-  Example Usage:
-  \verbatim
-    <sensor:camera name="prosilica_sensor">
-      <imageFormat>R8G8B8</imageFormat>
-      <imageSize>2448 2050</imageSize>
-      <hfov>45</hfov>
-      <nearClip>0.1</nearClip>
-      <farClip>100</farClip>
-      <updateRate>20.0</updateRate>
-      <controller:gazebo_ros_prosilica name="prosilica_controller" plugin="libgazebo_ros_prosilica.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>20.0</updateRate>
-        <imageTopicName>/prosilica/image_raw</imageTopicName>
-        <cameraInfoTopicName>/prosilica/camera_info</cameraInfoTopicName>
-        <pollServiceName>/prosilica/request_image</pollServiceName>
-        <frameName>prosilica_frame</frameName>
-        <CxPrime>1224.5</CxPrime>
-        <Cx>1224.5</Cx>
-        <Cy>1025.5</Cy>
-        <focal_length>2955</focal_length> <!-- image_width / (2*tan(hfov_radian /2)) -->
-        <distortion_k1>0.00000001</distortion_k1>
-        <distortion_k2>0.00000001</distortion_k2>
-        <distortion_k3>0.00000001</distortion_k3>
-        <distortion_t1>0.00000001</distortion_t1>
-        <distortion_t2>0.00000001</distortion_t2>
-        <interface:camera name="prosilica_iface" />
-      </controller:gazebo_ros_prosilica>
-    </sensor:camera>
-  \endverbatim
- 
-\{
-*/
-
-/**
-
-
-    \brief GazeboRosProsilica Controller.
-           \li This is a controller that collects data from a simulated Prosilica camera sensor and makes image data available
-  in the same manner prosilica_camera works.  The controller:gazebo_ros_prosilica block must be inside of a sensor:camera block.
-           \li Example Usage:
-  \verbatim
-    <sensor:camera name="prosilica_sensor">
-      <imageFormat>R8G8B8</imageFormat>
-      <imageSize>2448 2050</imageSize>
-      <hfov>45</hfov>
-      <nearClip>0.1</nearClip>
-      <farClip>100</farClip>
-      <updateRate>20.0</updateRate>
-      <controller:gazebo_ros_prosilica name="prosilica_controller" plugin="libgazebo_ros_prosilica.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>20.0</updateRate>
-        <imageTopicName>/prosilica/image_raw</imageTopicName>
-        <cameraInfoTopicName>/prosilica/camera_info</cameraInfoTopicName>
-        <pollServiceName>/prosilica/request_image</pollServiceName>
-        <frameName>prosilica_frame</frameName>
-        <CxPrime>1224.5</CxPrime>
-        <Cx>1224.5</Cx>
-        <Cy>1025.5</Cy>
-        <focal_length>2955</focal_length> <!-- image_width / (2*tan(hfov_radian /2)) -->
-        <distortion_k1>0.00000001</distortion_k1>
-        <distortion_k2>0.00000001</distortion_k2>
-        <distortion_k3>0.00000001</distortion_k3>
-        <distortion_t1>0.00000001</distortion_t1>
-        <distortion_t2>0.00000001</distortion_t2>
-        <interface:camera name="prosilica_iface" />
-      </controller:gazebo_ros_prosilica>
-    </sensor:camera>
-  \endverbatim
-           .
- 
-*/
 
 class GazeboRosProsilica : public Controller
 {
@@ -282,9 +207,6 @@ class GazeboRosProsilica : public Controller
 #endif
 
 };
-
-/** \} */
-/// @}
 
 }
 #endif
