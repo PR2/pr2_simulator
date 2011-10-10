@@ -35,10 +35,10 @@
 #include <set>
 
 //#include <gazebo/XMLConfig.hh>
+//#include "physics/physics.h"
 #include "gazebo.h"
 #include "physics/World.hh"
 #include "physics/HingeJoint.hh"
-//#include "physics/physics.h"
 #include "common/Global.hh"
 #include "sensors/Sensor.hh"
 #include "sdf/interface/SDF.hh"
@@ -244,7 +244,10 @@ void GazeboRosControllerManager::UpdateChild()
 
     this->fake_state_->joint_states_[i].measured_effort_ = this->fake_state_->joint_states_[i].commanded_effort_;
 
-    if ((boost::shared_static_cast<gazebo::physics::BasePtr>(this->joints_[i]))->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
+    //if ((boost::shared_static_cast<gazebo::physics::BasePtr>(this->joints_[i]))->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
+    //if ((boost::shared_static_cast<gazebo::physics::BasePtr const>(this->joints_[i]))->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
+    //if (((gazebo::physics::BasePtr const)(this->joints_[i]))->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
+    if (this->joints_[i]->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
     {
       gazebo::physics::JointPtr hj = this->joints_[i];
       this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
