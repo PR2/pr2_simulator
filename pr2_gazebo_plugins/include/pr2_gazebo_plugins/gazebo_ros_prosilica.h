@@ -64,27 +64,24 @@
 namespace gazebo
 {
 
-class GazeboRosProsilica : public Controller
+class GazeboRosProsilica : public SensorPlugin
 {
   /// \brief Constructor
   /// \param parent The parent entity, must be a Model or a Sensor
-  public: GazeboRosProsilica(Entity *parent);
+  public: GazeboRosProsilica();
 
   /// \brief Destructor
   public: virtual ~GazeboRosProsilica();
 
   /// \brief Load the controller
   /// \param node XML config node
-  protected: virtual void LoadChild(XMLConfigNode *node);
+  public: void Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf);
 
   /// \brief Init the controller
   protected: virtual void InitChild();
 
   /// \brief Update the controller
   protected: virtual void UpdateChild();
-
-  /// \brief Finalize the controller, unadvertise topics
-  protected: virtual void FiniChild();
 
   /// \brief does nothing for now
   private: static void mouse_cb(int event, int x, int y, int flags, void* param) { };
@@ -101,7 +98,13 @@ class GazeboRosProsilica : public Controller
   private: void PublishCameraInfo();
 
   /// \brief A pointer to the parent camera sensor
-  private: MonoCameraSensor *myParent;
+  //private: MonoCameraSensor *myParent;
+    // Pointer to the model
+    private: physics::WorldPtr world;
+    /// \brief The parent sensor
+    private: sensors::SensorPtr parentSensor;
+    private: sensors::CameraSensorPtr parentCameraSensor;
+
 
   /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
   private: ros::NodeHandle* rosnode_;
@@ -136,25 +139,25 @@ class GazeboRosProsilica : public Controller
 
 
   /// \brief Parameters
-  private: ParamT<std::string> *imageTopicNameP;
-  private: ParamT<std::string> *cameraInfoTopicNameP;
-  private: ParamT<std::string> *pollServiceNameP;
-  private: ParamT<std::string> *frameNameP;
-  private: ParamT<std::string> *cameraNameP;
+  // private: ParamT<std::string> *imageTopicNameP;
+  // private: ParamT<std::string> *cameraInfoTopicNameP;
+  // private: ParamT<std::string> *pollServiceNameP;
+  // private: ParamT<std::string> *frameNameP;
+  // private: ParamT<std::string> *cameraNameP;
 
-  private: ParamT<double> *CxPrimeP;           // rectified optical center x, for sim, CxPrime == Cx
-  private: ParamT<double> *CxP;            // optical center x
-  private: ParamT<double> *CyP;            // optical center y
-  private: ParamT<double> *focal_lengthP;  // also known as focal length
-  private: ParamT<double> *hack_baselineP;  // also known as focal length
-  private: ParamT<double> *distortion_k1P; // linear distortion
-  private: ParamT<double> *distortion_k2P; // quadratic distortion
-  private: ParamT<double> *distortion_k3P; // cubic distortion
-  private: ParamT<double> *distortion_t1P; // tangential distortion
-  private: ParamT<double> *distortion_t2P; // tangential distortion
+  // private: ParamT<double> *CxPrimeP;           // rectified optical center x, for sim, CxPrime == Cx
+  // private: ParamT<double> *CxP;            // optical center x
+  // private: ParamT<double> *CyP;            // optical center y
+  // private: ParamT<double> *focal_lengthP;  // also known as focal length
+  // private: ParamT<double> *hack_baselineP;  // also known as focal length
+  // private: ParamT<double> *distortion_k1P; // linear distortion
+  // private: ParamT<double> *distortion_k2P; // quadratic distortion
+  // private: ParamT<double> *distortion_k3P; // cubic distortion
+  // private: ParamT<double> *distortion_t1P; // tangential distortion
+  // private: ParamT<double> *distortion_t2P; // tangential distortion
 
   /// \brief for setting ROS name space
-  private: ParamT<std::string> *robotNamespaceP;
+  // private: ParamT<std::string> *robotNamespaceP;
   private: std::string robotNamespace;
 
   /// \brief ROS camera name
@@ -205,6 +208,15 @@ class GazeboRosProsilica : public Controller
   private: void ProsilicaROSThread();
   private: boost::thread ros_spinner_thread_;
 #endif
+
+    // Pointer to the update event connection
+    private: event::ConnectionPtr updateConnection;
+
+    // subscribe to world stats
+    private: transport::NodePtr node;
+    private: transport::SubscriberPtr statsSub;
+    private: common::Time simTime;
+    public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
 
 };
 
