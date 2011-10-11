@@ -168,7 +168,7 @@ void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf
 
   this->node = transport::NodePtr(new transport::Node());
   this->node->Init(worldName);
-  this->statsSub = this->node->Subscribe("~/world_stats", &GazeboRosProsilica::OnStats, this);
+  //this->statsSub = this->node->Subscribe("~/world_stats", &GazeboRosProsilica::OnStats, this);
 
   this->parentCameraSensor = boost::shared_dynamic_cast<sensors::CameraSensor>(this->parentSensor);
 
