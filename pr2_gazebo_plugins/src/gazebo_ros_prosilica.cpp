@@ -163,7 +163,7 @@ void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf
 
   // Listen to the update event. This event is broadcast every
   // simulation iteration.
-  this->updateConnection = event::Events::ConnectWorldUpdateStartSignal(
+  this->updateConnection = event::Events::ConnectWorldUpdateStart(
       boost::bind(&GazeboRosProsilica::UpdateChild, this));
 
   this->node = transport::NodePtr(new transport::Node());

@@ -98,8 +98,8 @@ void GazeboRosPowerMonitor::Load(physics::ModelPtr &_parent, sdf::ElementPtr &_s
 
   // Listen to the update event. This event is broadcast every
   // simulation iteration.
-  //this->updateConnection = event::Events::ConnectWorldUpdateStartSignal(
-  //    boost::bind(&GazeboRosControllerManager::OnUpdate, this));
+  this->updateConnection = event::Events::ConnectWorldUpdateStart(
+      boost::bind(&GazeboRosPowerMonitor::UpdateChild, this));
   gzdbg << "plugin model name: " << modelName << "\n";
 
 
