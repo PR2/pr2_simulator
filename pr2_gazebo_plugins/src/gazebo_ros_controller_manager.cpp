@@ -231,7 +231,7 @@ void GazeboRosControllerManager::UpdateChild()
   //  Pushes out simulation state
   //--------------------------------------------------
 
-  ROS_ERROR("joints_.size()[%d]",(int)this->joints_.size());
+  //ROS_ERROR("joints_.size()[%d]",(int)this->joints_.size());
   // Copies the state from the gazebo joints into the mechanism joints.
   for (unsigned int i = 0; i < this->joints_.size(); ++i)
   {
