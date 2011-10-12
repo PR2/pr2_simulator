@@ -5,7 +5,19 @@
 
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="spawn_pr2_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model pr2" respawn="false" output="screen" />
+  <!--node name="spawn_pr2_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model pr2" respawn="false" output="screen" /-->
+  <node name="pr2_world" pkg="gazebo" type="gzserver" args="$(find pr2_gazebo_plugins)/test/pr2_test_parsed.world" respawn="false" output="screen">
+    <env name="GAZEBO_RESOURCE_PATH" value="$(find gazebo)/gazebo/share/gazebo-1.0.0:$(find gazebo)/gazebo/share/gazebo-1.0.0/Media/models"/>
+    <env name="GAZEBO_PLUGIN_PATH" value="$(find gazebo)/gazebo/share/gazebo-1.0.0/plugins:$(find gazebo_plugins)/lib:$(find pr2_gazebo_plugins)/lib"/>
+    <env name="OGRE_RESOURCE_PATH" value="$(find ogre)/ogre/lib/OGRE"/>
+  </node>
+  <!--
+  <node name="gazebo_gui" pkg="gazebo" type="gzclient" respawn="false" output="screen">
+    <env name="GAZEBO_RESOURCE_PATH" value="$(find gazebo)/gazebo/share/gazebo-1.0.0:$(find gazebo)/gazebo/share/gazebo-1.0.0/Media/models"/>
+    <env name="GAZEBO_PLUGIN_PATH" value="$(find gazebo)/gazebo/share/gazebo-1.0.0/plugins:$(find gazebo_plugins)/lib:$(find pr2_gazebo_plugins)/lib"/>
+    <env name="OGRE_RESOURCE_PATH" value="$(find ogre)/ogre/lib/OGRE"/>
+  </node>
+  -->
  
   <!-- default bringup script -->
   <include file="$(find pr2_gazebo)/pr2_bringup.launch" />
