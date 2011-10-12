@@ -123,8 +123,8 @@ void GazeboRosControllerManager::Load(physics::ModelPtr &_parent, sdf::ElementPt
 
   // Listen to the update event. This event is broadcast every
   // simulation iteration.
-  //this->updateConnection = event::Events::ConnectWorldUpdateStartSignal(
-  //    boost::bind(&GazeboRosControllerManager::OnUpdate, this));
+  this->updateConnection = event::Events::ConnectWorldUpdateStartSignal(
+      boost::bind(&GazeboRosControllerManager::UpdateChild, this));
   gzdbg << "plugin model name: " << modelName << "\n";
 
 
@@ -189,7 +189,8 @@ void GazeboRosControllerManager::Load(physics::ModelPtr &_parent, sdf::ElementPt
       {
         //ROS_WARN("A joint named \"%s\" is not part of Mechanism Controlled joints.\n", joint_name.c_str());
         //this->joints_.push_back(NULL);  // FIXME: cannot be null, must be an empty boost shared pointer
-        ROS_FATAL("A joint named \"%s\" is not part of Mechanism Controlled joints.\n", joint_name.c_str());
+        this->joints_.push_back(gazebo::physics::JointPtr());  // FIXME: cannot be null, must be an empty boost shared pointer
+        ROS_ERROR("A joint named \"%s\" is not part of Mechanism Controlled joints.\n", joint_name.c_str());
       }
 
     }
@@ -230,6 +231,7 @@ void GazeboRosControllerManager::UpdateChild()
   //  Pushes out simulation state
   //--------------------------------------------------
 
+  ROS_ERROR("joints_.size()[%d]",(int)this->joints_.size());
   // Copies the state from the gazebo joints into the mechanism joints.
   for (unsigned int i = 0; i < this->joints_.size(); ++i)
   {
@@ -244,23 +246,37 @@ void GazeboRosControllerManager::UpdateChild()
 
     this->fake_state_->joint_states_[i].measured_effort_ = this->fake_state_->joint_states_[i].commanded_effort_;
 
-    //if ((boost::shared_static_cast<gazebo::physics::BasePtr>(this->joints_[i]))->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
-    //if ((boost::shared_static_cast<gazebo::physics::BasePtr const>(this->joints_[i]))->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
-    //if (((gazebo::physics::BasePtr const)(this->joints_[i]))->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
-    if (this->joints_[i]->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
+    //if ((boost::shared_static_cast<gazebo::physics::BasePtr>(this->joints_[i]))->HasType(gazebo::physics::Base::HINGE_JOINT))
+    //if ((boost::shared_static_cast<gazebo::physics::BasePtr const>(this->joints_[i]))->HasType(gazebo::physics::Base::HINGE_JOINT))
+    //if (((gazebo::physics::BasePtr const)(this->joints_[i]))->HasType(gazebo::physics::Base::HINGE_JOINT))
+    if (this->joints_[i]->HasType(gazebo::physics::Base::HINGE_JOINT))
     {
       gazebo::physics::JointPtr hj = this->joints_[i];
       this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
                     angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle(0).GetAsRadian());
       this->fake_state_->joint_states_[i].velocity_ = hj->GetVelocity(0);
+      //ROS_ERROR("joint[%s] is a hinge [%f]",this->joints_[i]->GetName().c_str(), this->fake_state_->joint_states_[i].position_);
     }
-    else if (this->joints_[i]->GetType(0) == gazebo::physics::Base::SLIDER_JOINT)
+    else if (this->joints_[i]->HasType(gazebo::physics::Base::SLIDER_JOINT))
     {
       gazebo::physics::JointPtr sj = this->joints_[i];
       {
         this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).GetAsRadian();
         this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
       }
+      //ROS_ERROR("joint[%s] is a slider [%f]",this->joints_[i]->GetName().c_str(),sj->GetAngle(0).GetAsRadian());
+    }
+    else
+    {
+      /*
+      ROS_WARN("joint[%s] is not hinge [%d] nor slider",this->joints_[i]->GetName().c_str(),
+        (unsigned int)gazebo::physics::Base::HINGE_JOINT
+        );
+      for (unsigned int j = 0; j < this->joints_[i]->GetTypeCount(); j++)
+      {
+        ROS_WARN("  types: %d hinge[%d] slider[%d]",(unsigned int)this->joints_[i]->GetType(j),(unsigned int)this->joints_[i]->HasType(gazebo::physics::Base::HINGE_JOINT),(unsigned int)this->joints_[i]->HasType(gazebo::physics::Base::SLIDER_JOINT));
+      }
+      */
     }
   }
 
@@ -308,29 +324,20 @@ void GazeboRosControllerManager::UpdateChild()
         damping_coef = 0;
     }
 
-    if (this->joints_[i]->GetType(0) == gazebo::physics::Base::HINGE_JOINT)
+    if (this->joints_[i]->HasType(gazebo::physics::Base::HINGE_JOINT))
     {
       gazebo::physics::JointPtr hj = this->joints_[i];
-      #if GAZEBO_PATCH_VERSION >= 1
-            // skip explicit damping force addition, taken care of in gazebo
-            double effort_command = effort;
-      #else
-            double current_velocity = hj->GetVelocity(0);
-            double damping_force = damping_coef * current_velocity;
-            double effort_command = effort - damping_force;
-      #endif
+      double current_velocity = hj->GetVelocity(0);
+      double damping_force = damping_coef * current_velocity;
+      double effort_command = effort - damping_force;
       hj->SetForce(0,effort_command);
     }
-    else if (this->joints_[i]->GetType(0) == gazebo::physics::Base::SLIDER_JOINT)
+    else if (this->joints_[i]->HasType(gazebo::physics::Base::SLIDER_JOINT))
     {
       gazebo::physics::JointPtr sj = this->joints_[i];
-      #if GAZEBO_PATCH_VERSION >= 1
-          double effort_command = effort;
-      #else
-          double current_velocity = sj->GetVelocity(0);
-          double damping_force = damping_coef * current_velocity;
-          double effort_command = effort-damping_force;
-      #endif
+      double current_velocity = sj->GetVelocity(0);
+      double damping_force = damping_coef * current_velocity;
+      double effort_command = effort-damping_force;
       (this->joints_[i])->SetForce(0,effort_command);
     }
   }
