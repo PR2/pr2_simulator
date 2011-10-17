@@ -33,8 +33,6 @@
 #include <ros/callback_queue.h>
 #endif
 #include "boost/thread/mutex.hpp"
-#include <gazebo/Param.hh>
-#include <gazebo/Controller.hh>
 
 // image components
 #include "cv_bridge/CvBridge.h"
@@ -54,112 +52,36 @@
 #include <dynamic_reconfigure/server.h>
 #endif
 
+// gazebo stuff
+#include "gazebo.h"
+#include "sdf/interface/Param.hh"
+#include "physics/physics.h"
+#include "transport/TransportTypes.hh"
+#include "msgs/MessageTypes.hh"
+#include "common/Time.hh"
+#include "sensors/SensorTypes.hh"
+
 namespace gazebo
 {
-  class MonoCameraSensor;
 
-/// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
-/// @{
-/** \defgroup GazeboRosProsilica Ros Camera Plugin XML Reference and Example
-
-  \brief Gazebo ROS Prosilica Camera Plugin Controller.
-  
-  This is a controller that collects data from a simulated Prosilica camera sensor and makes image data available
-  in the same manner prosilica_camera works.  The controller:gazebo_ros_prosilica block must be inside of a sensor:camera block.
-
-  Example Usage:
-  \verbatim
-    <sensor:camera name="prosilica_sensor">
-      <imageFormat>R8G8B8</imageFormat>
-      <imageSize>2448 2050</imageSize>
-      <hfov>45</hfov>
-      <nearClip>0.1</nearClip>
-      <farClip>100</farClip>
-      <updateRate>20.0</updateRate>
-      <controller:gazebo_ros_prosilica name="prosilica_controller" plugin="libgazebo_ros_prosilica.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>20.0</updateRate>
-        <imageTopicName>/prosilica/image_raw</imageTopicName>
-        <cameraInfoTopicName>/prosilica/camera_info</cameraInfoTopicName>
-        <pollServiceName>/prosilica/request_image</pollServiceName>
-        <frameName>prosilica_frame</frameName>
-        <CxPrime>1224.5</CxPrime>
-        <Cx>1224.5</Cx>
-        <Cy>1025.5</Cy>
-        <focal_length>2955</focal_length> <!-- image_width / (2*tan(hfov_radian /2)) -->
-        <distortion_k1>0.00000001</distortion_k1>
-        <distortion_k2>0.00000001</distortion_k2>
-        <distortion_k3>0.00000001</distortion_k3>
-        <distortion_t1>0.00000001</distortion_t1>
-        <distortion_t2>0.00000001</distortion_t2>
-        <interface:camera name="prosilica_iface" />
-      </controller:gazebo_ros_prosilica>
-    </sensor:camera>
-  \endverbatim
- 
-\{
-*/
-
-/**
-
-
-    \brief GazeboRosProsilica Controller.
-           \li This is a controller that collects data from a simulated Prosilica camera sensor and makes image data available
-  in the same manner prosilica_camera works.  The controller:gazebo_ros_prosilica block must be inside of a sensor:camera block.
-           \li Example Usage:
-  \verbatim
-    <sensor:camera name="prosilica_sensor">
-      <imageFormat>R8G8B8</imageFormat>
-      <imageSize>2448 2050</imageSize>
-      <hfov>45</hfov>
-      <nearClip>0.1</nearClip>
-      <farClip>100</farClip>
-      <updateRate>20.0</updateRate>
-      <controller:gazebo_ros_prosilica name="prosilica_controller" plugin="libgazebo_ros_prosilica.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>20.0</updateRate>
-        <imageTopicName>/prosilica/image_raw</imageTopicName>
-        <cameraInfoTopicName>/prosilica/camera_info</cameraInfoTopicName>
-        <pollServiceName>/prosilica/request_image</pollServiceName>
-        <frameName>prosilica_frame</frameName>
-        <CxPrime>1224.5</CxPrime>
-        <Cx>1224.5</Cx>
-        <Cy>1025.5</Cy>
-        <focal_length>2955</focal_length> <!-- image_width / (2*tan(hfov_radian /2)) -->
-        <distortion_k1>0.00000001</distortion_k1>
-        <distortion_k2>0.00000001</distortion_k2>
-        <distortion_k3>0.00000001</distortion_k3>
-        <distortion_t1>0.00000001</distortion_t1>
-        <distortion_t2>0.00000001</distortion_t2>
-        <interface:camera name="prosilica_iface" />
-      </controller:gazebo_ros_prosilica>
-    </sensor:camera>
-  \endverbatim
-           .
- 
-*/
-
-class GazeboRosProsilica : public Controller
+class GazeboRosProsilica : public SensorPlugin
 {
   /// \brief Constructor
   /// \param parent The parent entity, must be a Model or a Sensor
-  public: GazeboRosProsilica(Entity *parent);
+  public: GazeboRosProsilica();
 
   /// \brief Destructor
   public: virtual ~GazeboRosProsilica();
 
   /// \brief Load the controller
   /// \param node XML config node
-  protected: virtual void LoadChild(XMLConfigNode *node);
+  public: void Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf);
 
   /// \brief Init the controller
   protected: virtual void InitChild();
 
   /// \brief Update the controller
   protected: virtual void UpdateChild();
-
-  /// \brief Finalize the controller, unadvertise topics
-  protected: virtual void FiniChild();
 
   /// \brief does nothing for now
   private: static void mouse_cb(int event, int x, int y, int flags, void* param) { };
@@ -176,7 +98,13 @@ class GazeboRosProsilica : public Controller
   private: void PublishCameraInfo();
 
   /// \brief A pointer to the parent camera sensor
-  private: MonoCameraSensor *myParent;
+  //private: MonoCameraSensor *myParent;
+    // Pointer to the model
+    private: physics::WorldPtr world;
+    /// \brief The parent sensor
+    private: sensors::SensorPtr parentSensor;
+    private: sensors::CameraSensorPtr parentCameraSensor;
+
 
   /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
   private: ros::NodeHandle* rosnode_;
@@ -211,25 +139,25 @@ class GazeboRosProsilica : public Controller
 
 
   /// \brief Parameters
-  private: ParamT<std::string> *imageTopicNameP;
-  private: ParamT<std::string> *cameraInfoTopicNameP;
-  private: ParamT<std::string> *pollServiceNameP;
-  private: ParamT<std::string> *frameNameP;
-  private: ParamT<std::string> *cameraNameP;
+  // private: ParamT<std::string> *imageTopicNameP;
+  // private: ParamT<std::string> *cameraInfoTopicNameP;
+  // private: ParamT<std::string> *pollServiceNameP;
+  // private: ParamT<std::string> *frameNameP;
+  // private: ParamT<std::string> *cameraNameP;
 
-  private: ParamT<double> *CxPrimeP;           // rectified optical center x, for sim, CxPrime == Cx
-  private: ParamT<double> *CxP;            // optical center x
-  private: ParamT<double> *CyP;            // optical center y
-  private: ParamT<double> *focal_lengthP;  // also known as focal length
-  private: ParamT<double> *hack_baselineP;  // also known as focal length
-  private: ParamT<double> *distortion_k1P; // linear distortion
-  private: ParamT<double> *distortion_k2P; // quadratic distortion
-  private: ParamT<double> *distortion_k3P; // cubic distortion
-  private: ParamT<double> *distortion_t1P; // tangential distortion
-  private: ParamT<double> *distortion_t2P; // tangential distortion
+  // private: ParamT<double> *CxPrimeP;           // rectified optical center x, for sim, CxPrime == Cx
+  // private: ParamT<double> *CxP;            // optical center x
+  // private: ParamT<double> *CyP;            // optical center y
+  // private: ParamT<double> *focal_lengthP;  // also known as focal length
+  // private: ParamT<double> *hack_baselineP;  // also known as focal length
+  // private: ParamT<double> *distortion_k1P; // linear distortion
+  // private: ParamT<double> *distortion_k2P; // quadratic distortion
+  // private: ParamT<double> *distortion_k3P; // cubic distortion
+  // private: ParamT<double> *distortion_t1P; // tangential distortion
+  // private: ParamT<double> *distortion_t2P; // tangential distortion
 
   /// \brief for setting ROS name space
-  private: ParamT<std::string> *robotNamespaceP;
+  // private: ParamT<std::string> *robotNamespaceP;
   private: std::string robotNamespace;
 
   /// \brief ROS camera name
@@ -281,10 +209,16 @@ class GazeboRosProsilica : public Controller
   private: boost::thread ros_spinner_thread_;
 #endif
 
-};
+    // Pointer to the update event connection
+    private: event::ConnectionPtr updateConnection;
 
-/** \} */
-/// @}
+    // subscribe to world stats
+    private: transport::NodePtr node;
+    private: transport::SubscriberPtr statsSub;
+    private: common::Time simTime;
+    public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
+
+};
 
 }
 #endif

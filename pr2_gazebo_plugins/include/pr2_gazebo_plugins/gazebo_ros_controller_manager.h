@@ -32,15 +32,19 @@
 
 #include <vector>
 #include <map>
-#include <gazebo/Controller.hh>
-#include <gazebo/Entity.hh>
-#include <gazebo/Model.hh>
+
+#include "gazebo.h"
+#include "physics/World.hh"
+#include "physics/Model.hh"
+#include "common/Global.hh"
+#include "physics/physics.h"
+#include "common/Time.hh"
+
 #include "pr2_hardware_interface/hardware_interface.h"
 #include "pr2_controller_manager/controller_manager.h"
 #include "pr2_gazebo_plugins/SetModelsJointsStates.h"
 #include "pr2_mechanism_model/robot.h"
 #include <tinyxml.h>
-#include <gazebo/Param.hh>
 #include <ros/ros.h>
 #undef USE_CBQ
 #ifdef USE_CBQ
@@ -51,72 +55,22 @@
 
 namespace gazebo
 {
-class XMLConfigNode;
 
-/// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
-/// @{
-/** \defgroup gazebo_ros_controller_manager GazeboRosControllerMangager class
-
-  \brief GazeboRosControllerMangager Plugin
-  
-  This is a controller plugin that provides interface between simulated robot and pr2_controller_manager.
-  controller:gazebo_ros_controller_manager XML extension requires a model as its parent.  Please see pr2_description for
-  example usages in the pr2_simulator.
-
-  Example Usage:
-  \verbatim
-    <!-- GazeboRosControllerMangager -->
-    <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>1000.0</updateRate>
-      <robotParam>robot_description</robotParam>
-      <robotNamespace>/</robotNamespace>
-    </controller:gazebo_ros_controller_manager>
-  \endverbatim
- 
-\{
-*/
-
-/**
-
-  This is a controller plugin that provides interface between simulated robot and pr2_controller_manager.
-  controller:gazebo_ros_controller_manager XML extension requires a model as its parent.  Please see pr2_description for
-  example usages in the pr2_simulator.
-
-  Gazebo simulator provides joint force/torque control for simulated joints and links.
-  This plugin exposes a set of pseudo-actuator states to pr2_controller_manager through ros by
-  the use of inverse transmissions as defined in pr2_mechanism_controllers.
-  
-   - Example Usage:
-  \verbatim
-    <!-- GazeboRosControllerMangager -->
-    <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
-      <alwaysOn>true</alwaysOn>
-      <updateRate>1000.0</updateRate>
-      <robotParam>robot_description</robotParam>
-      <robotNamespace>/</robotNamespace>
-    </controller:gazebo_ros_controller_manager>
-  \endverbatim
-   .
-**/
-
-
-class GazeboRosControllerManager : public gazebo::Controller
+class GazeboRosControllerManager : public ModelPlugin
 {
 public:
-  GazeboRosControllerManager(Entity *parent);
+  GazeboRosControllerManager();
   virtual ~GazeboRosControllerManager();
+  void Load( physics::ModelPtr &_parent, sdf::ElementPtr &_sdf );
 
 protected:
   // Inherited from gazebo::Controller
-  virtual void LoadChild(XMLConfigNode *node);
   virtual void InitChild();
   virtual void UpdateChild();
-  virtual void FiniChild();
 
 private:
 
-  Model *parent_model_;
+  gazebo::physics::ModelPtr parent_model_;
   pr2_hardware_interface::HardwareInterface hw_;
   pr2_controller_manager::ControllerManager *cm_;
 
@@ -124,16 +78,16 @@ private:
   ///       that it can figure out what its joints should do based on the
   ///       actuator values.
   pr2_mechanism_model::RobotState *fake_state_;
-  std::vector<gazebo::Joint*>  joints_;
+  std::vector<gazebo::physics::JointPtr>  joints_;
 
   /// \brief Service Call Name
-  private: ParamT<std::string> *setModelsJointsStatesServiceNameP;
-  private: std::string setModelsJointsStatesServiceName;
+  //private: ParamT<std::string> *setModelsJointsStatesServiceNameP;
+  //private: std::string setModelsJointsStatesServiceName;
 
   /*
    * \brief read pr2.xml for actuators, and pass tinyxml node to mechanism control node's initXml.
    */
-  void ReadPr2Xml(XMLConfigNode *node);
+  void ReadPr2Xml();
 
   /*
    *  \brief pointer to ros node
@@ -154,8 +108,8 @@ private:
   double wall_start_, sim_start_;
 
   /// \brief set topic name of robot description parameter
-  ParamT<std::string> *robotParamP;
-  ParamT<std::string> *robotNamespaceP;
+  //ParamT<std::string> *robotParamP;
+  //ParamT<std::string> *robotNamespaceP;
   std::string robotParam;
   std::string robotNamespace;
 
@@ -169,10 +123,18 @@ private:
   private: void ControllerManagerROSThread();
   private: boost::thread ros_spinner_thread_;
 
-};
+  // Pointer to the model
+  private: physics::WorldPtr world;
 
-/** \} */
-/// @}
+  // Pointer to the update event connection
+  private: event::ConnectionPtr updateConnection;
+
+  // subscribe to world stats
+  private: transport::NodePtr node;
+  private: transport::SubscriberPtr statsSub;
+  private: common::Time simTime;
+
+};
 
 }
 

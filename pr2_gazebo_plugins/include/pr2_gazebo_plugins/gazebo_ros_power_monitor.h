@@ -33,95 +33,45 @@
 #include <map>
 #include <vector>
 #include <boost/thread/mutex.hpp>
-#include <gazebo/Controller.hh>
-#include <gazebo/Entity.hh>
-#include <gazebo/Model.hh>
-#include <gazebo/Param.hh>
+
+#include "gazebo.h"
+#include "physics/World.hh"
+#include "physics/Model.hh"
+#include "common/Global.hh"
+#include "physics/physics.h"
+#include "common/Time.hh"
+
 #include <ros/ros.h>
 #include <pr2_msgs/PowerState.h>
 #include <pr2_gazebo_plugins/PlugCommand.h>
 
 namespace gazebo {
 
-class XMLConfigNode;
-
-/// @addtogroup gazebo_dynamic_plugins Gazebo ROS Dynamic Plugins
-/// @{
-/** \defgroup gazebo_ros_power_monitor GazeboRosPowerMonitor class
-
- \brief GazeboRosPowerMonitor Plugin
-
- This plugin simulates the power_monitor node for reporting the state of the power system (battery charge, time remaining, AC present).
- controller:gazebo_ros_power requires a model as its parent.
-
- \verbatim
-    <!-- GazeboRosPowerMonitor -->
-    <controller:gazebo_ros_power_monitor name="gazebo_ros_power_monitor_controller" plugin="libgazebo_ros_power_monitor.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>1.0</updateRate>
-        <timeout>5</timeout>
-        <interface:audio name="power_monitor_dummy_interface" />
-        <powerStateTopic>power_state</powerStateTopic>
-        <powerStateRate>10.0</powerStateRate>
-        <fullChargeCapacity>87.78</fullChargeCapacity>
-        <dischargeRate>-474</dischargeRate>
-        <chargeRate>525</chargeRate>
-        <dischargeVoltage>15.52</dischargeVoltage>
-        <chargeVoltage>16.41</chargeVoltage>
-    </controller:gazebo_ros_power_monitor>
- \endverbatim
- 
- \{
-
- */
-
-/**
- * \brief power_monitor simulation
- *   \li This plugin simulates the power_monitor node for reporting the state of the power system (battery charge, time remaining, AC present).
- *   \li controller:gazebo_ros_power requires a model as its parent.
- * .
- *
- \verbatim
-    <!-- GazeboRosPowerMonitor -->
-    <controller:gazebo_ros_power_monitor name="gazebo_ros_power_monitor_controller" plugin="libgazebo_ros_power_monitor.so">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>1.0</updateRate>
-        <timeout>5</timeout>
-        <interface:audio name="power_monitor_dummy_interface" />
-        <powerStateTopic>power_state</powerStateTopic>
-        <powerStateRate>10.0</powerStateRate>
-        <fullChargeCapacity>87.78</fullChargeCapacity>
-        <dischargeRate>-474</dischargeRate>
-        <chargeRate>525</chargeRate>
-        <dischargeVoltage>15.52</dischargeVoltage>
-        <chargeVoltage>16.41</chargeVoltage>
-    </controller:gazebo_ros_power_monitor>
- \endverbatim
- **/
-class GazeboRosPowerMonitor : public Controller
+class GazeboRosPowerMonitor : public ModelPlugin
 {
 public:
-    GazeboRosPowerMonitor(Entity* parent);
+    GazeboRosPowerMonitor();
     virtual ~GazeboRosPowerMonitor();
 
 protected:
     // Inherited from Controller
-    virtual void LoadChild(XMLConfigNode* node);
+    void Load( physics::ModelPtr &_parent, sdf::ElementPtr &_sdf );
     virtual void InitChild();
     virtual void UpdateChild();
-    virtual void FiniChild();
 
 private:
     /// \brief listen to ROS to see if we are charging
     void SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg);
 
 private:
-    Model* model_;
+    gazebo::physics::ModelPtr parent_model_;
     double curr_time_;
     double last_time_;
 
-    ParamT<std::string>* robot_namespace_param_;
-    ParamT<std::string>* power_state_topic_param_;
+    //ParamT<std::string>* robot_namespace_param_;
+    //ParamT<std::string>* power_state_topic_param_;
+    std::string robot_namespace_;
+    std::string power_state_topic_;
 
     ros::NodeHandle* rosnode_;
     ros::Subscriber  plugged_in_sub_;
@@ -133,24 +83,29 @@ private:
     pr2_msgs::PowerState power_state_;
 
     /// \brief rate to broadcast power state message
-    ParamT<double>* power_state_rate_param_;
+    //ParamT<double>* power_state_rate_param_;
+    double power_state_rate_;
 
     /// \brief internal variables for keeping track of simulated battery
 
     /// \brief full capacity of battery (Ah)
-    ParamT<double>* full_capacity_param_;
+    //ParamT<double>* full_capacity_param_;
+    double full_capacity_;
 
     /// \brief charge rate when plugged in (W)
-    ParamT<double>* charge_rate_param_;
+    //ParamT<double>* charge_rate_param_;
 
     /// \brief discharge rate when not plugged in (W)
-    ParamT<double>* discharge_rate_param_;
+    //ParamT<double>* discharge_rate_param_;
+    double discharge_rate_;
 
     /// \brief charge voltage when plugged in (V)
-    ParamT<double>* charge_voltage_param_;
+    //ParamT<double>* charge_voltage_param_;
+    double charge_voltage_;
 
     /// \brief discharge voltage when plugged in (V)
-    ParamT<double>* discharge_voltage_param_;
+    //ParamT<double>* discharge_voltage_param_;
+    double discharge_voltage_;
 
     /// \brief charge state (Ah)
     double charge_;
@@ -160,10 +115,19 @@ private:
 
     /// \brief voltage (V)
     double voltage_;
-};
 
-/** \} */
-/// @}
+  // Pointer to the model
+  private: physics::WorldPtr world;
+
+  // Pointer to the update event connection
+  private: event::ConnectionPtr updateConnection;
+
+  // subscribe to world stats
+  private: transport::NodePtr node;
+  private: transport::SubscriberPtr statsSub;
+  private: common::Time simTime;
+
+};
 
 }
 

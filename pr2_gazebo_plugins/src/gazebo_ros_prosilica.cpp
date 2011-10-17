@@ -33,16 +33,17 @@
 
 #include <pr2_gazebo_plugins/gazebo_ros_prosilica.h>
 
-#include <gazebo/Sensor.hh>
-#include <gazebo/Model.hh>
-#include <gazebo/Global.hh>
-#include <gazebo/XMLConfig.hh>
-#include <gazebo/Simulator.hh>
-#include <gazebo/gazebo.h>
-#include <gazebo/GazeboError.hh>
-#include <gazebo/ControllerFactory.hh>
-#include "gazebo/MonoCameraSensor.hh"
-
+#include "gazebo.h"
+#include "physics/World.hh"
+#include "physics/HingeJoint.hh"
+#include "common/Global.hh"
+#include "sensors/Sensor.hh"
+#include "sdf/interface/SDF.hh"
+#include "sdf/interface/Param.hh"
+#include "common/Exception.hh"
+#include "sensors/CameraSensor.hh"
+#include "sensors/SensorTypes.hh"
+#include "rendering/Camera.hh"
 
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
@@ -67,37 +68,34 @@
 namespace gazebo
 {
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_ros_prosilica", GazeboRosProsilica);
-
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-GazeboRosProsilica::GazeboRosProsilica(Entity *parent)
-    : Controller(parent)
+GazeboRosProsilica::GazeboRosProsilica()
 {
-  this->myParent = dynamic_cast<MonoCameraSensor*>(this->parent);
+  // this->parentSensor = dynamic_cast<MonoCameraSensor*>(this->parent);
 
-  if (!this->myParent)
-    gzthrow("GazeboRosProsilica controller requires a Camera Sensor as its parent");
+  // if (!this->parentSensor)
+  //   gzthrow("GazeboRosProsilica controller requires a Camera Sensor as its parent");
 
-  Param::Begin(&this->parameters);
-  this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
-  this->imageTopicNameP = new ParamT<std::string>("imageTopicName","image_raw", 0);
-  this->cameraInfoTopicNameP = new ParamT<std::string>("cameraInfoTopicName","camera_info", 0);
-  this->pollServiceNameP = new ParamT<std::string>("pollServiceName","request_image", 0);
-  this->cameraNameP = new ParamT<std::string>("cameraName","", 0);
-  this->frameNameP = new ParamT<std::string>("frameName","camera", 0);
-  // camera parameters 
-  this->CxPrimeP = new ParamT<double>("CxPrime",320, 0); // for 640x480 image
-  this->CxP  = new ParamT<double>("Cx" ,320, 0); // for 640x480 image
-  this->CyP  = new ParamT<double>("Cy" ,240, 0); // for 640x480 image
-  this->focal_lengthP  = new ParamT<double>("focal_length" ,554.256, 0); // == image_width(px) / (2*tan( hfov(radian) /2))
-  this->hack_baselineP  = new ParamT<double>("hackBaseline" ,0, 0); // hack for right stereo camera
-  this->distortion_k1P  = new ParamT<double>("distortion_k1" ,0, 0);
-  this->distortion_k2P  = new ParamT<double>("distortion_k2" ,0, 0);
-  this->distortion_k3P  = new ParamT<double>("distortion_k3" ,0, 0);
-  this->distortion_t1P  = new ParamT<double>("distortion_t1" ,0, 0);
-  this->distortion_t2P  = new ParamT<double>("distortion_t2" ,0, 0);
-  Param::End();
+  // Param::Begin(&this->parameters);
+  // this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
+  // this->imageTopicNameP = new ParamT<std::string>("imageTopicName","image_raw", 0);
+  // this->cameraInfoTopicNameP = new ParamT<std::string>("cameraInfoTopicName","camera_info", 0);
+  // this->pollServiceNameP = new ParamT<std::string>("pollServiceName","request_image", 0);
+  // this->cameraNameP = new ParamT<std::string>("cameraName","", 0);
+  // this->frameNameP = new ParamT<std::string>("frameName","camera", 0);
+  // // camera parameters 
+  // this->CxPrimeP = new ParamT<double>("CxPrime",320, 0); // for 640x480 image
+  // this->CxP  = new ParamT<double>("Cx" ,320, 0); // for 640x480 image
+  // this->CyP  = new ParamT<double>("Cy" ,240, 0); // for 640x480 image
+  // this->focal_lengthP  = new ParamT<double>("focal_length" ,554.256, 0); // == image_width(px) / (2*tan( hfov(radian) /2))
+  // this->hack_baselineP  = new ParamT<double>("hackBaseline" ,0, 0); // hack for right stereo camera
+  // this->distortion_k1P  = new ParamT<double>("distortion_k1" ,0, 0);
+  // this->distortion_k2P  = new ParamT<double>("distortion_k2" ,0, 0);
+  // this->distortion_k3P  = new ParamT<double>("distortion_k3" ,0, 0);
+  // this->distortion_t1P  = new ParamT<double>("distortion_t1" ,0, 0);
+  // this->distortion_t2P  = new ParamT<double>("distortion_t2" ,0, 0);
+  // Param::End();
 
   this->imageConnectCount = 0;
   this->infoConnectCount = 0;
@@ -107,31 +105,83 @@ GazeboRosProsilica::GazeboRosProsilica(Entity *parent)
 // Destructor
 GazeboRosProsilica::~GazeboRosProsilica()
 {
-  delete this->robotNamespaceP;
+  // Finalize the controller
+  this->parentSensor->SetActive(false);
+  this->rosnode_->shutdown();
+#ifdef USE_CBQ
+  this->prosilica_queue_.clear();
+  this->prosilica_queue_.disable();
+  this->prosilica_callback_queue_thread_.join();
+#else
+  this->ros_spinner_thread_.join();
+#endif
+
+  this->poll_srv_.shutdown();
+  this->image_pub_.shutdown();
+  this->camera_info_pub_.shutdown();
+
+
+
+
   delete this->rosnode_;
-  delete this->imageTopicNameP;
-  delete this->cameraInfoTopicNameP;
-  delete this->pollServiceNameP;
-  delete this->frameNameP;
-  delete this->CxPrimeP;
-  delete this->CxP;
-  delete this->CyP;
-  delete this->focal_lengthP;
-  delete this->hack_baselineP;
-  delete this->distortion_k1P;
-  delete this->distortion_k2P;
-  delete this->distortion_k3P;
-  delete this->distortion_t1P;
-  delete this->distortion_t2P;
+
+
+  // delete this->robotNamespaceP;
+  // delete this->imageTopicNameP;
+  // delete this->cameraInfoTopicNameP;
+  // delete this->pollServiceNameP;
+  // delete this->frameNameP;
+  // delete this->CxPrimeP;
+  // delete this->CxP;
+  // delete this->CyP;
+  // delete this->focal_lengthP;
+  // delete this->hack_baselineP;
+  // delete this->distortion_k1P;
+  // delete this->distortion_k2P;
+  // delete this->distortion_k3P;
+  // delete this->distortion_t1P;
+  // delete this->distortion_t2P;
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
+void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf)
 {
-  this->robotNamespaceP->Load(node);
-  this->robotNamespace = this->robotNamespaceP->GetValue();
+
+
+
+  // Get then name of the parent sensor
+  this->parentSensor = _parent;
+
+
+  // Get the world name.
+  std::string worldName = _sdf->GetWorldName();
+  this->world = physics::get_world(worldName);
+
+  gzdbg << "plugin parent sensor name: " << this->parentSensor->GetName() << "\n";
+
+  // Listen to the update event. This event is broadcast every
+  // simulation iteration.
+  this->updateConnection = event::Events::ConnectWorldUpdateStart(
+      boost::bind(&GazeboRosProsilica::UpdateChild, this));
+
+  this->node = transport::NodePtr(new transport::Node());
+  this->node->Init(worldName);
+  //this->statsSub = this->node->Subscribe("~/world_stats", &GazeboRosProsilica::OnStats, this);
+
+  this->parentCameraSensor = boost::shared_dynamic_cast<sensors::CameraSensor>(this->parentSensor);
+
+  if (!this->parentCameraSensor)
+    gzthrow("GazeboRosProsilica controller requires a Camera Sensor as its parent");
+
+
+
+
+
+  //this->robotNamespaceP->Load(node);
+  this->robotNamespace = ""; // FIXME
+
   if (!ros::isInitialized())
   {
     int argc = 0;
@@ -139,41 +189,41 @@ void GazeboRosProsilica::LoadChild(XMLConfigNode *node)
     ros::init(argc,argv,"gazebo",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
   }
 
-  this->cameraNameP->Load(node);
-  this->cameraName = this->cameraNameP->GetValue();
+  //this->cameraNameP->Load(node);
+  this->cameraName = "prosilica"; // FIXME: this->cameraNameP->GetValue();
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace+"/"+this->cameraName);
   this->rosnode_->setCallbackQueue(&this->prosilica_queue_);
   this->itnode_ = new image_transport::ImageTransport(*this->rosnode_);
 
-  this->imageTopicNameP->Load(node);
-  this->cameraInfoTopicNameP->Load(node);
-  this->pollServiceNameP->Load(node);
-  this->frameNameP->Load(node);
-  this->CxPrimeP->Load(node);
-  this->CxP->Load(node);
-  this->CyP->Load(node);
-  this->focal_lengthP->Load(node);
-  this->hack_baselineP->Load(node);
-  this->distortion_k1P->Load(node);
-  this->distortion_k2P->Load(node);
-  this->distortion_k3P->Load(node);
-  this->distortion_t1P->Load(node);
-  this->distortion_t2P->Load(node);
+  //this->imageTopicNameP->Load(node);
+  // this->cameraInfoTopicNameP->Load(node);
+  // this->pollServiceNameP->Load(node);
+  // this->frameNameP->Load(node);
+  // this->CxPrimeP->Load(node);
+  // this->CxP->Load(node);
+  // this->CyP->Load(node);
+  // this->focal_lengthP->Load(node);
+  // this->hack_baselineP->Load(node);
+  // this->distortion_k1P->Load(node);
+  // this->distortion_k2P->Load(node);
+  // this->distortion_k3P->Load(node);
+  // this->distortion_t1P->Load(node);
+  // this->distortion_t2P->Load(node);
   
-  this->imageTopicName = this->imageTopicNameP->GetValue();
-  this->cameraInfoTopicName = this->cameraInfoTopicNameP->GetValue();
-  this->pollServiceName = this->pollServiceNameP->GetValue();
-  this->frameName = this->frameNameP->GetValue();
-  this->CxPrime = this->CxPrimeP->GetValue();
-  this->Cx = this->CxP->GetValue();
-  this->Cy = this->CyP->GetValue();
-  this->focal_length = this->focal_lengthP->GetValue();
-  this->hack_baseline = this->hack_baselineP->GetValue();
-  this->distortion_k1 = this->distortion_k1P->GetValue();
-  this->distortion_k2 = this->distortion_k2P->GetValue();
-  this->distortion_k3 = this->distortion_k3P->GetValue();
-  this->distortion_t1 = this->distortion_t1P->GetValue();
-  this->distortion_t2 = this->distortion_t2P->GetValue();
+  this->imageTopicName = "image_raw"; // FIXME: this->imageTopicNameP->GetValue();
+  this->cameraInfoTopicName = "camera_info"; // FIXME: this->cameraInfoTopicNameP->GetValue();
+  this->pollServiceName = "request_image"; // FIXME: this->pollServiceNameP->GetValue();
+  this->frameName = "high_def_optical_frame"; // FIXME: this->frameNameP->GetValue();
+  this->CxPrime = 320; // FIXME: this->CxPrimeP->GetValue();
+  this->Cx = 320; // FIXME: this->CxP->GetValue();
+  this->Cy = 240; // FIXME: this->CyP->GetValue();
+  this->focal_length = 554.256; // FIXME: this->focal_lengthP->GetValue();
+  this->hack_baseline = 0; // FIXME: this->hack_baselineP->GetValue();
+  this->distortion_k1 = 0; // FIXME: this->distortion_k1P->GetValue();
+  this->distortion_k2 = 0; // FIXME: this->distortion_k2P->GetValue();
+  this->distortion_k3 = 0; // FIXME: this->distortion_k3P->GetValue();
+  this->distortion_t1 = 0; // FIXME: this->distortion_t1P->GetValue();
+  this->distortion_t2 = 0; // FIXME: this->distortion_t2P->GetValue();
   if ((this->distortion_k1 != 0.0) || (this->distortion_k2 != 0.0) ||
       (this->distortion_k3 != 0.0) || (this->distortion_t1 != 0.0) ||
       (this->distortion_t2 != 0.0))
@@ -236,7 +286,8 @@ void GazeboRosProsilica::configCallback(gazebo_plugins::GazeboRosCameraConfig &c
 {
   ROS_INFO("Reconfigure request for the gazebo ros camera: %s. New rate: %.2f", this->cameraName.c_str(), config.imager_rate);
 
-  (dynamic_cast<OgreCamera*>(this->myParent))->SetUpdateRate(config.imager_rate);
+  gzerr << "SetUpdateRate for new camera has not been implemented yet\n";
+  //(dynamic_cast<OgreCamera*>(this->parentSensor))->SetUpdateRate(update_rate->data);
 }
 #endif
 
@@ -245,44 +296,44 @@ void GazeboRosProsilica::configCallback(gazebo_plugins::GazeboRosCameraConfig &c
 void GazeboRosProsilica::InitChild()
 {
   // sensor generation off by default
-  this->myParent->SetActive(false);
+  this->parentSensor->SetActive(false);
 
   // set buffer size
-  this->width            = this->myParent->GetImageWidth();
-  this->height           = this->myParent->GetImageHeight();
-  this->depth            = this->myParent->GetImageDepth();
-  //ROS_INFO("image format in urdf is %s\n",this->myParent->GetImageFormat().c_str());
-  if (this->myParent->GetImageFormat() == "L8")
+  this->width            = this->parentCameraSensor->GetCamera()->GetImageWidth();
+  this->height           = this->parentCameraSensor->GetCamera()->GetImageHeight();
+  this->depth            = this->parentCameraSensor->GetCamera()->GetImageDepth();
+  //ROS_INFO("image format in urdf is %s\n",this->parentCameraSensor->GetCamera()->GetImageFormat().c_str());
+  if (this->parentCameraSensor->GetCamera()->GetImageFormat() == "L8")
   {
     this->type = sensor_msgs::image_encodings::MONO8;
     this->skip = 1;
   }
-  else if (this->myParent->GetImageFormat() == "R8G8B8")
+  else if (this->parentCameraSensor->GetCamera()->GetImageFormat() == "R8G8B8")
   {
     this->type = sensor_msgs::image_encodings::RGB8;
     this->skip = 3;
   }
-  else if (this->myParent->GetImageFormat() == "B8G8R8")
+  else if (this->parentCameraSensor->GetCamera()->GetImageFormat() == "B8G8R8")
   {
     this->type = sensor_msgs::image_encodings::BGR8;
     this->skip = 3;
   }
-  else if (this->myParent->GetImageFormat() == "BAYER_RGGB8")
+  else if (this->parentCameraSensor->GetCamera()->GetImageFormat() == "BAYER_RGGB8")
   {
     this->type = sensor_msgs::image_encodings::BAYER_RGGB8;
     this->skip = 1;
   }
-  else if (this->myParent->GetImageFormat() == "BAYER_BGGR8")
+  else if (this->parentCameraSensor->GetCamera()->GetImageFormat() == "BAYER_BGGR8")
   {
     this->type = sensor_msgs::image_encodings::BAYER_BGGR8;
     this->skip = 1;
   }
-  else if (this->myParent->GetImageFormat() == "BAYER_GBRG8")
+  else if (this->parentCameraSensor->GetCamera()->GetImageFormat() == "BAYER_GBRG8")
   {
     this->type = sensor_msgs::image_encodings::BAYER_GBRG8;
     this->skip = 1;
   }
-  else if (this->myParent->GetImageFormat() == "BAYER_GRBG8")
+  else if (this->parentCameraSensor->GetCamera()->GetImageFormat() == "BAYER_GRBG8")
   {
     this->type = sensor_msgs::image_encodings::BAYER_GRBG8;
     this->skip = 1;
@@ -302,7 +353,7 @@ void GazeboRosProsilica::InitChild()
   if (this->Cy == 0)
     this->Cy = ((double)this->height+1.0) /2.0;
   if (this->focal_length == 0)
-    this->focal_length = ((double)this->width) / (2.0 *tan(this->myParent->GetHFOV().GetAsRadian()/2.0));
+    this->focal_length = ((double)this->width) / (2.0 *tan(this->parentCameraSensor->GetCamera()->GetHFOV().GetAsRadian()/2.0));
 
 #ifdef USE_CBQ
   // start custom queue for prosilica
@@ -327,7 +378,7 @@ void GazeboRosProsilica::ImageDisconnect()
   this->imageConnectCount--;
 
   if ((this->infoConnectCount == 0) && (this->imageConnectCount == 0))
-    this->myParent->SetActive(false);
+    this->parentSensor->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -343,7 +394,7 @@ void GazeboRosProsilica::InfoDisconnect()
   this->infoConnectCount--;
 
   if ((this->infoConnectCount == 0) && (this->imageConnectCount == 0))
-    this->myParent->SetActive(false);
+    this->parentSensor->SetActive(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -356,11 +407,11 @@ void GazeboRosProsilica::UpdateChild()
 
   // as long as ros is connected, parent is active
   //ROS_ERROR("debug image count %d",this->imageConnectCount);
-  if (!this->myParent->IsActive())
+  if (!this->parentSensor->IsActive())
   {
     if (this->imageConnectCount > 0)
       // do this first so there's chance for sensor to run 1 frame after activate
-      this->myParent->SetActive(true);
+      this->parentSensor->SetActive(true);
   }
   else
   {
@@ -380,135 +431,28 @@ void GazeboRosProsilica::PutCameraData()
 {
   const unsigned char *src;
 
-  //boost::recursive_mutex::scoped_lock mr_lock(*Simulator::Instance()->GetMRMutex());
+  //boost::recursive_mutex::scoped_lock mr_lock(*this->world->GetMRMutex());
 
   // Get a pointer to image data
-  src = this->myParent->GetImageData(0);
+  src = this->parentCameraSensor->GetCamera()->GetImageData(0);
 
   if (src)
   {
-    //double tmpT0 = Simulator::Instance()->GetWallTime();
+    //double tmpT0 = this->world->GetWallTime();
 
-    unsigned char dst[this->width*this->height];
+    //unsigned char dst[this->width*this->height];
 
     this->lock.lock();
     // copy data into image
     this->imageMsg.header.frame_id = this->frameName;
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-    this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
-#else
-    this->imageMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
-#endif
+    this->imageMsg.header.stamp.fromSec(this->world->GetSimTime().Double());
 
-    //double tmpT1 = Simulator::Instance()->GetWallTime();
+    //double tmpT1 = this->world->GetWallTime();
     //double tmpT2;
 
     /// @todo: don't bother if there are no subscribers
     if (this->image_pub_.getNumSubscribers() > 0)
     {
-
-      // do last minute conversion if Bayer pattern is requested but not provided, go from R8G8B8
-      // deprecated in gazebo2 branch, keep for backwards compatibility
-      if (this->myParent->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
-      {
-        for (int i=0;i<this->width;i++)
-        {
-          for (int j=0;j<this->height;j++)
-          {
-            //
-            // RG
-            // GB
-            //
-            // determine position
-            if (j%2) // even column
-              if (i%2) // even row, red
-                dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-              else // odd row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-            else // odd column
-              if (i%2) // even row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-              else // odd row, blue
-                dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-          }
-        }
-        src=dst;
-      }
-      else if (this->myParent->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
-      {
-        for (int i=0;i<this->width;i++)
-        {
-          for (int j=0;j<this->height;j++)
-          {
-            //
-            // BG
-            // GR
-            //
-            // determine position
-            if (j%2) // even column
-              if (i%2) // even row, blue
-                dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-              else // odd row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-            else // odd column
-              if (i%2) // even row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-              else // odd row, red
-                dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-          }
-        }
-        src=dst;
-      }
-      else if (this->myParent->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
-      {
-        for (int i=0;i<this->width;i++)
-        {
-          for (int j=0;j<this->height;j++)
-          {
-            //
-            // GB
-            // RG
-            //
-            // determine position
-            if (j%2) // even column
-              if (i%2) // even row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-              else // odd row, blue
-                dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-            else // odd column
-              if (i%2) // even row, red
-                dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-              else // odd row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-          }
-        }
-        src=dst;
-      }
-      else if (this->myParent->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
-      {
-        for (int i=0;i<this->width;i++)
-        {
-          for (int j=0;j<this->height;j++)
-          {
-            //
-            // GR
-            // BG
-            //
-            // determine position
-            if (j%2) // even column
-              if (i%2) // even row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-              else // odd row, red
-                dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-            else // odd column
-              if (i%2) // even row, blue
-                dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-              else // odd row, green
-                dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-          }
-        }
-        src=dst;
-      }
 
       //ROS_ERROR("debug %d %d %d %d", this->type, this->height, this->width, this->skip);
 
@@ -520,13 +464,13 @@ void GazeboRosProsilica::PutCameraData()
                 this->skip*this->width,
                 (void*)src );
 
-      //tmpT2 = Simulator::Instance()->GetWallTime();
+      //tmpT2 = this->world->GetWallTime();
 
       // publish to ros
       this->image_pub_.publish(this->imageMsg);
     }
 
-    //double tmpT3 = Simulator::Instance()->GetWallTime();
+    //double tmpT3 = this->world->GetWallTime();
 
     this->lock.unlock();
   }
@@ -539,11 +483,7 @@ void GazeboRosProsilica::PublishCameraInfo()
 {
   // fill CameraInfo
   this->cameraInfoMsg.header.frame_id = this->frameName;
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-  this->cameraInfoMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
-#else
-  this->cameraInfoMsg.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
-#endif
+  this->cameraInfoMsg.header.stamp.fromSec(this->world->GetSimTime().Double());
   this->cameraInfoMsg.height = this->height;
   this->cameraInfoMsg.width  = this->width;
 
@@ -620,13 +560,9 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 /*
   // fill out the cam info part
   info.header.frame_id = this->frameName;
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-  info.header.stamp.fromSec(Simulator::Instance()->GetSimTime().Double());
-#else
-  info.header.stamp.fromSec(Simulator::Instance()->GetSimTime());
-#endif
-  info.height = this->myParent->GetImageHeight();
-  info.width  = this->myParent->GetImageWidth() ;
+  info.header.stamp.fromSec(this->world->GetSimTime().Double());
+  info.height = this->parentCameraSensor->GetCamera()->GetImageHeight();
+  info.width  = this->parentCameraSensor->GetCamera()->GetImageWidth() ;
   // distortion
 #if ROS_VERSION_MINIMUM(1, 3, 0)
   info.distortion_model = "plumb_bob";
@@ -689,9 +625,9 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
   while(!src)
   {
     {
-      boost::recursive_mutex::scoped_lock lock(*Simulator::Instance()->GetMRMutex());
+      // boost::recursive_mutex::scoped_lock lock(*this->world->GetMRMutex());  // FIXME: no more mutex?
       // Get a pointer to image data
-      src = this->myParent->GetImageData(0);
+      src = this->parentCameraSensor->GetCamera()->GetImageData(0);
 
       if (src)
       {
@@ -699,13 +635,14 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
         // fill CameraInfo
         this->roiCameraInfoMsg = &info;
         this->roiCameraInfoMsg->header.frame_id = this->frameName;
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-        this->roiCameraInfoMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime().Double());
-#else
-        this->roiCameraInfoMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime());
-#endif
-        this->roiCameraInfoMsg->width  = req.roi.width; //this->myParent->GetImageWidth() ;
-        this->roiCameraInfoMsg->height = req.roi.height; //this->myParent->GetImageHeight();
+
+        // FIXME: this->roiCameraInfoMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->parentSensor))->GetLastRenderTime().Double());
+        common::Time roiLastRenderTime;
+        this->roiCameraInfoMsg->header.stamp.sec = roiLastRenderTime.sec;
+        this->roiCameraInfoMsg->header.stamp.nsec = roiLastRenderTime.nsec;
+
+        this->roiCameraInfoMsg->width  = req.roi.width; //this->parentSensor->GetImageWidth() ;
+        this->roiCameraInfoMsg->height = req.roi.height; //this->parentSensor->GetImageHeight();
         // distortion
 #if ROS_VERSION_MINIMUM(1, 3, 0)
         this->roiCameraInfoMsg->distortion_model = "plumb_bob";
@@ -753,118 +690,15 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 
         // copy data into imageMsg, then convert to roiImageMsg(image)
         this->imageMsg.header.frame_id    = this->frameName;
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-        this->imageMsg.header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime().Double());
-#else
-        this->imageMsg.header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime());
-#endif
 
-        unsigned char dst[this->width*this->height];
+        // FIXME: this->imageMsg.header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->parentSensor))->GetLastRenderTime().Double());
+        common::Time lastRenderTime;
+        this->imageMsg.header.stamp.sec = lastRenderTime.sec;
+        this->imageMsg.header.stamp.nsec = lastRenderTime.nsec;
+
+        //unsigned char dst[this->width*this->height];
 
         /// @todo: don't bother if there are no subscribers
-
-        // do last minute conversion if Bayer pattern is requested but not provided, go from R8G8B8
-        // deprecated in gazebo2 branch, keep for backwards compatibility
-        if (this->myParent->GetImageFormat() == "BAYER_RGGB8" && this->depth == 3)
-        {
-          for (int i=0;i<this->width;i++)
-          {
-            for (int j=0;j<this->height;j++)
-            {
-              //
-              // RG
-              // GB
-              //
-              // determine position
-              if (j%2) // even column
-                if (i%2) // even row, red
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-                else // odd row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-              else // odd column
-                if (i%2) // even row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-                else // odd row, blue
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-            }
-          }
-          src=dst;
-        }
-        else if (this->myParent->GetImageFormat() == "BAYER_BGGR8" && this->depth == 3)
-        {
-          for (int i=0;i<this->width;i++)
-          {
-            for (int j=0;j<this->height;j++)
-            {
-              //
-              // BG
-              // GR
-              //
-              // determine position
-              if (j%2) // even column
-                if (i%2) // even row, blue
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-                else // odd row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-              else // odd column
-                if (i%2) // even row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-                else // odd row, red
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-            }
-          }
-          src=dst;
-        }
-        else if (this->myParent->GetImageFormat() == "BAYER_GBRG8" && this->depth == 3)
-        {
-          for (int i=0;i<this->width;i++)
-          {
-            for (int j=0;j<this->height;j++)
-            {
-              //
-              // GB
-              // RG
-              //
-              // determine position
-              if (j%2) // even column
-                if (i%2) // even row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-                else // odd row, blue
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-              else // odd column
-                if (i%2) // even row, red
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-                else // odd row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-            }
-          }
-          src=dst;
-        }
-        else if (this->myParent->GetImageFormat() == "BAYER_GRBG8" && this->depth == 3)
-        {
-          for (int i=0;i<this->width;i++)
-          {
-            for (int j=0;j<this->height;j++)
-            {
-              //
-              // GR
-              // BG
-              //
-              // determine position
-              if (j%2) // even column
-                if (i%2) // even row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-                else // odd row, red
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+0];
-              else // odd column
-                if (i%2) // even row, blue
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+2];
-                else // odd row, green
-                  dst[i+j*this->width] = src[i*3+j*this->width*3+1];
-            }
-          }
-          src=dst;
-        }
 
         // copy from src to imageMsg
         fillImage(this->imageMsg,
@@ -878,35 +712,14 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
 
         this->image_pub_.publish(this->imageMsg);
 
-        // error if Bayer pattern is requested but not provided, roi not supported in this case
-        // not supported in old image_pipeline as well, this might change, but ultimately
-        // this is deprecated in gazebo2 branch, keep for backwards compatibility
-        if (((this->myParent->GetImageFormat() == "BAYER_RGGB8") ||
-             (this->myParent->GetImageFormat() == "BAYER_BGGR8") ||
-             (this->myParent->GetImageFormat() == "BAYER_GBRG8") ||
-             (this->myParent->GetImageFormat() == "BAYER_GRBG8") ) &&
-            this->depth == 3)
-        {
-          ROS_ERROR("prosilica does not support bayer roi, using full image");
-
-          // copy from src to imageMsg
-          fillImage(image,
-                    this->type,
-                    this->height,
-                    this->width,
-                    this->skip*this->width,
-                    (void*)src );
-        }
-        else
         {
           // copy data into ROI image
           this->roiImageMsg = &image;
           this->roiImageMsg->header.frame_id = this->frameName;
-#if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
-          this->roiImageMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime().Double());
-#else
-          this->roiImageMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->myParent))->GetLastRenderTime());
-#endif
+          // FIXME: this->roiImageMsg->header.stamp.fromSec( (dynamic_cast<OgreCamera*>(this->parentSensor))->GetLastRenderTime().Double());
+          common::Time roiLastRenderTime;
+          this->roiImageMsg->header.stamp.sec = roiLastRenderTime.sec;
+          this->roiImageMsg->header.stamp.nsec = roiLastRenderTime.nsec;
 
           //sensor_msgs::CvBridge img_bridge_(&this->imageMsg);
           //IplImage* cv_image;
@@ -939,25 +752,6 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
   return;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Finalize the controller
-void GazeboRosProsilica::FiniChild()
-{
-  this->myParent->SetActive(false);
-  this->rosnode_->shutdown();
-#ifdef USE_CBQ
-  this->prosilica_queue_.clear();
-  this->prosilica_queue_.disable();
-  this->prosilica_callback_queue_thread_.join();
-#else
-  this->ros_spinner_thread_.join();
-#endif
-
-  this->poll_srv_.shutdown();
-  this->image_pub_.shutdown();
-  this->camera_info_pub_.shutdown();
-
-}
 
 #ifdef USE_CBQ
 ////////////////////////////////////////////////////////////////////////////////
@@ -986,6 +780,19 @@ void GazeboRosProsilica::ProsilicaROSThread()
   }
 }
 #endif
+
+
+void GazeboRosProsilica::OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg)
+{
+  this->simTime  = msgs::Convert( _msg->sim_time() );
+
+  math::Pose pose;
+  pose.pos.x = 0.5*sin(0.01*this->simTime.Double());
+  gzdbg << "plugin simTime [" << this->simTime.Double() << "] update pose [" << pose.pos.x << "]\n";
+}
+
+// Register this plugin with the simulator
+GZ_REGISTER_SENSOR_PLUGIN(GazeboRosProsilica)
 
 
 }
