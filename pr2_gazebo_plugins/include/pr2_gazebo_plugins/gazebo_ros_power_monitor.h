@@ -37,7 +37,6 @@
 #include "gazebo.h"
 #include "physics/World.hh"
 #include "physics/Model.hh"
-#include "common/Global.hh"
 #include "physics/physics.h"
 #include "common/Time.hh"
 

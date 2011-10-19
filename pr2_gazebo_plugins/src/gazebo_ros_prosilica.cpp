@@ -36,7 +36,6 @@
 #include "gazebo.h"
 #include "physics/World.hh"
 #include "physics/HingeJoint.hh"
-#include "common/Global.hh"
 #include "sensors/Sensor.hh"
 #include "sdf/interface/SDF.hh"
 #include "sdf/interface/Param.hh"
