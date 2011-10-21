@@ -254,7 +254,8 @@ void GazeboRosControllerManager::UpdateChild()
       this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
                     angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle(0).GetAsRadian());
       this->fake_state_->joint_states_[i].velocity_ = hj->GetVelocity(0);
-      //ROS_ERROR("joint[%s] is a hinge [%f]",this->joints_[i]->GetName().c_str(), this->fake_state_->joint_states_[i].position_);
+      //if (this->joints_[i]->GetName() == "torso_lift_motor_screw_joint")
+      //  ROS_WARN("joint[%s] [%f]",this->joints_[i]->GetName().c_str(), this->fake_state_->joint_states_[i].position_);
     }
     else if (this->joints_[i]->HasType(gazebo::physics::Base::SLIDER_JOINT))
     {
@@ -264,6 +265,8 @@ void GazeboRosControllerManager::UpdateChild()
         this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
       }
       //ROS_ERROR("joint[%s] is a slider [%f]",this->joints_[i]->GetName().c_str(),sj->GetAngle(0).GetAsRadian());
+      //if (this->joints_[i]->GetName() == "torso_lift_joint")
+      //  ROS_WARN("joint[%s] [%f]",this->joints_[i]->GetName().c_str(), this->fake_state_->joint_states_[i].position_);
     }
     else
     {
@@ -330,6 +333,8 @@ void GazeboRosControllerManager::UpdateChild()
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort - damping_force;
       hj->SetForce(0,effort_command);
+      //if (this->joints_[i]->GetName() == "torso_lift_motor_screw_joint")
+      //  ROS_ERROR("gazebo [%s] command [%f] damping [%f]",this->joints_[i]->GetName().c_str(), effort, damping_force);
     }
     else if (this->joints_[i]->HasType(gazebo::physics::Base::SLIDER_JOINT))
     {
@@ -337,7 +342,9 @@ void GazeboRosControllerManager::UpdateChild()
       double current_velocity = sj->GetVelocity(0);
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort-damping_force;
-      (this->joints_[i])->SetForce(0,effort_command);
+      //(this->joints_[i])->SetForce(0,effort_command);
+      //if (this->joints_[i]->GetName() == "torso_lift_joint")
+      //  ROS_ERROR("gazebo [%s] command [%f] damping [%f]",this->joints_[i]->GetName().c_str(), effort, damping_force);
     }
   }
 }

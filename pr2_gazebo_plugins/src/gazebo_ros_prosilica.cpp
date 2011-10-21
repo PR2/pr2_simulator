@@ -71,31 +71,6 @@ namespace gazebo
 // Constructor
 GazeboRosProsilica::GazeboRosProsilica()
 {
-  // this->parentSensor = dynamic_cast<MonoCameraSensor*>(this->parent);
-
-  // if (!this->parentSensor)
-  //   gzthrow("GazeboRosProsilica controller requires a Camera Sensor as its parent");
-
-  // Param::Begin(&this->parameters);
-  // this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
-  // this->imageTopicNameP = new ParamT<std::string>("imageTopicName","image_raw", 0);
-  // this->cameraInfoTopicNameP = new ParamT<std::string>("cameraInfoTopicName","camera_info", 0);
-  // this->pollServiceNameP = new ParamT<std::string>("pollServiceName","request_image", 0);
-  // this->cameraNameP = new ParamT<std::string>("cameraName","", 0);
-  // this->frameNameP = new ParamT<std::string>("frameName","camera", 0);
-  // // camera parameters 
-  // this->CxPrimeP = new ParamT<double>("CxPrime",320, 0); // for 640x480 image
-  // this->CxP  = new ParamT<double>("Cx" ,320, 0); // for 640x480 image
-  // this->CyP  = new ParamT<double>("Cy" ,240, 0); // for 640x480 image
-  // this->focal_lengthP  = new ParamT<double>("focal_length" ,554.256, 0); // == image_width(px) / (2*tan( hfov(radian) /2))
-  // this->hack_baselineP  = new ParamT<double>("hackBaseline" ,0, 0); // hack for right stereo camera
-  // this->distortion_k1P  = new ParamT<double>("distortion_k1" ,0, 0);
-  // this->distortion_k2P  = new ParamT<double>("distortion_k2" ,0, 0);
-  // this->distortion_k3P  = new ParamT<double>("distortion_k3" ,0, 0);
-  // this->distortion_t1P  = new ParamT<double>("distortion_t1" ,0, 0);
-  // this->distortion_t2P  = new ParamT<double>("distortion_t2" ,0, 0);
-  // Param::End();
-
   this->imageConnectCount = 0;
   this->infoConnectCount = 0;
 }
@@ -124,23 +99,6 @@ GazeboRosProsilica::~GazeboRosProsilica()
 
   delete this->rosnode_;
 
-
-  // delete this->robotNamespaceP;
-  // delete this->imageTopicNameP;
-  // delete this->cameraInfoTopicNameP;
-  // delete this->pollServiceNameP;
-  // delete this->frameNameP;
-  // delete this->CxPrimeP;
-  // delete this->CxP;
-  // delete this->CyP;
-  // delete this->focal_lengthP;
-  // delete this->hack_baselineP;
-  // delete this->distortion_k1P;
-  // delete this->distortion_k2P;
-  // delete this->distortion_k3P;
-  // delete this->distortion_t1P;
-  // delete this->distortion_t2P;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -160,13 +118,8 @@ void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf
 
   gzdbg << "plugin parent sensor name: " << this->parentSensor->GetName() << "\n";
 
-  // Listen to the update event. This event is broadcast every
-  // simulation iteration.
-  this->updateConnection = event::Events::ConnectWorldUpdateStart(
-      boost::bind(&GazeboRosProsilica::UpdateChild, this));
-
-  this->node = transport::NodePtr(new transport::Node());
-  this->node->Init(worldName);
+  //this->node = transport::NodePtr(new transport::Node());
+  //this->node->Init(worldName);
   //this->statsSub = this->node->Subscribe("~/world_stats", &GazeboRosProsilica::OnStats, this);
 
   this->parentCameraSensor = boost::shared_dynamic_cast<sensors::CameraSensor>(this->parentSensor);
@@ -275,6 +228,11 @@ void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf
     dyn_srv_->setCallback(f);
   }
 #endif
+
+  // Listen to the update event. This event is broadcast every
+  // simulation iteration.
+  this->updateConnection = event::Events::ConnectWorldUpdateStart(
+      boost::bind(&GazeboRosProsilica::UpdateChild, this));
 
 }
 
@@ -780,7 +738,7 @@ void GazeboRosProsilica::ProsilicaROSThread()
 }
 #endif
 
-
+/*
 void GazeboRosProsilica::OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg)
 {
   this->simTime  = msgs::Convert( _msg->sim_time() );
@@ -789,6 +747,7 @@ void GazeboRosProsilica::OnStats( const boost::shared_ptr<msgs::WorldStatistics 
   pose.pos.x = 0.5*sin(0.01*this->simTime.Double());
   gzdbg << "plugin simTime [" << this->simTime.Double() << "] update pose [" << pose.pos.x << "]\n";
 }
+*/
 
 // Register this plugin with the simulator
 GZ_REGISTER_SENSOR_PLUGIN(GazeboRosProsilica)

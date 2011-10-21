@@ -60,11 +60,12 @@
 #include "msgs/MessageTypes.hh"
 #include "common/Time.hh"
 #include "sensors/SensorTypes.hh"
+#include "plugins/CameraPlugin.hh"
 
 namespace gazebo
 {
 
-class GazeboRosProsilica : public SensorPlugin
+class GazeboRosProsilica : public CameraPlugin
 {
   /// \brief Constructor
   /// \param parent The parent entity, must be a Model or a Sensor
@@ -137,25 +138,6 @@ class GazeboRosProsilica : public SensorPlugin
   private: sensor_msgs::CameraInfo cameraInfoMsg;
   private: sensor_msgs::CameraInfo *roiCameraInfoMsg;
 
-
-  /// \brief Parameters
-  // private: ParamT<std::string> *imageTopicNameP;
-  // private: ParamT<std::string> *cameraInfoTopicNameP;
-  // private: ParamT<std::string> *pollServiceNameP;
-  // private: ParamT<std::string> *frameNameP;
-  // private: ParamT<std::string> *cameraNameP;
-
-  // private: ParamT<double> *CxPrimeP;           // rectified optical center x, for sim, CxPrime == Cx
-  // private: ParamT<double> *CxP;            // optical center x
-  // private: ParamT<double> *CyP;            // optical center y
-  // private: ParamT<double> *focal_lengthP;  // also known as focal length
-  // private: ParamT<double> *hack_baselineP;  // also known as focal length
-  // private: ParamT<double> *distortion_k1P; // linear distortion
-  // private: ParamT<double> *distortion_k2P; // quadratic distortion
-  // private: ParamT<double> *distortion_k3P; // cubic distortion
-  // private: ParamT<double> *distortion_t1P; // tangential distortion
-  // private: ParamT<double> *distortion_t2P; // tangential distortion
-
   /// \brief for setting ROS name space
   // private: ParamT<std::string> *robotNamespaceP;
   private: std::string robotNamespace;
@@ -213,10 +195,10 @@ class GazeboRosProsilica : public SensorPlugin
     private: event::ConnectionPtr updateConnection;
 
     // subscribe to world stats
-    private: transport::NodePtr node;
-    private: transport::SubscriberPtr statsSub;
-    private: common::Time simTime;
-    public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
+    //private: transport::NodePtr node;
+    //private: transport::SubscriberPtr statsSub;
+    //private: common::Time simTime;
+    //public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
 
 };
 
