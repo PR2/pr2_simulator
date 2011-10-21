@@ -4,7 +4,7 @@
   <param name="/use_sim_time" value="true" />
 
   <!--<node alaunch-prefix="$(find gazebo_worlds)/scripts/gdbrun" name="empty_world_server" pkg="gazebo" type="gzserver" args="-p $(find gazebo)/lib/libgazeboros.so $(find gazebo)/gazebo/share/gazebo-1.0.0/worlds/empty.world" respawn="false" output="screen"/>-->
-  <node alaunch-prefix="$(find gazebo_worlds)/scripts/gdbrun" name="empty_world_server" pkg="gazebo" type="gzserver" args="-p $(find gazebo)/lib/libros_paths.so $(find gazebo_plugins)/worlds/default.world" respawn="false" output="screen"/>
+  <node launch-prefix="$(find gazebo_worlds)/scripts/gdbrun" name="empty_world_server" pkg="gazebo" type="gzserver" args="-p $(find gazebo)/lib/libros_paths.so $(find gazebo_plugins)/worlds/default.world" respawn="false" output="screen"/>
 
   <!--
   <node launch-prefix="$(find gazebo_worlds)/scripts/gdbrun" name="gazebo_gui" pkg="gazebo" type="gzclient" respawn="false" output="screen">
