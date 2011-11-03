@@ -24,20 +24,18 @@
  * Date: 24 Sept 2008
  * SVN: $Id$
  */
-#ifndef ROS_CAMERA_HH
-#define ROS_CAMERA_HH
+#ifndef GAZEBO_ROS_PROSILICA_CAMERA_HH
+#define GAZEBO_ROS_PROSILICA_CAMERA_HH
 
-#include <ros/ros.h>
-#define USE_CBQ
-#ifdef USE_CBQ
+// library for processing camera data for gazebo / ros conversions
+#include <gazebo_plugins/gazebo_ros_camera_utils.h>
+#include "plugins/CameraPlugin.hh"
+
 #include <ros/callback_queue.h>
-#endif
 #include "boost/thread/mutex.hpp"
 
 // image components
 #include "cv_bridge/CvBridge.h"
-#include "sensor_msgs/Image.h"
-#include "sensor_msgs/CameraInfo.h"
 // used by polled_camera
 #include "sensor_msgs/RegionOfInterest.h"
 
@@ -47,25 +45,10 @@
 #include <polled_camera/publication_server.h>
 #include <polled_camera/GetPolledImage.h>
 
-#ifdef SIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE
-#include <gazebo_plugins/GazeboRosCameraConfig.h>
-#include <dynamic_reconfigure/server.h>
-#endif
-
-// gazebo stuff
-#include "gazebo.h"
-#include "sdf/interface/Param.hh"
-#include "physics/physics.h"
-#include "transport/TransportTypes.hh"
-#include "msgs/MessageTypes.hh"
-#include "common/Time.hh"
-#include "sensors/SensorTypes.hh"
-#include "plugins/CameraPlugin.hh"
-
 namespace gazebo
 {
 
-class GazeboRosProsilica : public CameraPlugin
+class GazeboRosProsilica : public CameraPlugin, GazeboRosCameraUtils
 {
   /// \brief Constructor
   /// \param parent The parent entity, must be a Model or a Sensor
@@ -78,33 +61,15 @@ class GazeboRosProsilica : public CameraPlugin
   /// \param node XML config node
   public: void Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf);
 
-  /// \brief Init the controller
-  protected: virtual void InitChild();
-
-  /// \brief Update the controller
-  protected: virtual void UpdateChild();
-
   /// \brief does nothing for now
   private: static void mouse_cb(int event, int x, int y, int flags, void* param) { };
 
-  /// \brief Keep track of number of connctions
-  private: int imageConnectCount;
-  private: void ImageConnect();
-  private: void ImageDisconnect();
-  private: int infoConnectCount;
-  private: void InfoConnect();
-  private: void InfoDisconnect();
-
-  private: void PutCameraData();
-  private: void PublishCameraInfo();
-
   /// \brief A pointer to the parent camera sensor
   //private: MonoCameraSensor *myParent;
-    // Pointer to the model
-    private: physics::WorldPtr world;
-    /// \brief The parent sensor
-    private: sensors::SensorPtr parentSensor;
-    private: sensors::CameraSensorPtr parentCameraSensor;
+  // Pointer to the model
+  /// \brief The parent sensor
+  private: sensors::SensorPtr parentSensor;
+  private: sensors::CameraSensorPtr parentCameraSensor;
 
 
   /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
@@ -115,10 +80,7 @@ class GazeboRosProsilica : public CameraPlugin
 
   private: std::string mode_;
 
-  private: image_transport::ImageTransport* itnode_;
-  private: image_transport::Publisher image_pub_;
-  private: ros::Publisher camera_info_pub_;
-
+  private: std::string mode_param_name;
 /*
   /// \brief Service call to publish images, cam info
   private: bool camInfoService(prosilica_camera::CameraInfo::Request &req,
@@ -133,72 +95,22 @@ class GazeboRosProsilica : public CameraPlugin
 
   /// \brief ros message
   /// \brief construct raw stereo message
-  private: sensor_msgs::Image imageMsg;
   private: sensor_msgs::Image *roiImageMsg;
-  private: sensor_msgs::CameraInfo cameraInfoMsg;
   private: sensor_msgs::CameraInfo *roiCameraInfoMsg;
 
-  /// \brief for setting ROS name space
-  // private: ParamT<std::string> *robotNamespaceP;
-  private: std::string robotNamespace;
-
-  /// \brief ROS camera name
-  private: std::string cameraName;
-
   /// \brief ROS image topic name
-  private: std::string imageTopicName;
-  private: std::string cameraInfoTopicName;
   private: std::string pollServiceName;
-  private: double CxPrime;
-  private: double Cx;
-  private: double Cy;
-  private: double focal_length;
-  private: double hack_baseline;
-  private: double distortion_k1;
-  private: double distortion_k2;
-  private: double distortion_k3;
-  private: double distortion_t1;
-  private: double distortion_t2;
 
-  /// \brief ROS frame transform name to use in the image message header.
-  ///        This should typically match the link name the sensor is attached.
-  private: std::string frameName;
+  // subscribe to world stats
+  //private: transport::NodePtr node;
+  //private: transport::SubscriberPtr statsSub;
+  //private: common::Time simTime;
+  //public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
 
-  /// \brief A mutex to lock access to fields that are used in ROS message callbacks
-  private: boost::mutex lock;
-
-  /// \brief size of image buffer
-  private: int height, width, depth;
-  private: std::string type;
-  private: int skip;
-
-#ifdef SIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE
-  // Allow dynamic reconfiguration of camera params
-  dynamic_reconfigure::Server<gazebo_plugins::GazeboRosCameraConfig> *dyn_srv_;
-
-  void configCallback(gazebo_plugins::GazeboRosCameraConfig &config, uint32_t level);
-
-  // Name of camera
-  std::string dynamicReconfigureName;
-#endif
-
-#ifdef USE_CBQ
-  private: ros::CallbackQueue prosilica_queue_;
-  private: void ProsilicaQueueThread();
-  private: boost::thread prosilica_callback_queue_thread_;
-#else
-  private: void ProsilicaROSThread();
-  private: boost::thread ros_spinner_thread_;
-#endif
-
-    // Pointer to the update event connection
-    private: event::ConnectionPtr updateConnection;
-
-    // subscribe to world stats
-    //private: transport::NodePtr node;
-    //private: transport::SubscriberPtr statsSub;
-    //private: common::Time simTime;
-    //public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
+  /// \brief Update the controller
+  protected: virtual void OnNewFrame(const unsigned char *_image, 
+                 unsigned int _width, unsigned int _height, 
+                 unsigned int _depth, const std::string &_format);
 
 };
 
