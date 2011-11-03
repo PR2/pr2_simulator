@@ -86,13 +86,13 @@ GazeboRosProsilica::~GazeboRosProsilica()
 void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf)
 {
 
-  CameraPlugin::Load(_parent, _sdf);
+  DepthCameraPlugin::Load(_parent, _sdf);
   this->parentSensor_ = this->parentSensor;
   this->width_ = this->width;
   this->height_ = this->height;
   this->depth_ = this->depth;
   this->format_ = this->format;
-  this->camera_ = this->camera;
+  this->camera_ = this->depthCamera;
   GazeboRosCameraUtils::Load(_parent, _sdf);
 
   // camera mode for prosilica:
@@ -125,7 +125,7 @@ void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update the controller
-void GazeboRosProsilica::OnNewFrame(const unsigned char *_image, 
+void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image, 
     unsigned int _width, unsigned int _height, unsigned int _depth, 
     const std::string &_format)
 {
@@ -206,7 +206,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
   {
     {
       // Get a pointer to image data
-      src = this->parentCameraSensor->GetCamera()->GetImageData(0);
+      src = this->parentSensor->GetDepthCamera()->GetImageData(0);
 
       if (src)
       {

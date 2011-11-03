@@ -41,6 +41,7 @@ rosbuild_add_library(gazebo_ros_power_monitor src/gazebo_ros_power_monitor.cpp)
 rosbuild_link_boost(gazebo_ros_power_monitor thread)
 rosbuild_add_library(gazebo_ros_prosilica src/gazebo_ros_prosilica.cpp)
 rosbuild_link_boost(gazebo_ros_prosilica thread)
+target_link_libraries(gazebo_ros_prosilica gazebo_ros_camera_utils DepthCameraPlugin)
 
 exec_program("glxinfo" OUTPUT_VARIABLE glx_out RETURN_VALUE glx_val)
 if(${glx_val} EQUAL 0)

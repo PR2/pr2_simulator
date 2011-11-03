@@ -29,7 +29,7 @@
 
 // library for processing camera data for gazebo / ros conversions
 #include <gazebo_plugins/gazebo_ros_camera_utils.h>
-#include "plugins/CameraPlugin.hh"
+#include "plugins/DepthCameraPlugin.hh"
 
 #include <ros/callback_queue.h>
 #include "boost/thread/mutex.hpp"
@@ -48,7 +48,7 @@
 namespace gazebo
 {
 
-class GazeboRosProsilica : public CameraPlugin, GazeboRosCameraUtils
+class GazeboRosProsilica : public DepthCameraPlugin, GazeboRosCameraUtils
 {
   /// \brief Constructor
   /// \param parent The parent entity, must be a Model or a Sensor
@@ -63,17 +63,6 @@ class GazeboRosProsilica : public CameraPlugin, GazeboRosCameraUtils
 
   /// \brief does nothing for now
   private: static void mouse_cb(int event, int x, int y, int flags, void* param) { };
-
-  /// \brief A pointer to the parent camera sensor
-  //private: MonoCameraSensor *myParent;
-  // Pointer to the model
-  /// \brief The parent sensor
-  private: sensors::SensorPtr parentSensor;
-  private: sensors::CameraSensorPtr parentCameraSensor;
-
-
-  /// \brief A pointer to the ROS node.  A node will be instantiated if it does not exist.
-  private: ros::NodeHandle* rosnode_;
 
   /// \brief image_transport
   private: polled_camera::PublicationServer poll_srv_;      // Handles requests in polled mode
@@ -107,8 +96,14 @@ class GazeboRosProsilica : public CameraPlugin, GazeboRosCameraUtils
   //private: common::Time simTime;
   //public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
 
+  /// \brief Update the controller does nothing for depth
+  protected: virtual void OnNewDepthFrame(const float *_image, 
+                 unsigned int _width, unsigned int _height, 
+                 unsigned int _depth, const std::string &_format) {};
+
+
   /// \brief Update the controller
-  protected: virtual void OnNewFrame(const unsigned char *_image, 
+  protected: virtual void OnNewImageFrame(const unsigned char *_image, 
                  unsigned int _width, unsigned int _height, 
                  unsigned int _depth, const std::string &_format);
 
