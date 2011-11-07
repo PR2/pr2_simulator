@@ -9,12 +9,13 @@
   <license>BSD</license>  
   <review status="Doc reviewed" notes="2010/01/21"/>
   <url>http://ros.org/wiki/pr2_simulator</url>
+  <depend stack="bullet" /> <!-- bullet -->
   <depend stack="common_msgs" /> <!-- nav_msgs, geometry_msgs, sensor_msgs, diagnostic_msgs -->
   <depend stack="diagnostics" /> <!-- diagnostic_updater, diagnostic_aggregator -->
   <depend stack="driver_common" /> <!-- dynamic_reconfigure -->
-  <depend stack="geometry" /> <!-- bullet, angles -->
+  <depend stack="geometry" /> <!-- angles -->
   <depend stack="geometry_experimental" /> <!-- tf2_ros -->
-  <depend stack="image_common" /> <!-- image_transport, polled_camera -->
+  <depend stack="image_common" /> <!-- polled_camera, image_transport -->
   <depend stack="image_pipeline" /> <!-- stereo_image_proc, image_proc -->
   <depend stack="navigation" /> <!-- robot_pose_ekf -->
   <depend stack="physics_ode" /> <!-- opende -->
@@ -24,7 +25,7 @@
   <depend stack="pr2_mechanism" /> <!-- pr2_hardware_interface, pr2_mechanism_model, pr2_controller_manager -->
   <depend stack="robot_model" /> <!-- convex_decomposition, robot_state_publisher, urdf, ivcon -->
   <depend stack="ros" />
-  <depend stack="ros_comm" /> <!-- std_msgs, rospy, roscpp -->
+  <depend stack="ros_comm" /> <!-- std_msgs, topic_tools, rospy, roscpp -->
   <depend stack="simulator_gazebo" /> <!-- gazebo_tools, gazebo, gazebo_plugins, gazebo_worlds -->
   <depend stack="vision_opencv" /> <!-- opencv2, cv_bridge -->
   <depend stack="visualization_common" /> <!-- ogre_tools -->
