@@ -190,6 +190,8 @@ void GazeboRosControllerManager::InitChild()
 
 void GazeboRosControllerManager::UpdateChild()
 {
+  if (gazebo::Simulator::Instance()->IsPaused()) return;
+
   if (getenv("CHECK_SPEEDUP"))
   {
 #if GAZEBO_MAJOR_VERSION == 0 && GAZEBO_MINOR_VERSION >= 10
