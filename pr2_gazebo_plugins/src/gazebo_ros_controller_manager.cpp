@@ -55,12 +55,6 @@ namespace gazebo {
 
 GazeboRosControllerManager::GazeboRosControllerManager()
 {
-  //Param::Begin(&this->parameters);
-  //this->robotParamP = new ParamT<std::string>("robotParam", "robot_description", 0);
-  //this->robotNamespaceP = new ParamT<std::string>("robotNamespace", "/", 0);
-  //this->setModelsJointsStatesServiceNameP = new ParamT<std::string>("setModelsJointsStatesServiceName","set_models_joints_states", 0);
-  //Param::End();
-
 }
 
 /// \brief callback for setting models joints states
@@ -91,8 +85,6 @@ GazeboRosControllerManager::~GazeboRosControllerManager()
 
 
 
-  //delete this->robotParamP;
-  //delete this->robotNamespaceP;
   delete this->cm_; 
   delete this->rosnode_;
 
@@ -146,10 +138,15 @@ void GazeboRosControllerManager::Load(physics::ModelPtr &_parent, sdf::ElementPt
 
 
   // get parameter name
-  //this->robotParamP->Load(node);
-  this->robotParam = "robot_description"; //this->robotParamP->GetValue();
-  //this->robotNamespaceP->Load(node);
-  this->robotNamespace = ""; //this->robotNamespaceP->GetValue();
+  this->robotNamespace = "";
+  if (_sdf->HasElement("robotNamespace"))
+    this->robotNamespace = _sdf->GetElement("robotNamespace")->GetValueString();
+
+  this->robotParam = "robot_description";
+  if (_sdf->HasElement("robotParam"))
+    this->robotParam = _sdf->GetElement("robotParam")->GetValueString();
+
+  this->robotParam = this->robotNamespace+"/" + this->robotParam;
 
   if (!ros::isInitialized())
   {
