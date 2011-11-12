@@ -234,17 +234,8 @@ void GazeboRosControllerManager::UpdateChild()
     if (!this->joints_[i])
       continue;
 
-    double damping_coef;
-    if (this->cm_->state_->joint_states_[i].joint_->dynamics)
-      damping_coef = this->cm_->state_->joint_states_[i].joint_->dynamics->damping;
-    else
-      damping_coef = 0;
-
     this->fake_state_->joint_states_[i].measured_effort_ = this->fake_state_->joint_states_[i].commanded_effort_;
 
-    //if ((boost::shared_static_cast<gazebo::physics::BasePtr>(this->joints_[i]))->HasType(gazebo::physics::Base::HINGE_JOINT))
-    //if ((boost::shared_static_cast<gazebo::physics::BasePtr const>(this->joints_[i]))->HasType(gazebo::physics::Base::HINGE_JOINT))
-    //if (((gazebo::physics::BasePtr const)(this->joints_[i]))->HasType(gazebo::physics::Base::HINGE_JOINT))
     if (this->joints_[i]->HasType(gazebo::physics::Base::HINGE_JOINT))
     {
       gazebo::physics::JointPtr hj = this->joints_[i];
