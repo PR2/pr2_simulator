@@ -64,7 +64,6 @@ public:
 
 protected:
   // Inherited from gazebo::Controller
-  virtual void InitChild();
   virtual void UpdateChild();
 
 private:

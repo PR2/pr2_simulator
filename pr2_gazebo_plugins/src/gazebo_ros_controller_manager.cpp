@@ -157,7 +157,14 @@ void GazeboRosControllerManager::Load(physics::ModelPtr &_parent, sdf::ElementPt
   this->rosnode_ = new ros::NodeHandle(this->robotNamespace);
   ROS_INFO("starting gazebo_ros_controller_manager plugin in ns: %s",this->robotNamespace.c_str());
 
+  // pr2_etherCAT calls ros::spin(), we'll thread out one spinner here to mimic that
+  this->ros_spinner_thread_ = boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerROSThread,this ) );
+
+
+  // load a controller manager
   this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);
+  this->hw_.current_time_ = ros::Time(this->world->GetSimTime().Double());
+  if (this->hw_.current_time_ < ros::Time(0.001)) this->hw_.current_time_ == ros::Time(0.001); // hardcoded to minimum of 1ms on start up
 
   this->rosnode_->param("gazebo/start_robot_calibrated",this->fake_calibration_,true);
 
@@ -192,21 +199,13 @@ void GazeboRosControllerManager::Load(physics::ModelPtr &_parent, sdf::ElementPt
     }
   }
 
-  this->hw_.current_time_ = ros::Time(this->world->GetSimTime().Double());
-}
-
-void GazeboRosControllerManager::InitChild()
-{
-  this->hw_.current_time_ = ros::Time(this->world->GetSimTime().Double());
 #ifdef USE_CBQ
   // start custom queue for controller manager
   this->controller_manager_callback_queue_thread_ = boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerQueueThread,this ) );
 #endif
 
-  // pr2_etherCAT calls ros::spin(), we'll thread out one spinner here to mimic that
-  this->ros_spinner_thread_ = boost::thread( boost::bind( &GazeboRosControllerManager::ControllerManagerROSThread,this ) );
-
 }
+
 
 void GazeboRosControllerManager::UpdateChild()
 {
@@ -330,7 +329,7 @@ void GazeboRosControllerManager::UpdateChild()
       double current_velocity = sj->GetVelocity(0);
       double damping_force = damping_coef * current_velocity;
       double effort_command = effort-damping_force;
-      //(this->joints_[i])->SetForce(0,effort_command);
+      sj->SetForce(0,effort_command);
       //if (this->joints_[i]->GetName() == "torso_lift_joint")
       //  ROS_ERROR("gazebo [%s] command [%f] damping [%f]",this->joints_[i]->GetName().c_str(), effort, damping_force);
     }
