@@ -32,6 +32,7 @@
           pkg="pr2_gripper_action" type="pr2_gripper_action">
       <!-- needed for stall detection in simulation with joint "jitter" -->
       <param name="stall_velocity_threshold" value="0.01" type="double"/>
+      <param name="stall_timeout" value="1.0" type="double"/>
     </node>
   </group>
   <group ns="l_gripper_controller">
@@ -39,6 +40,7 @@
           pkg="pr2_gripper_action" type="pr2_gripper_action">
       <!-- needed for stall detection in simulation with joint "jitter" -->
       <param name="stall_velocity_threshold" value="0.01" type="double"/>
+      <param name="stall_timeout" value="1.0" type="double"/>
     </node>
   </group>
   <group ns="head_traj_controller">
