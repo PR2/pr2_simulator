@@ -1,0 +1,16 @@
+<launch>
+  <include file="$(find pr2_gazebo)/test/collisions/slide_world.launch" />
+
+
+  <!-- send pr2 urdf to param server -->
+  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo with a high starting position for the slide entry -->
+  <node name="spawn_pr2_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -urdf -param robot_description -y 6 -z 17 -P -1.3090 -Y 1.5708 -model pr2" respawn="false" output="screen" />
+
+  <!-- default bringup script -->
+  <include file="$(find pr2_gazebo)/pr2_bringup.launch" />
+
+  <!-- test -->
+  <test test-name="test_pr2_collisions_slide" pkg="pr2_gazebo" type="test_slide.py" time-limit="120" />
+</launch>
