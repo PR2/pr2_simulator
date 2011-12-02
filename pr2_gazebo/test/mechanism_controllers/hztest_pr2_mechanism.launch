@@ -46,6 +46,7 @@
     <param name="hzerror" value="10.0" /> <!-- for some ros reason, this is around 80Hz on my desktop! -->
     <param name="test_duration" value="10.0" />
     <param name="check_intervals" value="false" />
+    <param name="initial_cycles" value="1000" />
   </test>
 
 </launch>
