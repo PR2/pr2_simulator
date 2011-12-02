@@ -1,0 +1,27 @@
+<launch>
+  <include file="$(find pr2_machine)/sim.machine" />
+
+  <include file="$(find gazebo_worlds)/launch/camera_world.launch" />
+
+
+   <!-- send pr2 urdf to param server -->
+  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_pr2" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -x -3 -model pr2" respawn="false" output="screen" />
+ 
+  <!-- default bringup script -->
+  <include file="$(find pr2_gazebo)/pr2_bringup.launch" />
+
+  <!-- Default Controllers -->
+  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
+
+  <!-- tuck arms -->
+  <node name="tuckarms" pkg="pr2_tuckarm" type="tuck_arms.py" args="b" respawn="true"/>
+
+  <!-- send head a pointing command, this is done in test_camera.py, so commented out here -->
+  <!--node name="point_head"  pkg="pr2_mechanism_controllers" type="pointhead.py" args="10 0 2.5 /base_link" output="screen"/-->
+
+  <!-- test -->
+  <test test-name="test_pr2_sensors_gazebo_test_camera" pkg="pr2_gazebo" type="test_camera.py" time-limit="110" />
+</launch>

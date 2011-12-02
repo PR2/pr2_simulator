@@ -1,0 +1,10 @@
+<launch>
+  <include file="$(find pr2_machine)/sim.machine" />
+
+  <include file="$(find gazebo_worlds)/launch/scan_world.launch" />
+
+  <include file="$(find pr2_gazebo)/pr2.launch" />
+
+  <test test-name="test_pr2_sensors_gazebo_test_scan_0" pkg="pr2_gazebo" type="test_scan.py" time-limit="50"/>
+
+</launch>

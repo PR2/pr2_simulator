@@ -9,3 +9,12 @@ rosbuild_add_rostest_labeled(gazebo test/mechanism_controllers/test_arm.launch)
 rosbuild_add_rostest_labeled(gazebo test/mechanism_controllers/hztest_pr2_mechanism.launch)
 rosbuild_add_rostest_labeled(gazebo test/mechanism_controllers/hztest_rostime.launch)
 rosbuild_add_rostest_labeled(gazebo test/mechanism_controllers/hztest_pr2_odom.launch)
+
+rosbuild_add_rostest_labeled(gazebo test_scan.launch)
+rosbuild_add_rostest_labeled(gazebo test_camera.launch)
+rosbuild_add_rostest_labeled(gazebo hztest_pr2_scan.launch)
+rosbuild_add_rostest_labeled(gazebo hztest_pr2_image.launch)
+rosbuild_add_rostest_labeled(gazebo hztest_pr2_stereo.launch)
+
+
+
