@@ -70,19 +70,20 @@ class MyHzTest(unittest.TestCase):
         #some default values
         self.topic_name = '';
         self.hz_target = 10;
+        self.initial_cycles = 1;
         self.hz_tol = 1;
         self.test_duration = 0;
 
     def Input(self, msg):
         self.count += 1;
 
-        if self.count < 10000:
-          # will start after 10000 messages
+        if self.count < self.initial_cycles:
+          # will start after self.initial_cycles messages
           return;
 
         if not self.started:
           self.start_time = rospy.get_rostime().to_sec()
-          print " got first 10000 messages at: ",self.start_time, " sec"
+          print " got first ",self.initial_cycles," messages at: ",self.start_time, " sec"
           self.started = True
 
         self.end_time = rospy.get_rostime().to_sec()
@@ -91,7 +92,7 @@ class MyHzTest(unittest.TestCase):
           self.finished = True
 
         if (self.end_time - self.start_time) > 0.0:
-          cur_hz = (self.count - 10000) / (self.end_time - self.start_time)
+          cur_hz = (self.count - self.initial_cycles) / (self.end_time - self.start_time)
         else:
           cur_hz = 0
         print "current rate: ", cur_hz
@@ -110,6 +111,7 @@ class MyHzTest(unittest.TestCase):
 
         self.topic_name = rospy.get_param('~topic','mechanism_state');
         self.hz_target = rospy.get_param('~hz',100);
+        self.initial_cycles = rospy.get_param('~initial_cycles',1);
         self.hz_tol = rospy.get_param('~hzerror',1);
         self.test_duration = rospy.get_param('~test_duration',1);
 
@@ -123,7 +125,7 @@ class MyHzTest(unittest.TestCase):
             if not self.started:
                 print " waiting for first message realtime:",time.time()," simtime:",rospy.get_rostime().to_sec()
             else:
-                print " realtime:",time.time()," simtime:",rospy.get_rostime().to_sec()," time elapsed:",(self.end_time - self.start_time)," msg count:",self.count-10000
+                print " realtime:",time.time()," simtime:",rospy.get_rostime().to_sec()," time elapsed:",(self.end_time - self.start_time)," msg count:",self.count-self.initial_cycles
             time.sleep(0.5)
 
         self.assert_(self.success)
