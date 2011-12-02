@@ -119,7 +119,7 @@
   <!-- The trimesh cup -->
   <model:physical name="cup1_model">
     <xyz> 0.78  -1.0    0.0</xyz>
-    <rpy> 90.0   0.0    90.0</rpy>
+    <rpy>-90.0   0.0    90.0</rpy>
     <static>true</static>
     <body:trimesh name="cup1_body">
       <static>true</static>
@@ -139,11 +139,11 @@
         <kp>1000000000.0</kp>
         <kd>1.0</kd>
         <scale>0.2 1.0 0.2</scale>
-        <mesh>cup.mesh</mesh>
+        <mesh>cup.stl</mesh>
         <visual>
           <scale>0.2 1.0 0.2</scale>
           <material>Gazebo/Red</material>
-          <mesh>cup.mesh</mesh>
+          <mesh>cup.stl</mesh>
         </visual>
       </geom:trimesh>
     </body:trimesh>
