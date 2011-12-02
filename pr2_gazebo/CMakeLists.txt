@@ -16,5 +16,6 @@ rosbuild_add_rostest_labeled(gazebo test/sensors/hztest_pr2_scan.launch)
 rosbuild_add_rostest_labeled(gazebo test/sensors/hztest_pr2_image.launch)
 rosbuild_add_rostest_labeled(gazebo test/sensors/hztest_pr2_stereo.launch)
 
+rosbuild_add_pyunit(test/urdf2model/test_urdf2model_parser.py)
 
 

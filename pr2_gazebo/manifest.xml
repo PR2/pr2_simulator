@@ -40,6 +40,9 @@
   <depend package="std_msgs"/>
   <depend package="fingertip_pressure"/>
 
+  <!-- added for urdf2model test -->
+  <depend package="xacro"/>
+
   <platform os="ubuntu" version="9.04"/>
   <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>
