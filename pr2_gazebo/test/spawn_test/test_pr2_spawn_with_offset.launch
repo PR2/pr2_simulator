@@ -1,0 +1,15 @@
+<launch>
+
+  <!-- start gazebo with an empty plane -->
+  <param name="/use_sim_time" value="true" />
+
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="$(find pr2_gazebo)/test/spawn_test/origin_block.world" respawn="false" output="screen"/>
+
+  <!-- start pr2 robot -->
+  <include file="$(find pr2_gazebo)/test/spawn_test/pr2_spawn_with_offset.launch"/>
+
+  <!-- test spawn -->
+  <test test-name="test_pr2_offset_block_spawn" pkg="pr2_gazebo" type="check_pose.py" time-limit="20" />
+
+</launch>
+

@@ -1,0 +1,9 @@
+<launch>
+  
+  <!-- startup pr2 with some arbitrary offset -->
+  <include file="$(find pr2_gazebo)/pr2.launch">
+    <env name="ROBOT_INITIAL_POSE" value="-x 2 -y 2"/>
+  </include>
+
+</launch>
+

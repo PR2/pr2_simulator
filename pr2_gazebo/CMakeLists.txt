@@ -18,4 +18,4 @@ rosbuild_add_rostest_labeled(gazebo test/sensors/hztest_pr2_stereo.launch)
 
 rosbuild_add_pyunit(test/urdf2model/test_urdf2model_parser.py)
 
-
+rosbuild_add_rostest_labeled(gazebo test/spawn_test/test_pr2_spawn_with_offset.launch)
