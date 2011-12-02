@@ -5,7 +5,7 @@
 
   <node name="empty_world_server" pkg="gazebo" type="gazebo" args="$(find gazebo)/worlds/default.world" respawn="false" output="screen"/>
 <!--
-  <!--node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/-->
+  <node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/>
 -->
 
 </launch>
