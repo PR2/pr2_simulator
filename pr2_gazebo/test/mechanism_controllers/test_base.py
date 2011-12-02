@@ -11,23 +11,55 @@ class E:
         self.y = y
         self.z = z
     def shortest_euler_distance(self, e_from, e_to):
-       # takes two sets of euler angles, finds minimum transform between the two, FIXME: return some hacked norm for now
-       # start from the euler-from, and apply reverse euler-to transform, see how far we are from 0,0,0
-       r0 = e_from.x
-       p0 = e_from.y
-       y0 = e_from.z
+        # takes two sets of euler angles, finds minimum transform between the two, FIXME: return some hacked norm for now
+        # start from the euler-from, and apply reverse euler-to transform, see how far we are from 0,0,0
 
-       r1 =  math.cos(e_to.z)*r0       + math.sin(e_to.z)*p0
-       p1 = -math.sin(e_to.z)*r0       + math.cos(e_to.z)*p0
-       y1 =  y0
+        # convert to rotation matrix
+        phi = e_from.x / 2.0
+        the = e_from.y / 2.0
+        psi = e_from.z / 2.0
+        w1 = math.cos(phi) * math.cos(the) * math.cos(psi) + math.sin(phi) * math.sin(the) * math.sin(psi)
+        x1 = math.sin(phi) * math.cos(the) * math.cos(psi) - math.cos(phi) * math.sin(the) * math.sin(psi)
+        y1 = math.cos(phi) * math.sin(the) * math.cos(psi) + math.sin(phi) * math.cos(the) * math.sin(psi)
+        z1 = math.cos(phi) * math.cos(the) * math.sin(psi) - math.sin(phi) * math.sin(the) * math.cos(psi)
+  
+        # convert to rotation matrix inverse
+        phi = e_to.x / 2.0
+        the = e_to.y / 2.0
+        psi = e_to.z / 2.0
+        w2 = math.cos(phi) * math.cos(the) * math.cos(psi) + math.sin(phi) * math.sin(the) * math.sin(psi)
+        x2 = -(math.sin(phi) * math.cos(the) * math.cos(psi) - math.cos(phi) * math.sin(the) * math.sin(psi))
+        y2 = -(math.cos(phi) * math.sin(the) * math.cos(psi) + math.sin(phi) * math.cos(the) * math.sin(psi))
+        z2 = -(math.cos(phi) * math.cos(the) * math.sin(psi) - math.sin(phi) * math.sin(the) * math.cos(psi))
+  
+        # add the two rotations
+        w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+        x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+        y = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2
+        z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2
+  
+        # recover euler angles
+        squ = w * w
+        sqx = x * x
+        sqy = y * y
+        sqz = z * z
+  
+        # Roll
+        self.x = math.atan2(2.0 * (y*z + w*x), squ - sqx - sqy + sqz)
+  
+        # Pitch
+        sarg = -2.0 * (x*z - w * y)
+        if sarg <= -1.0:
+            self.y = -0.5*math.pi
+        else:
+            if sarg >= 1.0:
+                self.y = 0.5*math.pi
+            else:
+                self.y = math.asin(sarg)
+  
+        # Yaw
+        self.z = math.atan2(2.0 * (x*y + w*z), squ + sqx - sqy - sqz)
 
-       r2 =  math.cos(e_to.y)*r1     - math.sin(e_to.y)*y1
-       p2 =  p1
-       y2 =  math.sin(e_to.y)*r1     + math.cos(e_to.y)*y1
-
-       self.x =  r2
-       self.y =  math.cos(e_to.x)*p1     + math.sin(e_to.x)*y1
-       self.z = -math.sin(e_to.x)*p1     + math.cos(e_to.x)*y1
 
 class Q:
     def __init__(self,x,y,z,u):
@@ -102,7 +134,7 @@ class BaseTest(unittest.TestCase):
         return self.normalize_angle(angle_diff)
 
     def printBaseOdom(self, odom):
-        orientation = odom.pose.orientation
+        orientation = odom.pose.pose.orientation
         q = Q(orientation.x, orientation.y, orientation.z, orientation.w)
         q.normalize()
         print "odom received"
@@ -130,7 +162,7 @@ class BaseTest(unittest.TestCase):
         print "                   " + "z: " + str(p3d.twist.twist.angular.vz)
 
     def odomInput(self, odom):
-        #self.printBaseOdom(odom)
+        self.printBaseOdom(odom)
         orientation = odom.pose.pose.orientation
         q = Q(orientation.x, orientation.y, orientation.z, orientation.w)
         q.normalize()

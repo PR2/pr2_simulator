@@ -77,7 +77,8 @@ class XYW_GT(BaseTest):
             print " error   " +      " x:" + str(self.odom_x - self.p3d_x) \
                               +      " y:" + str(self.odom_y - self.p3d_y) \
                               +      " e:" + str(error.x) + "," + str(error.y) + "," + str(error.z) \
-                              + " t_odom:" + str(self.odom_e.z) + " t_p3d:" + str(self.p3d_e.z)
+                              + " t_odom:" + str(self.odom_e.x) + "," + str(self.odom_e.y) + "," + str(self.odom_e.z) \
+                              + " t_p3d:" + str(self.p3d_e.x) + "," + str(self.p3d_e.y) + "," + str(self.p3d_e.z)
 
         # check total error
         total_error = abs(self.odom_x - self.p3d_x) + abs(self.odom_y - self.p3d_y) + abs(error.x) + abs(error.y) + abs(error.z)
