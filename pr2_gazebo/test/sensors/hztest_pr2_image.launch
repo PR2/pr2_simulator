@@ -10,6 +10,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />    
+    <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of 'right narrow_stereo camera image publish rate' topic -->
@@ -19,6 +20,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />    
+    <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of 'left wide_stereo camera image publish rate' topic -->
@@ -28,6 +30,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />    
+    <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of 'right wide_stereo camera image publish rate' topic -->
@@ -37,6 +40,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />    
+    <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of left forearm camera 'image_raw' topic. -->
@@ -46,6 +50,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />
+    <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of right forearm camera 'image_raw' topic. -->
@@ -55,6 +60,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />
+    <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of left forearm camera 'camera_info' topic. -->
@@ -64,6 +70,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />
+    <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of right forearm camera 'camera_info' topic. -->
@@ -73,6 +80,7 @@
     <param name="hzerror" value="1.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />
+    <param name="initial_cycles" value="300" />
   </test>
 
 </launch>
