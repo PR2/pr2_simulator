@@ -1,10 +1,6 @@
 <launch>
-  <include file="$(find pr2_machine)/sim.machine" />
-  <!-- load empty world -->
-  <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
-
   <!-- Bring up the node we want to test. -->
-  <include file="$(find pr2_gazebo)/pr2.launch"/>
+  <include file="$(find pr2_gazebo)/pr2_empty_world.launch"/>
 
   <!-- Run hztest -->
   <!-- Test for publication of 'base_pose_ground_truth' topic. -->

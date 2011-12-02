@@ -1,7 +1,7 @@
 <launch>
   <include file="$(find pr2_machine)/sim.machine" />
 
-  <include file="$(find gazebo_worlds)/launch/scan_world.launch" />
+  <include file="$(find pr2_gazebo)/test/senosrs/scan_world.launch" />
 
   <include file="$(find pr2_gazebo)/pr2.launch" />
 

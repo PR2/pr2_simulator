@@ -1,10 +1,9 @@
 <launch>
   <include file="$(find pr2_machine)/sim.machine" />
 
-  <include file="$(find gazebo_worlds)/launch/camera_world.launch" />
+  <include file="$(find pr2_gazebo)/test/sensors/camera_world.launch" />
 
-
-   <!-- send pr2 urdf to param server -->
+  <!-- send pr2 urdf to param server -->
   <include file="$(find pr2_description)/robots/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->

@@ -1,9 +1,6 @@
 <launch>
-  <!-- load empty world -->
-  <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
-
   <!-- Bring up the node we want to test. -->
-  <include file="$(find pr2_gazebo)/pr2.launch"/>
+  <include file="$(find pr2_gazebo)/pr2_empty_world.launch"/>
 
   <!-- Test for publication of 'odom' topic. -->
   <test test-name="hztest_test_odom" pkg="pr2_gazebo" type="hztest" time-limit="500" name="odom_test">
