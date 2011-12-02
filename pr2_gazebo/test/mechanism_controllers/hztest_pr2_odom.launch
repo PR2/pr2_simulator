@@ -1,0 +1,18 @@
+<launch>
+  <!-- load empty world -->
+  <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
+
+  <!-- Bring up the node we want to test. -->
+  <include file="$(find pr2_gazebo)/pr2.launch"/>
+
+  <!-- Test for publication of 'odom' topic. -->
+  <test test-name="hztest_test_odom" pkg="pr2_gazebo" type="hztest" time-limit="500" name="odom_test">
+    <!-- Note how we use a different parameter namespace and node name
+    for this test (odom_test vs. scan_test). -->
+    <param name="topic" value="/base_odometry/odom" />
+    <param name="hz" value="100.0" />
+    <param name="hzerror" value="20.0" /> <!-- for whatever ros reason, this is 90Hz on my desktop! -->
+    <param name="test_duration" value="10.0" />
+    <param name="check_intervals" value="false" />
+  </test>
+</launch>

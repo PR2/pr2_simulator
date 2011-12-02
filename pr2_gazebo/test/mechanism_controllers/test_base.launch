@@ -1,0 +1,17 @@
+<launch>
+
+  <include file="$(find pr2_machine)/sim.machine" />
+
+  <!-- load empty world -->
+  <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
+
+  <!-- Bring up the node we want to test. -->
+  <include file="$(find pr2_gazebo)/pr2.launch"/>
+
+  <test test-name="test_pr2_mechanism_gazebo_test_base_vw1"      pkg="pr2_gazebo" type="test_base_vw_gt.py" />
+  <test test-name="test_pr2_mechanism_gazebo_test_base_odomxyw1" pkg="pr2_gazebo" type="test_base_odomxyw_gt.py" />
+  <test test-name="test_pr2_mechanism_gazebo_test_base_odomxy1"  pkg="pr2_gazebo" type="test_base_odomxy_gt.py" />
+  <test test-name="test_pr2_mechanism_gazebo_test_base_odomw1"   pkg="pr2_gazebo" type="test_base_odomw_gt.py" />
+  <test test-name="test_pr2_mechanism_gazebo_test_base_odomx1"   pkg="pr2_gazebo" type="test_base_odomx_gt.py" />
+  <test test-name="test_pr2_mechanism_gazebo_test_base_odomy1"   pkg="pr2_gazebo" type="test_base_odomy_gt.py" />
+</launch>

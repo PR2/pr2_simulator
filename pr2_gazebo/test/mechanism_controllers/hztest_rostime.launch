@@ -1,0 +1,19 @@
+<launch>
+  <include file="$(find pr2_machine)/sim.machine" />
+  <!-- load empty world -->
+  <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
+
+  <!-- Bring up the node we want to test. -->
+  <include file="$(find pr2_gazebo)/pr2.launch"/>
+
+  <!-- Test for publication of 'odom' topic. -->
+  <test test-name="hztest_test_rostime" pkg="pr2_gazebo" type="hztest" time-limit="500" name="rostime_test">
+    <!-- Note how we use a different parameter namespace and node name
+    for this test (odom_test vs. scan_test). -->
+    <param name="topic" value="/clock" />
+    <param name="hz" value="1000.0" />
+    <param name="hzerror" value="800.0" /> <!-- why is this not exactly 1000Hz on test machine? -->
+    <param name="test_duration" value="20.0" />
+    <param name="check_intervals" value="false" />
+  </test>
+</launch>
