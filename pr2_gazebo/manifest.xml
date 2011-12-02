@@ -10,7 +10,7 @@
   <url>http://ros.org/wiki/pr2_gazebo</url>
   <depend package="pr2_gazebo_plugins"/>
   <depend package="gazebo_plugins"/>
-  <depend package="gazebo_tools"/>
+  <depend package="gazebo"/>
   <depend package="pr2_ogre" />
   <depend package="gazebo_worlds"/>
   <depend package="pr2_description"/>
@@ -31,6 +31,8 @@
   <depend package="tf2_ros"/>
   <depend package="topic_tools"/>
 
+  <depend package="rostest"/>
+
   <!-- added for fingertip_pressure simulation -->
   <depend package="pr2_msgs"/>
   <depend package="geometry_msgs"/>
@@ -41,4 +43,8 @@
   <platform os="ubuntu" version="9.04"/>
   <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>
+
+  <export>
+    <gazebo gazebo_media_path="${prefix}/test" />
+  </export>
 </package>

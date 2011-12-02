@@ -3,7 +3,7 @@
   <!-- start gazebo with an empty plane -->
   <param name="/use_sim_time" value="true" />
 
-  <node name="empty_world_server" pkg="gazebo" type="debug" respawn="false" output="screen"/>
+  <node name="empty_world_server" pkg="gazebo" type="gazebo" args="$(find gazebo)/worlds/default.world" respawn="false" output="screen"/>
 
   <!--node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/-->
 
