@@ -76,9 +76,13 @@ class MyHzTest(unittest.TestCase):
     def Input(self, msg):
         self.count += 1;
 
+        if self.count < 10000:
+          # will start after 10000 messages
+          return;
+
         if not self.started:
           self.start_time = rospy.get_rostime().to_sec()
-          print " got first message at: ",self.start_time, " sec"
+          print " got first 10000 messages at: ",self.start_time, " sec"
           self.started = True
 
         self.end_time = rospy.get_rostime().to_sec()
@@ -87,9 +91,10 @@ class MyHzTest(unittest.TestCase):
           self.finished = True
 
         if (self.end_time - self.start_time) > 0.0:
-          cur_hz = self.count / (self.end_time - self.start_time)
+          cur_hz = (self.count - 10000) / (self.end_time - self.start_time)
         else:
           cur_hz = 0
+        print "current rate: ", cur_hz
 
         if abs(cur_hz - self.hz_target) < self.hz_tol:
           self.success = True
@@ -110,13 +115,15 @@ class MyHzTest(unittest.TestCase):
 
         rospy.Subscriber(self.topic_name, rospy.AnyMsg, self.Input)
 
+        print "topic name ",self.topic_name
+
         timeout_t = time.time() + self.test_duration + TEST_TIMEOUT
         while not rospy.is_shutdown() and not self.success and not self.finished and time.time() < timeout_t:
             # wait for first message
             if not self.started:
                 print " waiting for first message realtime:",time.time()," simtime:",rospy.get_rostime().to_sec()
             else:
-                print " realtime:",time.time()," simtime:",rospy.get_rostime().to_sec()," time elapsed:",(self.end_time - self.start_time)," msg count:",self.count
+                print " realtime:",time.time()," simtime:",rospy.get_rostime().to_sec()," time elapsed:",(self.end_time - self.start_time)," msg count:",self.count-10000
             time.sleep(0.5)
 
         self.assert_(self.success)
