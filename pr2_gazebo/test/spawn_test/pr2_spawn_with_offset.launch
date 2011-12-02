@@ -1,9 +1,23 @@
 <launch>
   
-  <!-- startup pr2 with some arbitrary offset -->
+  <!-- startup pr2 with some arbitrary offset (but this does not work as env tag only passes through one layer of include
   <include file="$(find pr2_gazebo)/pr2.launch">
     <env name="ROBOT_INITIAL_POSE" value="-x 2 -y 2"/>
   </include>
+  -->
+
+  <!-- send pr2 urdf to param server -->
+  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_pr2_model" pkg="gazebo" type="spawn_model" args="-x 2 -y 2 -unpause -urdf -param robot_description -model pr2" respawn="false" output="screen" />
+
+
+  <!-- default bringup script -->
+  <include file="$(find pr2_gazebo)/pr2_bringup.launch" />
+
+  <!-- Load and Start Default Controllers -->
+  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
 
 </launch>
 
