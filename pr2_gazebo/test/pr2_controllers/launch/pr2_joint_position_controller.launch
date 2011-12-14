@@ -1,0 +1,26 @@
+<launch>
+  <!-- load controller configuration yaml files -->
+  <rosparam command="load" file="$(find pr2_controller_configuration)/pr2_joint_position_controllers.yaml" />
+
+  <!-- stop some default controllers -->
+  <node name="stop_default_controllers_spawner"
+        pkg="pr2_controller_manager" type="pr2_controller_manager" output="screen"
+        args="stop laser_tilt_controller r_arm_controller l_arm_controller" />
+
+  <!-- Controllers that come up started -->
+  <node name="joint_position_controllers_spawner"
+        pkg="pr2_controller_manager" type="spawner" output="screen"
+        args="r_shoulder_pan_position_controller r_shoulder_lift_position_controller r_upper_arm_roll_position_controller r_elbow_flex_position_controller r_forearm_roll_position_controller r_wrist_flex_position_controller r_wrist_roll_position_controller l_shoulder_pan_position_controller l_shoulder_lift_position_controller l_upper_arm_roll_position_controller l_elbow_flex_position_controller l_forearm_roll_position_controller l_wrist_flex_position_controller l_wrist_roll_position_controller" />
+
+  <node name="joint_position_controllers_starter"
+        pkg="pr2_controller_manager" type="pr2_controller_manager" output="screen"
+        args="start r_shoulder_pan_position_controller r_shoulder_lift_position_controller r_upper_arm_roll_position_controller r_elbow_flex_position_controller r_forearm_roll_position_controller r_wrist_flex_position_controller r_wrist_roll_position_controller l_shoulder_pan_position_controller l_shoulder_lift_position_controller l_upper_arm_roll_position_controller l_elbow_flex_position_controller l_forearm_roll_position_controller l_wrist_flex_position_controller l_wrist_roll_position_controller" />
+
+  <node name="plot_shoulder_pan" type="rxplot" pkg="rxtools" args="-p 30 '/r_shoulder_pan_position_controller/state/process_value' '/r_shoulder_pan_position_controller/state/process_value_dot' '/r_shoulder_pan_position_controller/state/command' 'joint_states/position[17]' 'joint_states/velocity[17]' 'joint_states/effort[17]'"/>
+  <node name="plot_shoulder_lift" type="rxplot" pkg="rxtools" args="-p 30 '/r_shoulder_lift_position_controller/state/process_value' '/r_shoulder_lift_position_controller/state/process_value_dot' '/r_shoulder_lift_position_controller/state/command' 'joint_states/position[18]' 'joint_states/velocity[18]' 'joint_states/effort[18]'"/>
+  <node name="plot_elbow_flex" type="rxplot" pkg="rxtools" args="-p 30 '/r_elbow_flex_position_controller/state/process_value' '/r_elbow_flex_position_controller/state/process_value_dot' '/r_elbow_flex_position_controller/state/command' 'joint_states/position[20]' 'joint_states/velocity[20]' 'joint_states/effort[20]'"/>
+
+  <node name="pr2_gazebo" type="test_positions.py" pkg="pr2_gazebo" args=""/>
+
+</launch>
+
