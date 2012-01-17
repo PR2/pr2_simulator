@@ -38,6 +38,7 @@
 #include "physics/Model.hh"
 #include "physics/physics.h"
 #include "common/Time.hh"
+#include "common/Plugin.hh"
 
 #include "pr2_hardware_interface/hardware_interface.h"
 #include "pr2_controller_manager/controller_manager.h"
