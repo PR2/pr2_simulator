@@ -59,7 +59,7 @@ class GazeboRosProsilica : public DepthCameraPlugin, GazeboRosCameraUtils
 
   /// \brief Load the controller
   /// \param node XML config node
-  public: void Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf);
+  public: void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
 
   /// \brief does nothing for now
   private: static void mouse_cb(int event, int x, int y, int flags, void* param) { };

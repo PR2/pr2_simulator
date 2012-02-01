@@ -83,7 +83,7 @@ GazeboRosProsilica::~GazeboRosProsilica()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void GazeboRosProsilica::Load(sensors::SensorPtr &_parent, sdf::ElementPtr &_sdf)
+void GazeboRosProsilica::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 {
 
   DepthCameraPlugin::Load(_parent, _sdf);

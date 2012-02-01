@@ -55,7 +55,7 @@ public:
 
 protected:
     // Inherited from Controller
-    void Load( physics::ModelPtr &_parent, sdf::ElementPtr &_sdf );
+    void Load( physics::ModelPtr _parent, sdf::ElementPtr _sdf );
     virtual void InitChild();
     virtual void UpdateChild();
 

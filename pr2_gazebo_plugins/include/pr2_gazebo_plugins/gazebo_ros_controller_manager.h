@@ -61,7 +61,7 @@ class GazeboRosControllerManager : public ModelPlugin
 public:
   GazeboRosControllerManager();
   virtual ~GazeboRosControllerManager();
-  void Load( physics::ModelPtr &_parent, sdf::ElementPtr &_sdf );
+  void Load( physics::ModelPtr _parent, sdf::ElementPtr _sdf );
 
 protected:
   // Inherited from gazebo::Controller

@@ -79,7 +79,7 @@ GazeboRosPowerMonitor::~GazeboRosPowerMonitor()
     // delete charge_voltage_param_;
 }
 
-void GazeboRosPowerMonitor::Load(physics::ModelPtr &_parent, sdf::ElementPtr &_sdf)
+void GazeboRosPowerMonitor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
   // Get then name of the parent model
   std::string modelName = _sdf->GetParent()->GetValueString("name");
