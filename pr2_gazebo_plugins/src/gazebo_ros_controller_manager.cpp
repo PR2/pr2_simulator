@@ -304,13 +304,11 @@ void GazeboRosControllerManager::UpdateChild()
 
     double effort = this->fake_state_->joint_states_[i].commanded_effort_;
 
-    double damping_coef;
+    double damping_coef = 0;
     if (this->cm_->state_ != NULL) // could be NULL if ReadPr2Xml is unsuccessful
     {
       if (this->cm_->state_->joint_states_[i].joint_->dynamics)
         damping_coef = this->cm_->state_->joint_states_[i].joint_->dynamics->damping;
-      else
-        damping_coef = 0;
     }
 
     if (this->joints_[i]->HasType(gazebo::physics::Base::HINGE_JOINT))
