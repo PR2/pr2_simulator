@@ -1,7 +1,10 @@
 <launch>
+  <arg name="swept_back_kinect" default="false"/>
   
   <!-- send pr2 urdf to param server -->
-  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+  <include file="$(find pr2_description)/robots/upload_pr2.launch">
+    <arg name="swept_back_kinect" value="$(arg swept_back_kinect)"/>
+  </include>
 
 
   <!-- push robot_description to factory and spawn robot in gazebo -->

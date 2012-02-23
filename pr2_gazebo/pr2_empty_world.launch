@@ -1,10 +1,13 @@
 <launch>
+  <arg name="swept_back_kinect" default="false"/>
 
   <!-- start up empty world -->
   <include file="$(find pr2_gazebo)/empty_world_paused.launch"/>
 
   <!-- start pr2 robot -->
-  <include file="$(find pr2_gazebo)/pr2.launch"/>
+  <include file="$(find pr2_gazebo)/pr2.launch">
+    <arg name="swept_back_kinect" value="$(arg swept_back_kinect)"/>
+  </include>
 
 </launch>
 
