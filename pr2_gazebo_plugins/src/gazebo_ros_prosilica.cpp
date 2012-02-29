@@ -301,8 +301,14 @@ void GazeboRosProsilica::InitChild()
     this->Cx = ((double)this->width+1.0) /2.0;
   if (this->Cy == 0)
     this->Cy = ((double)this->height+1.0) /2.0;
+
+  double computed_focal_length = ((double)this->width) / (2.0 *tan(this->myParent->GetHFOV().GetAsRadian()/2.0)); 
   if (this->focal_length == 0)
-    this->focal_length = ((double)this->width) / (2.0 *tan(this->myParent->GetHFOV().GetAsRadian()/2.0));
+    this->focal_length = computed_focal_length; 
+  else if (fabs(this->focal_length - computed_focal_length) > 1e-8) // check against float precision 
+    ROS_WARN("The <focal_length>[%f] you have provided for camera [%s] is inconsistent with specified image_width [%d] and HFOV [%f].   Please double check to see that focal_length = width / (2.0 * tan( HFOV/2.0 )), the explected focal_lengtth value is [%f], please update your camera model description accordingly.", 
+               this->focal_length,this->myParent->GetName().c_str(),this->width,this->myParent->GetHFOV().GetAsRadian(), 
+               computed_focal_length); 
 
 #ifdef USE_CBQ
   // start custom queue for prosilica
