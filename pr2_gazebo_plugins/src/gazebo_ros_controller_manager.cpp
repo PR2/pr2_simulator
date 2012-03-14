@@ -105,7 +105,7 @@ void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr
   this->world = _parent->GetWorld();
 
   // Get a pointer to the model
-  this->parent_model_ = this->world->GetModel(modelName);
+  this->parent_model_ = _parent;
 
   // Error message if the model couldn't be found
   if (!this->parent_model_)
