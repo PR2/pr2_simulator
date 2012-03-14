@@ -102,11 +102,10 @@ void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr
   std::string modelName = _sdf->GetParent()->GetValueString("name");
 
   // Get the world name.
-  std::string worldName = _sdf->GetWorldName();
-  this->world = physics::get_world(worldName);
+  this->world = _parent->GetWorld();
 
   // Get a pointer to the model
-  this->parent_model_ = this->world->GetModelByName(modelName);
+  this->parent_model_ = _parent;
 
   // Error message if the model couldn't be found
   if (!this->parent_model_)
