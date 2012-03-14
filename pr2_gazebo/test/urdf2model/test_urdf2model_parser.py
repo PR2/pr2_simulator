@@ -37,7 +37,7 @@
 ##\brief Tests that URDF models in pr2_component_descriptions parse and are valid
 
 PKG = 'pr2_gazebo'
-TEST_PKG = 'test_urdf2model_parser'
+TEST_PKG = 'pr2_description'
 
 import roslib; roslib.load_manifest(PKG)
 
