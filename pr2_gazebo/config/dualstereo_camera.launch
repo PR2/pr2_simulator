@@ -2,9 +2,11 @@
   <!-- Stereo image processing -->
   <node ns="wide_stereo" name="wide_stereo_proc" pkg="stereo_image_proc" type="stereo_image_proc" respawn="false" output="screen">
     <param name="disparity_range" type="int" value="128"/>
+    <param name="approximate_sync" type="bool" value="true"/>
   </node>
   <node ns="narrow_stereo" name="narrow_stereo_proc" pkg="stereo_image_proc" type="stereo_image_proc" respawn="false" output="screen">
     <param name="disparity_range" type="int" value="128"/>
+    <param name="approximate_sync" type="bool" value="true"/>
   </node>
   <group ns="narrow_stereo_textured">
     <remap from="/narrow_stereo_textured/left/image_raw" to="/narrow_stereo/left/image_raw" />
@@ -13,6 +15,7 @@
     <remap from="/narrow_stereo_textured/right/camera_info" to="/narrow_stereo/right/camera_info" />
     <node name="narrow_stereo_textured_proc" pkg="stereo_image_proc" type="stereo_image_proc" respawn="false" output="screen">
       <param name="disparity_range" type="int" value="128"/>
+      <param name="approximate_sync" type="bool" value="true"/>
     </node>
   </group>
 
