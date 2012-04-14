@@ -29,6 +29,11 @@
 #include <ros/callback_queue.h>
 #include <ros/advertise_options.h>
 #include <std_msgs/Float64.h>
+#include <geometry_msgs/Twist.h>
+
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/client/terminal_state.h>
+#include <pr2_controllers_msgs/SingleJointPositionAction.h>
 
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
@@ -51,8 +56,7 @@
 #include <QSlider>
 #include <QVBoxLayout>
 #include <QWidget>
-#include "pr2_gazebo/lcdrange.h"
-
+#include "pr2_gazebo/qt_ros_slider.h"
 
 class MyWidget : public QWidget
 {
@@ -60,49 +64,58 @@ class MyWidget : public QWidget
     MyWidget(QWidget *parent, ros::NodeHandle* rosnode)
         : QWidget(parent)
     {
-        QVBoxLayout *layout = new QVBoxLayout;
+        if (!ros::isInitialized()) {
+          ROS_ERROR("ros node didn't start for some reason");
+          return;
+        }
+        actionlib::SimpleActionClient<pr2_controllers_msgs::SingleJointPositionAction> *ac;
 
+        QVBoxLayout *layout = new QVBoxLayout;
         QPushButton *quit = new QPushButton(tr("Quit"));
         quit->setFont(QFont("Times", 18, QFont::Bold));
         connect(quit, SIGNAL(clicked()), qApp, SLOT(quit()));
         layout->addWidget(quit);
 
-
-        std::vector<std::string> topic_names;
-        topic_names.push_back("/trunk_controller/command");
-        topic_names.push_back("/shoulder_controller/command");
-        topic_names.push_back("/upper_arm_controller/command");
-        topic_names.push_back("/forearm_base_controller/command");
-        topic_names.push_back("/forearm_controller/command");
-        topic_names.push_back("/wrist_diff_controller/command");
-        topic_names.push_back("/wrist_controller/command");
-
-        std::vector<ros::Publisher> publishers;
-        for (unsigned int i=0 ; i< topic_names.size(); ++i)
-          publishers.push_back(rosnode->advertise<std_msgs::Float64>(topic_names[i],1));
-
-        for (unsigned int i=0 ; i< topic_names.size(); ++i)
-        {
-          std::vector<ros::Publisher> publishers_for_this_slide;
-          publishers_for_this_slide.push_back(publishers[i]);
-          LCDRange *lcd = new LCDRange(parent, publishers_for_this_slide);
-          lcd->setValue(500);
-          layout->addWidget(lcd);
-        }
+        // /base_controller/command
+        // /head_traj_controller/command
+        // /l_arm_controller/command
+        // /l_gripper_controller/command
+        // /r_arm_controller/command
+        // /r_gripper_controller/command
+        // /torso_controller/command
 
         {
-          std::vector<ros::Publisher> publishers_for_this_slide;
-          topic_names.push_back("/l_wheel_controller/command");
-          publishers.push_back(rosnode->advertise<std_msgs::Float64>("/l_wheel_controller/command",1));
-          publishers_for_this_slide.push_back(publishers[publishers.size()-1]);
-          topic_names.push_back("/r_wheel_controller/command");
-          publishers.push_back(rosnode->advertise<std_msgs::Float64>("/r_wheel_controller/command",1));
-          publishers_for_this_slide.push_back(publishers[publishers.size()-1]);
-          LCDRange *lcd = new LCDRange(parent, publishers_for_this_slide);
-          lcd->setValue(500);
+          std::string ac_name("/torso_controller/position_joint_action");
+          ac = new actionlib::SimpleActionClient<pr2_controllers_msgs::SingleJointPositionAction>(ac_name,true);
+          while (!ac->waitForServer(ros::Duration(5.0))) ROS_INFO("waiting for torso action");
+
+          QtRosSlider *lcd = new QtRosSlider("torso height",parent);
+          lcd->setCallback(ac);
+          lcd->min_value = 0.0;
+          lcd->max_value = 0.31;
+          lcd->setValue(0.0);
           layout->addWidget(lcd);
         }
-
+        {
+          std::string pub_name("/l_gripper_controller/command");
+          QtRosSlider *lcd = new QtRosSlider("left gripper",parent);
+          ros::Publisher pub = rosnode->advertise<pr2_controllers_msgs::Pr2GripperCommand>(pub_name,1);
+          lcd->addGripperPublisher(pub);
+          lcd->min_value = 0.0;
+          lcd->max_value = 0.08;
+          lcd->setValue(0.0);
+          layout->addWidget(lcd);
+        }
+        {
+          std::string pub_name("/r_gripper_controller/command");
+          QtRosSlider *lcd = new QtRosSlider("right gripper",parent);
+          ros::Publisher pub = rosnode->advertise<pr2_controllers_msgs::Pr2GripperCommand>(pub_name,1);
+          lcd->addGripperPublisher(pub);
+          lcd->min_value = 0.0;
+          lcd->max_value = 0.08;
+          lcd->setValue(0.0);
+          layout->addWidget(lcd);
+        }
 
         setLayout(layout);
     }

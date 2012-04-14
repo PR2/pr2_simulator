@@ -27,23 +27,38 @@
 #include <ros/ros.h>
 #include <QLCDNumber>
 #include <QWidget>
+#include <geometry_msgs/Twist.h>
+
+// for torso
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/client/terminal_state.h>
+#include <pr2_controllers_msgs/SingleJointPositionAction.h>
+
+// for gripper
+#include <pr2_controllers_msgs/Pr2GripperCommand.h>
 
 class QLabel;
 class QSlider;
 
-class LCDRange : public QWidget
+class QtRosSlider : public QWidget
 {
     Q_OBJECT
 
 public:
-    LCDRange(QWidget *parent, std::vector<ros::Publisher> publishers);
-    LCDRange(const QString &text, QWidget *parent = 0);
+    QtRosSlider(const QString &text, QWidget *_parent = 0);
 
     int value() const;
     QString text() const;
 
+    void setCallback(actionlib::SimpleActionClient<pr2_controllers_msgs::SingleJointPositionAction> *_ac);
+    void addGripperPublisher(ros::Publisher _pub);
+
+    int min_int;
+    int max_int;
+    double min_value;
+    double max_value;
 public slots:
-    void setValue(int value);
+    void setValue(double value);
     void setRange(int minValue, int maxValue);
     void setText(const QString &text);
     void conversion(int value);
@@ -54,11 +69,14 @@ signals:
     void valueChanged(int newValue);
 
 private:
-    void init();
+    void initTorsoCommander();
+    void initGripperCommander();
     QLCDNumber *lcd;
     QSlider *slider;
     QLabel *label;
-    std::vector<ros::Publisher> publishers_;
+    actionlib::SimpleActionClient<pr2_controllers_msgs::SingleJointPositionAction> *ac;
+    std::vector<ros::Publisher> gripper_publishers;
+    std::vector<ros::Publisher> base_publishers;
 };
 
 #endif
