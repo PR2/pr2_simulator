@@ -1,0 +1,13 @@
+<launch>
+
+  <!-- so ros know we're simming -->
+  <param name="/use_sim_time" value="true" />
+
+  <!-- start gazebo with an empty plane -->
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="$(find pr2_gazebo_benchmarks)/worlds/pgs_iters100.world" respawn="false" output="screen"/>
+
+  <!-- start pr2 robot -->
+  <include file="$(find pr2_gazebo)/pr2.launch"/>
+
+</launch>
+
