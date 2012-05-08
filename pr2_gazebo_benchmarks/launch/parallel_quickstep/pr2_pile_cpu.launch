@@ -1,0 +1,50 @@
+<launch>
+
+  <!-- so ros know we're simming -->
+  <param name="/use_sim_time" value="true" />
+
+  <!-- start gazebo with an empty plane -->
+   <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find pr2_gazebo_benchmarks)/worlds/parallel_quickstep/box_stack.world" respawn="false" output="screen"/>
+
+  <!-- send pr2 urdf to param server -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_simulator_benchmarks)/urdf/pr2_urdf_only.urdf'" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="pr2_00_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x   0 -model pr2_00" respawn="false" output="screen" />
+  <node name="pr2_01_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x   2 -model pr2_01" respawn="false" output="screen" />
+  <node name="pr2_02_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x   4 -model pr2_02" respawn="false" output="screen" />
+  <node name="pr2_03_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x   6 -model pr2_03" respawn="false" output="screen" />
+  <node name="pr2_04_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x   8 -model pr2_04" respawn="false" output="screen" />
+  <node name="pr2_05_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x  10 -model pr2_05" respawn="false" output="screen" />
+  <node name="pr2_06_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x  12 -model pr2_06" respawn="false" output="screen" />
+  <node name="pr2_07_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x  14 -model pr2_07" respawn="false" output="screen" />
+  <node name="pr2_10_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x  16 -model pr2_10" respawn="false" output="screen" />
+  <node name="pr2_12_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x   0 -model pr2_12" respawn="false" output="screen" />
+  <node name="pr2_13_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x   2 -model pr2_13" respawn="false" output="screen" />
+  <node name="pr2_14_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x   4 -model pr2_14" respawn="false" output="screen" />
+  <node name="pr2_15_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x   6 -model pr2_15" respawn="false" output="screen" />
+  <node name="pr2_16_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x   8 -model pr2_16" respawn="false" output="screen" />
+  <node name="pr2_17_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x  10 -model pr2_17" respawn="false" output="screen" />
+  <node name="pr2_20_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x  12 -model pr2_20" respawn="false" output="screen" />
+  <node name="pr2_21_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x  14 -model pr2_21" respawn="false" output="screen" />
+  <node name="pr2_22_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  1 -x  16 -model pr2_22" respawn="false" output="screen" />
+  <node name="pr2_24_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x   0 -model pr2_24" respawn="false" output="screen" />
+  <node name="pr2_25_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x   2 -model pr2_25" respawn="false" output="screen" />
+  <node name="pr2_26_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x   4 -model pr2_26" respawn="false" output="screen" />
+  <node name="pr2_27_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x   6 -model pr2_27" respawn="false" output="screen" />
+  <node name="pr2_28_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x   8 -model pr2_28" respawn="false" output="screen" />
+  <node name="pr2_29_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x  10 -model pr2_29" respawn="false" output="screen" />
+  <node name="pr2_30_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x  12 -model pr2_30" respawn="false" output="screen" />
+  <node name="pr2_31_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x  14 -model pr2_31" respawn="false" output="screen" />
+  <node name="pr2_32_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y -1 -x  16 -model pr2_32" respawn="false" output="screen" />
+  <node name="pr2_34_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x   0 -model pr2_34" respawn="false" output="screen" />
+  <node name="pr2_35_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x   2 -model pr2_35" respawn="false" output="screen" />
+  <node name="pr2_36_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x   4 -model pr2_36" respawn="false" output="screen" />
+  <node name="pr2_37_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x   6 -model pr2_37" respawn="false" output="screen" />
+  <node name="pr2_38_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x   8 -model pr2_38" respawn="false" output="screen" />
+  <node name="pr2_39_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x  10 -model pr2_39" respawn="false" output="screen" />
+  <node name="pr2_40_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x  12 -model pr2_40" respawn="false" output="screen" />
+  <node name="pr2_41_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x  14 -model pr2_41" respawn="false" output="screen" />
+  <node name="pr2_42_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  2 -x  16 -model pr2_42" respawn="false" output="screen" />
+</launch>
+

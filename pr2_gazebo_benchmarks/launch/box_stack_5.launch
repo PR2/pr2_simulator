@@ -1,0 +1,15 @@
+<launch>
+
+  <!-- start world -->
+  <include file="$(find pr2_gazebo_benchmarks)/launch/box_stack_world.launch"/>
+
+  <!-- spawn robots -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/urdf/box_stack.urdf.xacro'" />
+  <node name="spawn_box_stack" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack" respawn="false" output="screen" />
+  <node name="spawn_box_stack_2" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_2 -y 1.5" respawn="false" output="screen" />
+  <node name="spawn_box_stack_3" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_3 -y -1.5" respawn="false" output="screen" />
+  <node name="spawn_box_stack_4" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_4 -x 1.5" respawn="false" output="screen" />
+  <node name="spawn_box_stack_5" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_5 -x -1.5" respawn="false" output="screen" />
+
+</launch>
+

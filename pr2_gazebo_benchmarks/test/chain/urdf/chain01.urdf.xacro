@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<robot name="continuous_pendulum"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <!--
+     A pendulum constructed from single continuous link and a mass with some moment of inertia
+  -->
+  <xacro:macro name="one_link" params="link_name parent *axis *origin material">
+    <joint name="${link_name}_joint" type="continuous" >
+      <insert_block name="origin"/>
+      <insert_block name="axis"/>
+      <parent link="${parent}" />
+      <child link="${link_name}" />
+      <dynamics damping="0.0" />
+    </joint>
+    <link name="${link_name}">
+      <inertial >
+        <mass value="1.0" />
+        <origin xyz="0 1 0" /> 
+        <inertia  ixx="0.0" ixy="0.0"  ixz="0.0"  iyy="0.0"  iyz="0.0"  izz="0.0" />
+      </inertial>
+      <visual >
+        <origin xyz="0 0.5 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.2 1.0 0.2" />
+        </geometry>
+      </visual>
+      <collision >
+        <origin xyz="0 0.5 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.2 1.0 0.2" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="${link_name}">
+      <material>${material}</material>
+      <turnGravityOff>false</turnGravityOff>
+      <transmission type="SimpleTransmission" name="${link_name}_trans">
+        <actuator name="${link_name}_motor" />
+        <joint name="${link_name}_joint" />
+        <mechanicalReduction>1</mechanicalReduction>
+        <motorTorqueConstant>1</motorTorqueConstant>
+      </transmission>
+    </gazebo>
+  </xacro:macro>
+
+  <link name="world"/>
+  <xacro:one_link link_name="link1_1" parent="world" material="Gazebo/GrassFloor">
+    <origin xyz="0 0 21" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link2_1" parent="link1_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link3_1" parent="link2_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link4_1" parent="link3_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link5_1" parent="link4_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link6_1" parent="link5_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link7_1" parent="link6_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link8_1" parent="link7_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link9_1" parent="link8_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link10_1" parent="link9_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+
+
+  <gazebo>
+      <!-- PR2_ACTARRAY -->
+      <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1000.0</updateRate>
+        <interface:audio name="gazebo_ros_controller_manager_dummy_iface" />
+      </controller:gazebo_ros_controller_manager>
+  </gazebo>
+
+
+</robot>

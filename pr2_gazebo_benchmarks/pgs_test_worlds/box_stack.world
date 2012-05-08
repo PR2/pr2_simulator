@@ -1,0 +1,2543 @@
+<?xml version="1.0"?>
+
+<gazebo:world 
+  xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" 
+  xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" 
+  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" 
+  xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" 
+  xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" 
+  xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint" 
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" 
+  xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering" 
+  xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics" >
+
+  <verbosity>5</verbosity>
+
+  <!--
+  <physics:ode>
+    <stepTime>0.001</stepTime>
+    <gravity>0 0 -9.8</gravity>
+    <cfm>10e-2</cfm>
+    <erp>0.2</erp>
+  </physics:ode>
+  -->
+  <physics:ode>
+    <stepTime>0.001</stepTime>
+    <gravity>0 0 -9.8</gravity>
+    <cfm>0.0000000001</cfm>
+    <erp>0.2</erp>
+    <quickStep>true</quickStep>
+    <quickStepIters>30</quickStepIters>
+    <quickStepW>0.8</quickStepW>
+    <contactMaxCorrectingVel>1.0</contactMaxCorrectingVel>
+    <contactSurfaceLayer>0.001</contactSurfaceLayer>
+  </physics:ode>
+
+  <rendering:gui>
+    <type>fltk</type>
+    <imageSize>1024 800</imageSize>
+    <pos>0 0</pos>
+    <frames>
+      <row height="100%">
+        <camera width="100%">
+          <xyz>-3.0 0 0.5</xyz>
+          <rpy>0 0 0</rpy>
+        </camera>
+      </row>
+    </frames>
+  </rendering:gui>
+
+  <rendering:ogre>
+    <ambient>0.0 0.0 0.0 1.0</ambient>
+    <sky>
+      <material>Gazebo/CloudySky</material>
+    </sky>
+    <grid>true</grid>
+  </rendering:ogre>
+<!--
+  <model:physical name="sphere1_model">
+    <xyz>1 0 0.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere1_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>0.001</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>0.001</iyy>
+      <iyz>0.0</iyz>
+      <izz>0.001</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:sphere name="sphere1_geom">
+        <size>0.5</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+
+  <model:physical name="sphere2_model">
+    <xyz>1 0 1.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere2_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>0.001</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>0.001</iyy>
+      <iyz>0.0</iyz>
+      <izz>0.001</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:sphere name="sphere2_geom">
+        <size>0.5</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+
+  <model:physical name="sphere3_model">
+    <xyz>1 0 2.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere3_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1000.0</mass>
+      <ixx>0.001</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>0.001</iyy>
+      <iyz>0.0</iyz>
+      <izz>0.001</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:sphere name="sphere3_geom">
+        <size>0.5</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+ </model:physical>
+
+-->
+ <!--
+  <model:physical name="sphere4_model">
+    <xyz>1 0 3.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere4_body">
+      <geom:sphere name="sphere4_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere5_model">
+    <xyz>1 0 4.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere5_body">
+      <geom:sphere name="sphere5_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+-->
+<!--
+  <model:physical name="sphere6_model">
+    <xyz>1 0 5.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere6_body">
+      <geom:sphere name="sphere6_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere7_model">
+    <xyz>1 0 6.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere7_body">
+      <geom:sphere name="sphere7_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere8_model">
+    <xyz>1 0 7.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere8_body">
+      <geom:sphere name="sphere8_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere9_model">
+    <xyz>1 0 8.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere9_body">
+      <geom:sphere name="sphere9_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere10_model">
+    <xyz>1 0 9.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere10_body">
+      <geom:sphere name="sphere10_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere11_model">
+    <xyz>1 0 10.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere11_body">
+      <geom:sphere name="sphere11_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere12_model">
+    <xyz>1 0 11.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere12_body">
+      <geom:sphere name="sphere12_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere13_model">
+    <xyz>1 0 12.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere13_body">
+      <geom:sphere name="sphere13_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere14_model">
+    <xyz>1 0 13.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere14_body">
+      <geom:sphere name="sphere14_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere15_model">
+    <xyz>1 0 14.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere15_body">
+      <geom:sphere name="sphere15_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere16_model">
+    <xyz>1 0 15.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere16_body">
+      <geom:sphere name="sphere16_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere17_model">
+    <xyz>1 0 16.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere17_body">
+      <geom:sphere name="sphere17_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere18_model">
+    <xyz>1 0 17.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere18_body">
+      <geom:sphere name="sphere18_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere19_model">
+    <xyz>1 0 18.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere19_body">
+      <geom:sphere name="sphere19_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere20_model">
+    <xyz>1 0 19.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere20_body">
+      <geom:sphere name="sphere20_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere21_model">
+    <xyz>1 0 20.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere21_body">
+      <geom:sphere name="sphere21_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere22_model">
+    <xyz>1 0 21.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere22_body">
+      <geom:sphere name="sphere22_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere23_model">
+    <xyz>1 0 22.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere23_body">
+      <geom:sphere name="sphere23_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere24_model">
+    <xyz>1 0 23.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere24_body">
+      <geom:sphere name="sphere24_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere25_model">
+    <xyz>1 0 24.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere25_body">
+      <geom:sphere name="sphere25_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere26_model">
+    <xyz>1 0 25.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere26_body">
+      <geom:sphere name="sphere26_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere27_model">
+    <xyz>1 0 26.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere27_body">
+      <geom:sphere name="sphere27_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere28_model">
+    <xyz>1 0 27.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere28_body">
+      <geom:sphere name="sphere28_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere29_model">
+    <xyz>1 0 28.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere29_body">
+      <geom:sphere name="sphere29_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere30_model">
+    <xyz>1 0 29.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere30_body">
+      <geom:sphere name="sphere30_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere31_model">
+    <xyz>1 0 30.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere31_body">
+      <geom:sphere name="sphere31_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere32_model">
+    <xyz>1 0 31.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere32_body">
+      <geom:sphere name="sphere32_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere33_model">
+    <xyz>1 0 32.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere33_body">
+      <geom:sphere name="sphere33_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere34_model">
+    <xyz>1 0 33.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere34_body">
+      <geom:sphere name="sphere34_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere35_model">
+    <xyz>1 0 34.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere35_body">
+      <geom:sphere name="sphere35_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere36_model">
+    <xyz>1 0 35.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere36_body">
+      <geom:sphere name="sphere36_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere37_model">
+    <xyz>1 0 36.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere37_body">
+      <geom:sphere name="sphere37_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere38_model">
+    <xyz>1 0 37.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere38_body">
+      <geom:sphere name="sphere38_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere39_model">
+    <xyz>1 0 38.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere39_body">
+      <geom:sphere name="sphere39_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere40_model">
+    <xyz>1 0 39.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere40_body">
+      <geom:sphere name="sphere40_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere41_model">
+    <xyz>1 0 40.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere41_body">
+      <geom:sphere name="sphere41_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere42_model">
+    <xyz>1 0 41.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere42_body">
+      <geom:sphere name="sphere42_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere43_model">
+    <xyz>1 0 42.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere43_body">
+      <geom:sphere name="sphere43_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere44_model">
+    <xyz>1 0 43.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere44_body">
+      <geom:sphere name="sphere44_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere45_model">
+    <xyz>1 0 44.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere45_body">
+      <geom:sphere name="sphere45_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere46_model">
+    <xyz>1 0 45.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere46_body">
+      <geom:sphere name="sphere46_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere47_model">
+    <xyz>1 0 46.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere47_body">
+      <geom:sphere name="sphere47_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere48_model">
+    <xyz>1 0 47.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere48_body">
+      <geom:sphere name="sphere48_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere49_model">
+    <xyz>1 0 48.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere49_body">
+      <geom:sphere name="sphere49_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere50_model">
+    <xyz>1 0 49.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere50_body">
+      <geom:sphere name="sphere50_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere51_model">
+    <xyz>1 0 50.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere51_body">
+      <geom:sphere name="sphere51_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere52_model">
+    <xyz>1 0 51.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere52_body">
+      <geom:sphere name="sphere52_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere53_model">
+    <xyz>1 0 52.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere53_body">
+      <geom:sphere name="sphere53_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere54_model">
+    <xyz>1 0 53.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere54_body">
+      <geom:sphere name="sphere54_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere55_model">
+    <xyz>1 0 54.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere55_body">
+      <geom:sphere name="sphere55_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere56_model">
+    <xyz>1 0 55.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere56_body">
+      <geom:sphere name="sphere56_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere57_model">
+    <xyz>1 0 56.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere57_body">
+      <geom:sphere name="sphere57_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere58_model">
+    <xyz>1 0 57.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere58_body">
+      <geom:sphere name="sphere58_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere59_model">
+    <xyz>1 0 58.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere59_body">
+      <geom:sphere name="sphere59_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere60_model">
+    <xyz>1 0 59.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere60_body">
+      <geom:sphere name="sphere60_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere61_model">
+    <xyz>1 0 60.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere61_body">
+      <geom:sphere name="sphere61_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere62_model">
+    <xyz>1 0 61.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere62_body">
+      <geom:sphere name="sphere62_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere63_model">
+    <xyz>1 0 62.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere63_body">
+      <geom:sphere name="sphere63_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere64_model">
+    <xyz>1 0 63.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere64_body">
+      <geom:sphere name="sphere64_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere65_model">
+    <xyz>1 0 64.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere65_body">
+      <geom:sphere name="sphere65_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere66_model">
+    <xyz>1 0 65.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere66_body">
+      <geom:sphere name="sphere66_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere67_model">
+    <xyz>1 0 66.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere67_body">
+      <geom:sphere name="sphere67_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere68_model">
+    <xyz>1 0 67.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere68_body">
+      <geom:sphere name="sphere68_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere69_model">
+    <xyz>1 0 68.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere69_body">
+      <geom:sphere name="sphere69_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere70_model">
+    <xyz>1 0 69.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere70_body">
+      <geom:sphere name="sphere70_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere71_model">
+    <xyz>1 0 70.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere71_body">
+      <geom:sphere name="sphere71_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere72_model">
+    <xyz>1 0 71.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere72_body">
+      <geom:sphere name="sphere72_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere73_model">
+    <xyz>1 0 72.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere73_body">
+      <geom:sphere name="sphere73_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere74_model">
+    <xyz>1 0 73.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere74_body">
+      <geom:sphere name="sphere74_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere75_model">
+    <xyz>1 0 74.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere75_body">
+      <geom:sphere name="sphere75_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere76_model">
+    <xyz>1 0 75.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere76_body">
+      <geom:sphere name="sphere76_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere77_model">
+    <xyz>1 0 76.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere77_body">
+      <geom:sphere name="sphere77_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere78_model">
+    <xyz>1 0 77.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere78_body">
+      <geom:sphere name="sphere78_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere79_model">
+    <xyz>1 0 78.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere79_body">
+      <geom:sphere name="sphere79_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere80_model">
+    <xyz>1 0 79.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere80_body">
+      <geom:sphere name="sphere80_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere81_model">
+    <xyz>1 0 80.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere81_body">
+      <geom:sphere name="sphere81_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere82_model">
+    <xyz>1 0 81.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere82_body">
+      <geom:sphere name="sphere82_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere83_model">
+    <xyz>1 0 82.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere83_body">
+      <geom:sphere name="sphere83_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere84_model">
+    <xyz>1 0 83.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere84_body">
+      <geom:sphere name="sphere84_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere85_model">
+    <xyz>1 0 84.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere85_body">
+      <geom:sphere name="sphere85_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere86_model">
+    <xyz>1 0 85.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere86_body">
+      <geom:sphere name="sphere86_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere87_model">
+    <xyz>1 0 86.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere87_body">
+      <geom:sphere name="sphere87_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere88_model">
+    <xyz>1 0 87.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere88_body">
+      <geom:sphere name="sphere88_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere89_model">
+    <xyz>1 0 88.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere89_body">
+      <geom:sphere name="sphere89_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere90_model">
+    <xyz>1 0 89.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere90_body">
+      <geom:sphere name="sphere90_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere91_model">
+    <xyz>1 0 90.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere91_body">
+      <geom:sphere name="sphere91_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere92_model">
+    <xyz>1 0 91.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere92_body">
+      <geom:sphere name="sphere92_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere93_model">
+    <xyz>1 0 92.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere93_body">
+      <geom:sphere name="sphere93_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere94_model">
+    <xyz>1 0 93.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere94_body">
+      <geom:sphere name="sphere94_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere95_model">
+    <xyz>1 0 94.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere95_body">
+      <geom:sphere name="sphere95_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere96_model">
+    <xyz>1 0 95.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere96_body">
+      <geom:sphere name="sphere96_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere97_model">
+    <xyz>1 0 96.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere97_body">
+      <geom:sphere name="sphere97_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere98_model">
+    <xyz>1 0 97.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere98_body">
+      <geom:sphere name="sphere98_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere99_model">
+    <xyz>1 0 98.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere99_body">
+      <geom:sphere name="sphere99_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+  <model:physical name="sphere100_model">
+    <xyz>1 0 99.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere100_body">
+      <geom:sphere name="sphere100_geom">
+        <size>0.2</size>
+        <mass>0.1</mass>
+
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1.0</kd>
+
+        <visual>
+          <size>0.4 0.4 0.4</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+-->
+
+  <model:physical name="box1_model">
+    <xyz>1 1.5 0.5</xyz>
+    <canonicalBody>box1_body</canonicalBody>
+    <static>false</static>
+
+    <body:box name="box1_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>1.00</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>1.00</iyy>
+      <iyz>0.0</iyz>
+      <izz>1.00</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:box name="box1_geom1">
+        <size>1.0 1.0 1.0</size>
+        <mass>0.1</mass>
+
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>100000000.0</kp>
+        <kd>100000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_box</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:box>
+    </body:box>
+  </model:physical>
+
+  <model:physical name="box2_model">
+    <xyz>1 1.5 1.5</xyz>
+    <canonicalBody>box2_body</canonicalBody>
+    <static>false</static>
+
+    <body:box name="box2_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>1.00</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>1.00</iyy>
+      <iyz>0.0</iyz>
+      <izz>1.00</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:box name="box2_geom1">
+        <size>1.0 1.0 1.0</size>
+        <mass>0.1</mass>
+
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>100000000.0</kp>
+        <kd>100000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_box</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:box>
+    </body:box>
+  </model:physical>
+
+  <model:physical name="box3_model">
+    <xyz>1 1.5 2.5</xyz>
+    <canonicalBody>box3_body</canonicalBody>
+    <static>false</static>
+
+    <body:box name="box3_body">
+      <massMatrix>true</massMatrix> 
+      <mass>100.0</mass>
+      <ixx>100.00</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>100.00</iyy>
+      <iyz>0.0</iyz>
+      <izz>100.00</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:box name="box3_geom1">
+        <size>1.0 1.0 1.0</size>
+        <mass>0.1</mass>
+
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>100000000.0</kp>
+        <kd>100000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_box</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:box>
+    </body:box>
+  </model:physical>
+
+
+
+   <!-- Ground Plane -->
+   <model:physical name="plane1_model">
+    <xyz>0 0 0</xyz>
+    <rpy>0 0 0</rpy>
+    <static>true</static>
+
+    <body:plane name="plane1_body">
+      <geom:plane name="plane1_geom">
+        <normal>0 0 1</normal>
+        <size>100 100</size>
+        <segments>10 10</segments>
+        <uvTile>100 100</uvTile>
+        <material>Gazebo/Rockwall</material>
+        <mu1>1000.0</mu1>
+        <mu2>1000.0</mu2>
+      </geom:plane>
+    </body:plane>
+  </model:physical>
+
+  <!-- White Point light -->
+  <model:renderable name="point_white">
+    <xyz>1 1 100</xyz>
+    <static>true</static>
+
+    <light>
+      <type>point</type>
+      <diffuseColor>0.9 0.9 0.9</diffuseColor>
+      <specularColor>0.9 0.9 0.9</specularColor>
+      <range>200</range>
+
+      <!-- Constant(0-1) Linear(0-1) Quadratic -->
+      <attenuation>0.8 0.001 0.0</attenuation>
+    </light>
+  </model:renderable>
+ 
+</gazebo:world>

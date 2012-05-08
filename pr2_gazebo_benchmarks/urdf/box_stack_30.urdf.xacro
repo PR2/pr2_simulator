@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<robot name="continuous_pendulum"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <!--
+     For Contact Joints,
+       erp = h * kp / (h * kp + kd)
+       cfm = 1.0 / (h * kp + kd)
+
+     For example,
+       h = erp = 0.001, cfm = 0 requires kd >> 1, kp = kd / (1 - h)
+       h = erp = 0.0, cfm = 0 requires kd >> 1, kp = 0
+  -->
+  <xacro:property name="moi" value="0.0001"/>
+  <xacro:property name="mass" value="1.0"/>
+  <xacro:property name="kp" value="1000000001.0"/>
+  <xacro:property name="kd" value="1000000000.0"/>
+
+  <link name="world"/>
+  <xacro:macro name="one_link" params="link_name parent *origin material">
+    <joint name="${link_name}_joint" type="floating" >
+      <insert_block name="origin"/>
+      <parent link="${parent}" />
+      <child link="${link_name}" />
+      <dynamics damping="0.0" />
+    </joint>
+    <link name="${link_name}">
+      <inertial >
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" /> 
+        <inertia  ixx="${moi}" ixy="0.0"  ixz="0.0"  iyy="${moi}"  iyz="0.0"  izz="${moi}" />
+      </inertial>
+      <visual >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </visual>
+      <collision >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="${link_name}">
+      <kp>${kp}</kp>
+      <kd>${kd}</kd>
+      <material>${material}</material>
+      <turnGravityOff>false</turnGravityOff>
+      <selfCollide>true</selfCollide>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:one_link link_name="link1" parent="world" material="Gazebo/GrassFloor">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link2" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link3" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 2" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link4" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 3" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link5" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 4" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link6" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 5" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link7" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 6" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link8" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 7" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link9" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 8" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link10" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 9" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link11" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 10" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link12" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 11" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link13" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 12" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link14" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 13" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link15" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 14" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link16" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 15" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link17" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 16" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link18" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 17" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link19" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 18" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link20" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 19" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link21" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 20" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link22" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 21" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link23" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 22" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link24" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 23" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link25" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 24" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link26" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 25" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link27" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 26" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link28" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 27" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link29" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 28" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link30" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 29" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link31" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 30" rpy="0 0 0"/>
+  </xacro:one_link>
+
+<!--
+  <xacro:one_link link_name="link1" parent="world" material="Gazebo/GrassFloor">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link2" parent="link1" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link3" parent="link2" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link4" parent="link3" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link5" parent="link4" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link6" parent="link5" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link7" parent="link6" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link8" parent="link7" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link9" parent="link8" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link10" parent="link9" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link11" parent="link10" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link12" parent="link11" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link13" parent="link12" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link14" parent="link13" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link15" parent="link14" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link16" parent="link15" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link17" parent="link16" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link18" parent="link17" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link19" parent="link18" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link20" parent="link19" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link21" parent="link20" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link22" parent="link21" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link23" parent="link22" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link24" parent="link23" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link25" parent="link24" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link26" parent="link25" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link27" parent="link26" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link28" parent="link27" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link29" parent="link28" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link30" parent="link29" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link31" parent="link30" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+-->
+
+
+</robot>

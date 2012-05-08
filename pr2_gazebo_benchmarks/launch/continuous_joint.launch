@@ -1,0 +1,17 @@
+<launch>
+
+  <!-- start world -->
+  <include file="$(find pr2_gazebo_benchmarks)/launch/empty_world.launch"/>
+
+  <!-- spawn robot -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/urdf/continuous_joint.urdf.xacro'" />
+  <node name="spawn_continuous_joint" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model" respawn="false" output="screen" />
+
+  <rosparam file="$(find pr2_gazebo_benchmarks)/config/basic_controllers.yaml" command="load"/>
+
+  <node name="spawn_effort_controller" pkg="pr2_controller_manager" type="spawner" args="--stopped effort_controller" respawn="false" output="screen" />
+  <node name="spawn_velocity_controller" pkg="pr2_controller_manager" type="spawner" args="--stopped velocity_controller" respawn="false" output="screen" />
+  <node name="spawn_position_controller" pkg="pr2_controller_manager" type="spawner" args="--stopped position_controller" respawn="false" output="screen" />
+
+</launch>
+

@@ -1,0 +1,16 @@
+<launch>
+
+  <!-- so ros know we're simming -->
+  <param name="/use_sim_time" value="true" />
+
+  <!-- start gazebo with an empty plane -->
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="$(find pr2_gazebo_benchmarks)/worlds/parallel_quickstep/pgs_iters10_cuda.world" respawn="false" output="screen"/>
+
+  <!-- start pr2 robot -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_simulator_benchmarks)/urdf/pr2_urdf_only.urdf'" />
+  <node name="pr2_00_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  0 -x   0 -model pr2_00" respawn="false" output="screen" />
+
+  <!-- spawn cube -->
+  <node name="spawn_cube" pkg="gazebo" type="spawn_model" args="-urdf -file $(find pr2_simulator_benchmarks)/urdf/cube.urdf -model cube -z 2 -x 2" respawn="false" output="screen"/>
+</launch>
+

@@ -1,0 +1,48 @@
+link1_position_controller:
+  type: JointPositionController
+  joint: link1_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+link1_velocity_controller:
+  type: JointVelocityController
+  joint: link1_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+link1_effort_controller:
+  type: JointEffortController
+  joint: link1_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+link2_position_controller:
+  type: JointPositionController
+  joint: link2_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+link2_velocity_controller:
+  type: JointVelocityController
+  joint: link2_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+link2_effort_controller:
+  type: JointEffortController
+  joint: link2_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
