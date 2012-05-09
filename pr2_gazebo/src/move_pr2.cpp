@@ -7,6 +7,7 @@
 #include <gazebo_msgs/SetModelConfiguration.h>
 #include <std_srvs/Empty.h>
 #include <pr2_mechanism_msgs/SwitchController.h>
+#include <pr2_mechanism_msgs/ListControllers.h>
 
 typedef actionlib::SimpleActionClient< pr2_controllers_msgs::JointTrajectoryAction > TrajClient;
 
@@ -112,6 +113,34 @@ public:
  
 };
 
+class PR2Controllers
+{
+
+   PR2Controllers()
+   {
+   }
+
+   ~PR2Controllers()
+   {
+   }
+
+   void waitForControllers()
+   {
+   }
+
+   void stopControllers()
+   {
+   }
+
+   void startControllers()
+   {
+   }
+
+
+};
+
+
+
 // Our Action interface type, provided as a typedef for convenience
 typedef actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction> GripperClient;
 
@@ -126,10 +155,9 @@ public:
     //Initialize the client for the Action interface to the gripper controller
     //and tell the action client that we want to spin a thread by default
     gripper_client_ = new GripperClient(action_topic, true);
-    //gripper_client_ = new GripperClient("r_gripper_controller/gripper_action", true);
     
     //wait for the gripper action server to come up 
-    while(!gripper_client_->waitForServer(ros::Duration(30.0))){
+    while(!gripper_client_->waitForServer(ros::Duration(60.0))){
       ROS_INFO("Waiting for the r_gripper_controller/gripper_action action server to come up");
     }
   }
@@ -146,13 +174,25 @@ public:
     
     ROS_INFO("Sending open goal");
 
-    gripper_client_->sendGoal(open);
-    bool finished_before_timeout = gripper_client_->waitForResult(ros::Duration(30.0));
+    ROS_WARN("cancelling all gripper actionclient goals");
+    gripper_client_->cancelAllGoals();
 
-    if (finished_before_timeout)
-      ROS_INFO("The gripper opened.");
-    else
-      ROS_WARN("The gripper failed to open [%s].",gripper_client_->getState().toString().c_str());
+    bool success = false;
+    while (!success)
+    {
+      actionlib::SimpleClientGoalState state =
+        gripper_client_->sendGoalAndWait(open,ros::Duration(50.0),ros::Duration(30.0));
+      bool finished_before_timeout = gripper_client_->waitForResult(ros::Duration(50.0));
+
+      if (finished_before_timeout)
+        ROS_INFO("The gripper opened.");
+      else
+        ROS_WARN("The gripper failed to open [%s].",gripper_client_->getState().toString().c_str());
+
+      // final check if goal reached
+      success = (gripper_client_->getState() != actionlib::SimpleClientGoalState::SUCCEEDED);
+      ROS_ERROR("success %d",success);
+    }
   }
 
   //Close the gripper
@@ -178,23 +218,61 @@ int main(int argc, char** argv)
   ros::NodeHandle rh("");
   ros::Duration(1e-9).sleep();
 
+  // wait for services
+  std::string pause_srv_name = "/gazebo/pause_physics";
+  ros::service::waitForService(pause_srv_name);
+
+  std::string unpause_srv_name = "/gazebo/unpause_physics";
+  ros::service::waitForService(unpause_srv_name);
+
+  std::string clear_body_wrenches_srv_name = "/gazebo/clear_body_wrenches";
+  ros::service::waitForService(clear_body_wrenches_srv_name);
+
+  Gripper r_gripper("r_gripper_controller/gripper_action");
+  Gripper l_gripper("l_gripper_controller/gripper_action");
+
+  std::string switch_controller_srv_name = "/pr2_controller_manager/switch_controller";
+  ros::service::waitForService(switch_controller_srv_name);
+
+  std::string list_controllers_srv_name = "/pr2_controller_manager/list_controllers";
+  ros::service::waitForService(list_controllers_srv_name);
+
+  // wait for pr2 controllers
+  ros::ServiceClient list_controller_client = rh.serviceClient<pr2_mechanism_msgs::ListControllers>(list_controllers_srv_name);
+  pr2_mechanism_msgs::ListControllers list_controller;
+  int controllers_count = 0;
+  while (controllers_count != 8)
+  {
+    controllers_count = 0;
+    list_controller_client.call(list_controller);
+    for (unsigned int i = 0; i < list_controller.response.controllers.size() ; ++i)
+    {
+      std::string name = list_controller.response.controllers[i];
+      std::string state = list_controller.response.state[i];
+      if ((name == "r_gripper_controller" || name == "l_gripper_controller" ||
+          name == "laser_tilt_controller" || name == "head_traj_controller" ||
+          name == "r_arm_controller" || name == "l_arm_controller" ||
+          name == "base_controller" || name == "torso_controller") && state == "running")
+        controllers_count++;
+      ROS_INFO("controller [%s] state [%s] count[%d]",name.c_str(), state.c_str(),controllers_count);
+    }
+  }
+
   // clear object wrench
-  ros::service::waitForService("/gazebo/clear_body_wrenches");
-  ros::ServiceClient clear_client = rh.serviceClient<gazebo_msgs::BodyRequest>("/gazebo/clear_body_wrenches");
+  /*
+  ros::ServiceClient clear_client = rh.serviceClient<gazebo_msgs::BodyRequest>(clear_body_wrenches_srv_name);
   gazebo_msgs::BodyRequest body_request;
   body_request.request.body_name = "object_1::coke_can";
   clear_client.call(body_request);
+  */
 
   // open gripper
-  Gripper r_gripper("r_gripper_controller/gripper_action");
   r_gripper.open();
-  //Gripper l_gripper("l_gripper_controller/gripper_action");
+  r_gripper.open(); // only works after two calls
   //l_gripper.open();
 
   ROS_INFO("stopping controllers");
   // stop arm controller
-  std::string switch_controller_srv_name = "/pr2_controller_manager/switch_controller";
-  ros::service::waitForService(switch_controller_srv_name);
   ros::ServiceClient switch_controller_client = rh.serviceClient<pr2_mechanism_msgs::SwitchController>(switch_controller_srv_name);
   pr2_mechanism_msgs::SwitchController switch_controller;
   switch_controller.request.start_controllers.clear();
@@ -212,9 +290,7 @@ int main(int argc, char** argv)
   
   ROS_INFO("pausing physics");
   // pause simulation
-  std::string psn = "/gazebo/pause_physics";
-  ros::service::waitForService(psn);
-  ros::ServiceClient ps_client = rh.serviceClient<std_srvs::Empty>(psn);
+  ros::ServiceClient ps_client = rh.serviceClient<std_srvs::Empty>(pause_srv_name);
   std_srvs::Empty ps;
   ps_client.call(ps);
 
@@ -274,30 +350,30 @@ int main(int argc, char** argv)
   // 'l_gripper_joint', 'l_gripper_l_finger_joint', 'l_gripper_r_finger_joint', 'l_gripper_r_finger_tip_joint', 'l_gripper_l_finger_tip_joint', 'l_gripper_motor_screw_joint', 'l_gripper_motor_slider_joint', 
   // 3.895490011392481e-05, 0.0023094056377544747, 0.0023094056377544747, 0.0023094056377544747, 0.0023094056377544747, 0.0, 0.0, 
 
-  smc.request.joint_names.push_back("r_gripper_joint"); 
+/* need to set parallel links on the gripper too, but not exposed through urdf
   smc.request.joint_names.push_back("r_gripper_l_finger_joint"); 
   smc.request.joint_names.push_back("r_gripper_r_finger_joint"); 
   smc.request.joint_names.push_back("r_gripper_r_finger_tip_joint"); 
   smc.request.joint_names.push_back("r_gripper_l_finger_tip_joint"); 
+  smc.request.joint_names.push_back("r_gripper_joint"); 
   smc.request.joint_names.push_back("r_gripper_motor_screw_joint"); 
   smc.request.joint_names.push_back("r_gripper_motor_slider_joint"); 
 
+  smc.request.joint_positions.push_back(0.5014809427821072);
+  smc.request.joint_positions.push_back(0.5014809427821072);
+  smc.request.joint_positions.push_back(0.5014809427821072);
+  smc.request.joint_positions.push_back(0.5014809427821072);
   smc.request.joint_positions.push_back(0.0859999741332338);
-  smc.request.joint_positions.push_back(0.5014809427821072);
-  smc.request.joint_positions.push_back(0.5014809427821072);
-  smc.request.joint_positions.push_back(0.5014809427821072);
-  smc.request.joint_positions.push_back(0.5014809427821072);
   smc.request.joint_positions.push_back(0.0);
   smc.request.joint_positions.push_back(0.0);
+*/
 
 
 
   smc_client.call(smc);
   
   // unpause simulation
-  std::string upsn = "/gazebo/unpause_physics";
-  ros::service::waitForService(upsn);
-  ros::ServiceClient ups_client = rh.serviceClient<std_srvs::Empty>(upsn);
+  ros::ServiceClient ups_client = rh.serviceClient<std_srvs::Empty>(unpause_srv_name);
   std_srvs::Empty ups;
   ups_client.call(ups);
 
