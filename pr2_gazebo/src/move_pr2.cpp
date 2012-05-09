@@ -142,23 +142,28 @@ public:
   void open(){
     pr2_controllers_msgs::Pr2GripperCommandGoal open;
     open.command.position = 0.08;
-    open.command.max_effort = 100.0;  // use -1 to not limit effort (negative)
+    open.command.max_effort = 150.0;  // use -1 to not limit effort (negative)
     
     ROS_INFO("Sending open goal");
-    if (gripper_client_->sendGoalAndWait(open,ros::Duration(10.0),ros::Duration(5.0)) == actionlib::SimpleClientGoalState::SUCCEEDED)
-      ROS_INFO("The gripper opened!");
+
+    gripper_client_->sendGoal(open);
+    bool finished_before_timeout = gripper_client_->waitForResult(ros::Duration(30.0));
+
+    if (finished_before_timeout)
+      ROS_INFO("The gripper opened.");
     else
-      ROS_INFO("The gripper failed to open.");
+      ROS_WARN("The gripper failed to open [%s].",gripper_client_->getState().toString().c_str());
   }
 
   //Close the gripper
   void close(){
     pr2_controllers_msgs::Pr2GripperCommandGoal squeeze;
     squeeze.command.position = 0.0;
-    squeeze.command.max_effort = 200.0;  // Close gently
+    squeeze.command.max_effort = 50.0;  // Close gently
     
     ROS_INFO("Sending squeeze goal");
-    if (gripper_client_->sendGoalAndWait(squeeze,ros::Duration(5.0),ros::Duration(3.0)) == actionlib::SimpleClientGoalState::SUCCEEDED)
+    if (gripper_client_->sendGoalAndWait(squeeze,ros::Duration(5.0),ros::Duration(3.0))
+        == actionlib::SimpleClientGoalState::SUCCEEDED)
       ROS_INFO("The gripper closed!");
     else
       ROS_INFO("The gripper failed to close.");
@@ -182,11 +187,11 @@ int main(int argc, char** argv)
 
   // open gripper
   Gripper r_gripper("r_gripper_controller/gripper_action");
-  Gripper l_gripper("l_gripper_controller/gripper_action");
   r_gripper.open();
-  l_gripper.open();
+  //Gripper l_gripper("l_gripper_controller/gripper_action");
+  //l_gripper.open();
 
-  ROS_ERROR("stopping controllers");
+  ROS_INFO("stopping controllers");
   // stop arm controller
   std::string switch_controller_srv_name = "/pr2_controller_manager/switch_controller";
   ros::service::waitForService(switch_controller_srv_name);
@@ -205,9 +210,7 @@ int main(int argc, char** argv)
   switch_controller.request.strictness = pr2_mechanism_msgs::SwitchControllerRequest::STRICT;
   switch_controller_client.call(switch_controller);
   
-  sleep(3); // for debug viewing
-
-  ROS_ERROR("pausing physics");
+  ROS_INFO("pausing physics");
   // pause simulation
   std::string psn = "/gazebo/pause_physics";
   ros::service::waitForService(psn);
@@ -215,7 +218,7 @@ int main(int argc, char** argv)
   std_srvs::Empty ps;
   ps_client.call(ps);
 
-  ROS_ERROR("setting arm pose");
+  ROS_INFO("setting arm pose");
   // set arm model configuration
   std::string smcn = "/gazebo/set_model_configuration";
   ros::service::waitForService(smcn);
@@ -223,33 +226,83 @@ int main(int argc, char** argv)
   gazebo_msgs::SetModelConfiguration smc;
   smc.request.model_name = "pr2";
   smc.request.urdf_param_name = "robot_description";
-  smc.request.joint_names.push_back("l_upper_arm_roll_joint");
-  smc.request.joint_names.push_back("l_shoulder_pan_joint");
-  smc.request.joint_names.push_back("l_shoulder_lift_joint");
-  smc.request.joint_names.push_back("l_forearm_roll_joint");
-  smc.request.joint_names.push_back("l_elbow_flex_joint");
-  smc.request.joint_names.push_back("l_wrist_flex_joint");
-  smc.request.joint_names.push_back("l_wrist_roll_joint");
-  smc.request.joint_positions.push_back(3.1);
-  smc.request.joint_positions.push_back(0);
-  smc.request.joint_positions.push_back(-0.2);
-  smc.request.joint_positions.push_back(0);
-  smc.request.joint_positions.push_back(-0.2);
-  smc.request.joint_positions.push_back(-1.0);
-  smc.request.joint_positions.push_back(0);
+
+  smc.request.joint_names.push_back("head_pan_joint"); 
+  smc.request.joint_names.push_back("head_tilt_joint"); 
+  smc.request.joint_names.push_back("laser_tilt_mount_joint");
+
+  smc.request.joint_positions.push_back(-0.04695624787873154);
+  smc.request.joint_positions.push_back(0.9571995901909744);
+  smc.request.joint_positions.push_back(1.0137128597170113);
+
+
+
+  smc.request.joint_names.push_back("r_upper_arm_roll_joint"); 
+  smc.request.joint_names.push_back("r_shoulder_pan_joint"); 
+  smc.request.joint_names.push_back("r_shoulder_lift_joint"); 
+  smc.request.joint_names.push_back("r_forearm_roll_joint"); 
+  smc.request.joint_names.push_back("r_elbow_flex_joint"); 
+  smc.request.joint_names.push_back("r_wrist_flex_joint"); 
+  smc.request.joint_names.push_back("r_wrist_roll_joint"); 
+ 
+  smc.request.joint_positions.push_back(-1.6399960594910876);
+  smc.request.joint_positions.push_back(-0.3689082990354322);
+  smc.request.joint_positions.push_back(0.3212309310513026);
+  smc.request.joint_positions.push_back(-3.5471901137256694);
+  smc.request.joint_positions.push_back(-1.459007345767927);
+  smc.request.joint_positions.push_back(-0.6873569547257024);
+  smc.request.joint_positions.push_back(-1.4355428273114548);
+
+
+  smc.request.joint_names.push_back("l_upper_arm_roll_joint"); 
+  smc.request.joint_names.push_back("l_shoulder_pan_joint"); 
+  smc.request.joint_names.push_back("l_shoulder_lift_joint"); 
+  smc.request.joint_names.push_back("l_forearm_roll_joint"); 
+  smc.request.joint_names.push_back("l_elbow_flex_joint"); 
+  smc.request.joint_names.push_back("l_wrist_flex_joint"); 
+  smc.request.joint_names.push_back("l_wrist_roll_joint"); 
+
+  smc.request.joint_positions.push_back(1.6399982206352233);
+  smc.request.joint_positions.push_back(2.1350018853307198);
+  smc.request.joint_positions.push_back(-0.02000609892474703);
+  smc.request.joint_positions.push_back(1.6399955487793614);
+  smc.request.joint_positions.push_back(-2.070018727445361);
+  smc.request.joint_positions.push_back(-1.6800004066137673);
+  smc.request.joint_positions.push_back(1.3980012258720143);
+
+
+  // 'l_gripper_joint', 'l_gripper_l_finger_joint', 'l_gripper_r_finger_joint', 'l_gripper_r_finger_tip_joint', 'l_gripper_l_finger_tip_joint', 'l_gripper_motor_screw_joint', 'l_gripper_motor_slider_joint', 
+  // 3.895490011392481e-05, 0.0023094056377544747, 0.0023094056377544747, 0.0023094056377544747, 0.0023094056377544747, 0.0, 0.0, 
+
+  smc.request.joint_names.push_back("r_gripper_joint"); 
+  smc.request.joint_names.push_back("r_gripper_l_finger_joint"); 
+  smc.request.joint_names.push_back("r_gripper_r_finger_joint"); 
+  smc.request.joint_names.push_back("r_gripper_r_finger_tip_joint"); 
+  smc.request.joint_names.push_back("r_gripper_l_finger_tip_joint"); 
+  smc.request.joint_names.push_back("r_gripper_motor_screw_joint"); 
+  smc.request.joint_names.push_back("r_gripper_motor_slider_joint"); 
+
+  smc.request.joint_positions.push_back(0.0859999741332338);
+  smc.request.joint_positions.push_back(0.5014809427821072);
+  smc.request.joint_positions.push_back(0.5014809427821072);
+  smc.request.joint_positions.push_back(0.5014809427821072);
+  smc.request.joint_positions.push_back(0.5014809427821072);
+  smc.request.joint_positions.push_back(0.0);
+  smc.request.joint_positions.push_back(0.0);
+
+
+
   smc_client.call(smc);
   
-  sleep(3); // for debug viewing
-
-  ROS_ERROR("setting arm pose 2");
-/* arm waving test */
-  // pause simulation
+  // unpause simulation
   std::string upsn = "/gazebo/unpause_physics";
   ros::service::waitForService(upsn);
   ros::ServiceClient ups_client = rh.serviceClient<std_srvs::Empty>(upsn);
   std_srvs::Empty ups;
   ups_client.call(ups);
 
+  /* check another pose
+  ROS_INFO("setting arm pose 2");
   gazebo_msgs::SetModelConfiguration smc1;
   smc1.request.model_name = "pr2";
   smc1.request.urdf_param_name = "robot_description";
@@ -268,10 +321,9 @@ int main(int argc, char** argv)
   smc1.request.joint_positions.push_back(-0.2);
   smc1.request.joint_positions.push_back(0.0);
   smc_client.call(smc1);
+ */
 
-  sleep(3); // for debug viewing
-
-  ROS_ERROR("restarting controllers");
+  ROS_INFO("restarting controllers");
   // start arm controller
   switch_controller.request.start_controllers.clear();
   switch_controller.request.start_controllers.push_back("r_gripper_controller");
@@ -285,15 +337,12 @@ int main(int argc, char** argv)
   switch_controller.request.stop_controllers.clear();
   switch_controller_client.call(switch_controller);
 
-  sleep(3); // for debug viewing
-
-  ROS_ERROR("closing grippers");
+  /* 
+  ROS_INFO("closing grippers");
   r_gripper.close();
-  l_gripper.close();
+  //l_gripper.close();
 
-  sleep(3); // for debug viewing
-
-  ROS_ERROR("stopping controllers");
+  ROS_INFO("stopping controllers");
   // stop arm controller
   switch_controller.request.start_controllers.clear();
   switch_controller.request.stop_controllers.clear();
@@ -307,9 +356,8 @@ int main(int argc, char** argv)
   switch_controller.request.stop_controllers.push_back("torso_controller");
   switch_controller.request.strictness = pr2_mechanism_msgs::SwitchControllerRequest::STRICT;
   switch_controller_client.call(switch_controller);
-  
-  sleep(3); // for debug viewing
-  ROS_ERROR("resetting simulation");
+
+  ROS_INFO("resetting simulation");
   // reset simulation
   std::string rsn = "/gazebo/reset_simulation";
   ros::service::waitForService(rsn);
@@ -317,8 +365,7 @@ int main(int argc, char** argv)
   std_srvs::Empty rs;
   rs_client.call(rs);
 
-  sleep(3); // for debug viewing
-  ROS_ERROR("restarting controllers");
+  ROS_INFO("stop all controllers");
   // start arm controller
   switch_controller.request.start_controllers.clear();
   switch_controller.request.start_controllers.push_back("r_gripper_controller");
@@ -331,8 +378,7 @@ int main(int argc, char** argv)
   switch_controller.request.start_controllers.push_back("torso_controller");
   switch_controller.request.stop_controllers.clear();
   switch_controller_client.call(switch_controller);
-
-  sleep(3); // for debug viewing
+  */
 
 /*
   RobotArm arm;
