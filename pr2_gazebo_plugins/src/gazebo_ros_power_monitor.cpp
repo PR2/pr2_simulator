@@ -27,7 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "gazebo.h"
 #include "physics/World.hh"
 #include "sensors/Sensor.hh"
 #include "sdf/interface/SDF.hh"

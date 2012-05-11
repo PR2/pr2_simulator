@@ -33,7 +33,6 @@
 
 #include <pr2_gazebo_plugins/gazebo_ros_prosilica.h>
 
-#include "gazebo.h"
 #include "physics/World.hh"
 #include "physics/HingeJoint.hh"
 #include "sensors/Sensor.hh"
