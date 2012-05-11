@@ -36,7 +36,7 @@
 #include "angles/angles.h"
 #include "pluginlib/class_list_macros.h"
 
-PLUGINLIB_REGISTER_CLASS(JointGravityController, controller::JointGravityController, pr2_controller_interface::Controller)
+PLUGINLIB_DECLARE_CLASS(pr2_gazebo_benchmarks, JointGravityController, controller::JointGravityController, pr2_controller_interface::Controller)
 
 using namespace std;
 

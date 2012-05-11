@@ -36,7 +36,7 @@
 #include "angles/angles.h"
 #include "pluginlib/class_list_macros.h"
 
-PLUGINLIB_REGISTER_CLASS(JointPendulumController, controller::JointPendulumController, pr2_controller_interface::Controller)
+PLUGINLIB_DECLARE_CLASS(pr2_gazebo_benchmarks, JointPendulumController, controller::JointPendulumController, pr2_controller_interface::Controller)
 
 using namespace std;
 
@@ -168,7 +168,7 @@ void JointPendulumController::update()
   // hack for compensation
   double g = 1.0;
   double p = angles::shortest_angular_distance(joint_state_->position_,M_PI/2.0);
-  double f = g*sin(p);
+  //double f = g*sin(p);
   //joint_state_->commanded_effort_ = f;
 
   //ROS_ERROR("debug %f %f %f",g,p,f);
