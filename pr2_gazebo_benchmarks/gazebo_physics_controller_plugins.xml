@@ -1,0 +1,4 @@
+<library path="lib/libgazebo_physics_controllers">
+  <class name="JointGravityController" type="controller::JointGravityController" base_class_type="pr2_controller_interface::Controller" />
+  <class name="JointPendulumController" type="controller::JointPendulumController" base_class_type="pr2_controller_interface::Controller" />
+</library>

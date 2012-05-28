@@ -1,0 +1,26 @@
+<launch>
+
+  <param name="/use_sim_time" value="true" />
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find pr2_gazebo_benchmarks)/worlds/parallel_quickstep/final_demo.world" respawn="false" output="screen"/>
+
+<!--<param name="table_description" command="$(find xacro)/xacro.py $(find pr2_gazebo_benchmarks)/urdf/parallel_quickstep/table.urdf.xacro" />
+  <node name="spawn_table" pkg="gazebo" type="spawn_model" args="-urdf -param table_description -z 0.0 -model table_model" respawn="false" output="screen" /> -->
+
+  <param name="box_description" command="$(find xacro)/xacro.py $(find pr2_gazebo_benchmarks)/urdf/parallel_quickstep/final_demo_blocks.urdf.xacro" />
+  <node name="spawn_boxes" pkg="gazebo" type="spawn_model" args="-urdf -param box_description -z 0.0 -model box_model" respawn="false" output="screen" /> -->
+
+  <param name="object_description" command="$(find xacro)/xacro.py $(find pr2_gazebo_benchmarks)/urdf/parallel_quickstep/table_objects.urdf.xacro" />
+  <node name="spawn_object" pkg="gazebo" type="spawn_model" args="-urdf -param object_description -z 0.0 -model dominoes_model" respawn="false" output="screen" />
+
+   <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_simulator_benchmarks)/urdf/pr2_urdf_only.urdf'" />
+  <node name="pr2_00_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  3 -x   0 -model pr2_00" respawn="false" output="screen" />
+  <node name="pr2_01_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  3 -x   1.5 -model pr2_01" respawn="false" output="screen" />
+  <node name="pr2_02_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  3 -x   3 -model pr2_02" respawn="false" output="screen" />
+  <node name="pr2_03_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  6 -x   0 -model pr2_03" respawn="false" output="screen" />
+  <node name="pr2_04_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  6 -x   1.5 -model pr2_04" respawn="false" output="screen" />
+  <node name="pr2_05_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -z 0.2 -y  6 -x   3 -model pr2_05" respawn="false" output="screen" />
+
+  <param name="chains_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/urdf/parallel_quickstep/final_demo_chains.urdf.xacro'" />
+  <node name="chains0" pkg="gazebo" type="spawn_model" args="-urdf -param chains_description -model chains0" respawn="false" output="screen" />
+
+</launch>

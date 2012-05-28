@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<robot name="box_stack_block"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <!--
+     For Contact Joints,
+       erp = h * kp / (h * kp + kd)
+       cfm = 1.0 / (h * kp + kd)
+
+     For example,
+       h = erp = 0.001, cfm = 0 requires kd >> 1, kp = kd / (1 - h)
+       h = erp = 0.0, cfm = 0 requires kd >> 1, kp = 0
+  -->
+  <xacro:property name="moi" value="0.01"/>
+  <xacro:property name="mass" value="1.0"/>
+  <xacro:property name="kp" value="100000000000.0"/> <!-- erp of ~1e-2 -->
+  <xacro:property name="kd" value="1000000000.0"/> <!-- cfm of ~1e-10 -->
+
+  <link name="world"/>
+  <xacro:macro name="one_link" params="link_name parent *origin material">
+    <joint name="${link_name}_joint" type="floating" >
+      <insert_block name="origin"/>
+      <parent link="${parent}" />
+      <child link="${link_name}" />
+      <dynamics damping="0.0" />
+    </joint>
+    <link name="${link_name}">
+      <inertial >
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" />
+        <inertia  ixx="${moi}" ixy="0.0"  ixz="0.0"  iyy="${moi}"  iyz="0.0"  izz="${moi}" />
+      </inertial>
+      <visual >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </visual>
+      <collision >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="${link_name}">
+      <kp>${kp}</kp>
+      <kd>${kd}</kd>
+      <material>${material}</material>
+      <turnGravityOff>false</turnGravityOff>
+      <selfCollide>true</selfCollide>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name ="interlaced_wall" params="offset">
+    <xacro:one_link link_name="${offset}_link00" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 0 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link01" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 1 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link02" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 2 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link03" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 3 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link04" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 4 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link05" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 5 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link06" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 6 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link07" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 7 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link08" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 8 0" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link09" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 9 0" rpy="0 0 0"/> </xacro:one_link>
+
+    <xacro:one_link link_name="${offset}_link10" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 0.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link11" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 1.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link12" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 2.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link13" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 3.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link14" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 4.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link15" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 5.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link16" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 6.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link17" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 7.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link18" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 8.5 1" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link19" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 9.5 1" rpy="0 0 0"/> </xacro:one_link>
+
+    <xacro:one_link link_name="${offset}_link20" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 0 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link21" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 1 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link22" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 2 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link23" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 3 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link24" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 4 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link25" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 5 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link26" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 6 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link27" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 7 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link28" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 8 2" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link29" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 9 2" rpy="0 0 0"/> </xacro:one_link>
+
+    <xacro:one_link link_name="${offset}_link30" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 0.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link31" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 1.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link32" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 2.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link33" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 3.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link34" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 4.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link35" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 5.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link36" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 6.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link37" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 7.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link38" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 8.5 3" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link39" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 9.5 3" rpy="0 0 0"/> </xacro:one_link>
+
+    <xacro:one_link link_name="${offset}_link40" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 0 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link41" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 1 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link42" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 2 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link43" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 3 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link44" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 4 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link45" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 5 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link46" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 6 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link47" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 7 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link48" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 8 4" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link49" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 9 4" rpy="0 0 0"/> </xacro:one_link>
+
+    <xacro:one_link link_name="${offset}_link50" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 0.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link51" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 1.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link52" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 2.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link53" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 3.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link54" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 4.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link55" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 5.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link56" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 6.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link57" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 7.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link58" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 8.5 5" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link59" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 9.5 5" rpy="0 0 0"/> </xacro:one_link>
+  </xacro:macro>
+
+  <xacro:interlaced_wall offset="0"  />
+  <xacro:interlaced_wall offset="2"  />
+  <xacro:interlaced_wall offset="4"  />
+  <xacro:interlaced_wall offset="6"  />
+  <xacro:interlaced_wall offset="8"  />
+
+</robot>

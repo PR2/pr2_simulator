@@ -1,0 +1,49 @@
+<robot name="simple_box">
+  <!-- two connected boxes for debugging wrench/reference frame application utilities -->
+  <link name="box1">
+    <inertial>
+      <mass value="10.0" />
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="1.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="1 1 1" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="box1">
+    <material>Gazebo/Red</material>
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+  <joint name="box1_joint" type="continuous" >
+    <axis xyz="1 0 0" />
+    <parent link="box1" />
+    <child link="box2" />
+    <origin xyz="1 0 0" rpy="0 1.571 0" />
+  </joint>
+  <link name="box2">
+    <inertial>
+      <mass value="0.01" />
+      <inertia  ixx="0.001" ixy="0.0"  ixz="0.0"  iyy="0.001"  iyz="0.0"  izz="0.001" />
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="box2">
+    <material>Gazebo/Blue</material>
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+</robot>

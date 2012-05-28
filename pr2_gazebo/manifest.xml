@@ -47,6 +47,9 @@
   <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>
 
+  <rosdep name="libqt4-dev"/>
+  <rosdep name="libqt4-opengl-dev"/>
+
   <export>
     <gazebo gazebo_media_path="${prefix}/test" />
   </export>

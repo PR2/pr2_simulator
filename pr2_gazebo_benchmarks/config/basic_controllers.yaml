@@ -1,0 +1,40 @@
+pendulum_controller:
+  type: JointPendulumController
+  joint: link_joint
+  pid:
+    p: 0.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+gravity_controller:
+  type: JointGravityController
+  joint: link_joint
+  pid:
+    p: 1.0
+    i: 1.0
+    d: 0
+    i_clamp: 0
+position_controller:
+  type: JointPositionController
+  joint: link_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+velocity_controller:
+  type: JointVelocityController
+  joint: link_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0
+effort_controller:
+  type: JointEffortController
+  joint: link_joint
+  pid:
+    p: 1.0
+    i: 0.0
+    d: 0
+    i_clamp: 0

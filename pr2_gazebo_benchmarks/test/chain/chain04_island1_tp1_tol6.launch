@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- start world -->
+  <param name="/use_sim_time" value="true" />
+  <node launch-prefix="vglrun" name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find pr2_gazebo_benchmarks)/test/worlds/island1_tp1_tol6.world" respawn="false" output="screen"/>
+
+  <!-- spawn robots -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/test/chain/urdf/chain04.urdf.xacro'" />
+  <node name="spawn_continuous_chain_pendulum" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model continuous_chain_pendulum" respawn="false" output="screen" />
+
+</launch>
+

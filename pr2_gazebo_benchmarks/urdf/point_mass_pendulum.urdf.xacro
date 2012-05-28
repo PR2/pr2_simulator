@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<robot name="point_mass_pendulum"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <!--
+     A pendulum constructed from single continuous link and a point mass
+  -->
+  
+  <link name="world"/>
+  <joint name="link_joint" type="continuous" >
+    <axis xyz="1 0 0" />
+    <parent link="world" />
+    <origin xyz="0 0 2" rpy="0 0 0" />
+    <child link="link" />
+    <dynamics damping="0.0" />
+  </joint>
+  <link name="link">
+    <inertial >
+      <mass value="10" />
+      <origin xyz="0 1.0 0" /> 
+      <inertia  ixx="0.0" ixy="0.0"  ixz="0.0"  iyy="0.0"  iyz="0.0"  izz="0.0" />
+    </inertial>
+    <visual >
+      <origin xyz="0 1.0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius=".1" />
+      </geometry>
+    </visual>
+    <collision >
+      <origin xyz="0 1.0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius=".1" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="link">
+    <material>Gazebo/GrassFloor</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <gazebo>
+      <!-- PR2_ACTARRAY -->
+      <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1000.0</updateRate>
+        <interface:audio name="gazebo_ros_controller_manager_dummy_iface" />
+      </controller:gazebo_ros_controller_manager>
+
+      <!-- gazebo_ros_p3d for position groundtruth -->
+      <controller:gazebo_ros_p3d name="p3d_link_controller" plugin="libgazebo_ros_p3d.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>100.0</updateRate>
+          <bodyName>link</bodyName>
+          <topicName>link_pose</topicName>
+          <frameName>map</frameName>
+          <interface:position name="p3d_link_position"/>
+      </controller:gazebo_ros_p3d>
+  </gazebo>
+
+  <!-- mechanism controls -->
+  <transmission type="SimpleTransmission" name="link_trans">
+    <actuator name="link_motor" />
+    <joint name="link_joint" />
+    <mechanicalReduction>1</mechanicalReduction>
+    <motorTorqueConstant>1</motorTorqueConstant>
+  </transmission>
+
+</robot>

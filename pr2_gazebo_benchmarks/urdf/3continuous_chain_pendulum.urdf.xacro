@@ -1,0 +1,580 @@
+<?xml version="1.0"?>
+<robot name="continuous_pendulum"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <link name="world"/>
+  <!--
+     A pendulum constructed from single continuous link and a mass with some moment of inertia
+  -->
+  <xacro:macro name="one_link" params="link_name parent *axis *origin material">
+    <joint name="${link_name}_joint" type="continuous" >
+      <insert_block name="origin"/>
+      <insert_block name="axis"/>
+      <parent link="${parent}" />
+      <child link="${link_name}" />
+      <dynamics damping="0.0" />
+    </joint>
+    <link name="${link_name}">
+      <inertial >
+        <mass value="1.0" />
+        <origin xyz="0 1 0" /> 
+        <inertia  ixx="0.0" ixy="0.0"  ixz="0.0"  iyy="0.0"  iyz="0.0"  izz="0.0" />
+      </inertial>
+      <visual >
+        <origin xyz="0 0.5 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.2 1.0 0.2" />
+        </geometry>
+      </visual>
+      <collision >
+        <origin xyz="0 0.5 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.2 1.0 0.2" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="${link_name}">
+      <material>${material}</material>
+      <turnGravityOff>false</turnGravityOff>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:one_link link_name="link1" parent="world" material="Gazebo/GrassFloor">
+    <origin xyz="0 0 55" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link2" parent="link1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link3" parent="link2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link4" parent="link3" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link5" parent="link4" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link6" parent="link5" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link7" parent="link6" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link8" parent="link7" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link9" parent="link8" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link10" parent="link9" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link11" parent="link10" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link12" parent="link11" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link13" parent="link12" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link14" parent="link13" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link15" parent="link14" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link16" parent="link15" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link17" parent="link16" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link18" parent="link17" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link19" parent="link18" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link20" parent="link19" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link21" parent="link20" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link22" parent="link21" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link23" parent="link22" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link24" parent="link23" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link25" parent="link24" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link26" parent="link25" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link27" parent="link26" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link28" parent="link27" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link29" parent="link28" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link30" parent="link29" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link31" parent="link30" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link32" parent="link31" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link33" parent="link32" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link34" parent="link33" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link35" parent="link34" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link36" parent="link35" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link37" parent="link36" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link38" parent="link37" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link39" parent="link38" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link40" parent="link39" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+
+  <xacro:one_link link_name="link1_1" parent="world" material="Gazebo/GrassFloor">
+    <origin xyz="1 0 55" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link2_1" parent="link1_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link3_1" parent="link2_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link4_1" parent="link3_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link5_1" parent="link4_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link6_1" parent="link5_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link7_1" parent="link6_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link8_1" parent="link7_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link9_1" parent="link8_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link10_1" parent="link9_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link11_1" parent="link10_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link12_1" parent="link11_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link13_1" parent="link12_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link14_1" parent="link13_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link15_1" parent="link14_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link16_1" parent="link15_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link17_1" parent="link16_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link18_1" parent="link17_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link19_1" parent="link18_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link20_1" parent="link19_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link21_1" parent="link20_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link22_1" parent="link21_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link23_1" parent="link22_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link24_1" parent="link23_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link25_1" parent="link24_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link26_1" parent="link25_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link27_1" parent="link26_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link28_1" parent="link27_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link29_1" parent="link28_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link30_1" parent="link29_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link31_1" parent="link30_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link32_1" parent="link31_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link33_1" parent="link32_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link34_1" parent="link33_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link35_1" parent="link34_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link36_1" parent="link35_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link37_1" parent="link36_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link38_1" parent="link37_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link39_1" parent="link38_1" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link40_1" parent="link39_1" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+ 
+  <xacro:one_link link_name="link1_2" parent="world" material="Gazebo/GrassFloor">
+    <origin xyz="2 0 55" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link2_2" parent="link1_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link3_2" parent="link2_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link4_2" parent="link3_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link5_2" parent="link4_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link6_2" parent="link5_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link7_2" parent="link6_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link8_2" parent="link7_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link9_2" parent="link8_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link10_2" parent="link9_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link11_2" parent="link10_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link12_2" parent="link11_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link13_2" parent="link12_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link14_2" parent="link13_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link15_2" parent="link14_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link16_2" parent="link15_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link17_2" parent="link16_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link18_2" parent="link17_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link19_2" parent="link18_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link20_2" parent="link19_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link21_2" parent="link20_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link22_2" parent="link21_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link23_2" parent="link22_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link24_2" parent="link23_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link25_2" parent="link24_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link26_2" parent="link25_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link27_2" parent="link26_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link28_2" parent="link27_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link29_2" parent="link28_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link30_2" parent="link29_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link31_2" parent="link30_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link32_2" parent="link31_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link33_2" parent="link32_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link34_2" parent="link33_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link35_2" parent="link34_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link36_2" parent="link35_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link37_2" parent="link36_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link38_2" parent="link37_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link39_2" parent="link38_2" material="Gazebo/LightWood">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+  <xacro:one_link link_name="link40_2" parent="link39_2" material="Gazebo/GrassFloor">
+    <origin xyz="0 1 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+  </xacro:one_link>
+
+
+  <gazebo>
+      <!-- PR2_ACTARRAY -->
+      <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1000.0</updateRate>
+        <interface:audio name="gazebo_ros_controller_manager_dummy_iface" />
+      </controller:gazebo_ros_controller_manager>
+
+      <!-- gazebo_ros_p3d for position groundtruth -->
+      <controller:gazebo_ros_p3d name="p3d_link1_controller" plugin="libgazebo_ros_p3d.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>100.0</updateRate>
+          <bodyName>link1</bodyName>
+          <topicName>link1_pose</topicName>
+          <frameName>map</frameName>
+          <interface:position name="p3d_link1_position"/>
+      </controller:gazebo_ros_p3d>
+      <controller:gazebo_ros_p3d name="p3d_link2_controller" plugin="libgazebo_ros_p3d.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>100.0</updateRate>
+          <bodyName>link2</bodyName>
+          <topicName>link2_pose</topicName>
+          <frameName>map</frameName>
+          <interface:position name="p3d_link2_position"/>
+      </controller:gazebo_ros_p3d>
+  </gazebo>
+
+  <!-- mechanism controls -->
+  <transmission type="SimpleTransmission" name="link1_trans">
+    <actuator name="link1_motor" />
+    <joint name="link1_joint" />
+    <mechanicalReduction>1</mechanicalReduction>
+    <motorTorqueConstant>1</motorTorqueConstant>
+  </transmission>
+
+  <transmission type="SimpleTransmission" name="link2_trans">
+    <actuator name="link2_motor" />
+    <joint name="link2_joint" />
+    <mechanicalReduction>1</mechanicalReduction>
+    <motorTorqueConstant>1</motorTorqueConstant>
+  </transmission>
+
+</robot>

@@ -1,0 +1,16 @@
+<launch>
+
+  <!-- start world -->
+  <param name="/use_sim_time" value="true" />
+  <node launch-prefix="vglrun" name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find pr2_gazebo_benchmarks)/test/worlds/island1_tp1_tol2.world" respawn="false" output="screen"/>
+
+  <!-- spawn robots -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/test/box_stack/urdf/box_stack_06.urdf.xacro'" />
+  <node name="spawn_box_stack_1" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_1" respawn="false" output="screen" />
+  <node name="spawn_box_stack_2" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_2 -y 1.5" respawn="false" output="screen" />
+  <node name="spawn_box_stack_3" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_3 -y -1.5" respawn="false" output="screen" />
+  <node name="spawn_box_stack_4" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_4 -x 1.5" respawn="false" output="screen" />
+  <node name="spawn_box_stack_5" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box_stack_5 -x -1.5" respawn="false" output="screen" />
+
+</launch>
+

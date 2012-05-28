@@ -1,0 +1,13 @@
+<launch>
+
+  <!-- start gazebo with an empty plane -->
+  <param name="/use_sim_time" value="true" />
+
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find pr2_gazebo_benchmarks)/worlds/parallel_quickstep/cuda.world" respawn="false" output="screen"/>
+
+  <!-- Spawn Robots in Simulation -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/urdf/contact_sphere.urdf.xacro'" />
+  <node name="spawn_contact_sphere_cuda" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model contact_sphere_cuda" respawn="false" output="screen" />
+
+</launch>
+

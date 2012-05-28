@@ -1,0 +1,17 @@
+<launch>
+
+  <!-- two connected boxes for debugging wrench/reference frame application utilities -->
+
+  <!-- start gazebo with an empty plane -->
+  <param name="/use_sim_time" value="true" />
+
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="$(find pr2_gazebo_benchmarks)/worlds/boxes.world" respawn="false" output="screen"/>
+
+  <!-- send urdf to param server -->
+  <param name="boxes" textfile="$(find pr2_gazebo_benchmarks)/urdf/boxes.urdf" />
+
+  <!-- push urdf to factory and spawn robot in gazebo -->
+  <node name="spawn_boxes" pkg="gazebo" type="spawn_model" args="-urdf -param boxes -x 0 -y -0 -z 2.0  -R 0 -P 0 -Y 0 -model boxes" respawn="false" output="screen" />
+
+</launch>
+

@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<robot name="table_objects"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <property name="table_z" value="0.0" />
+  <property name="table_height" value="0.0" />
+
+  <property name="dom_height"  value="0.2" />
+  <property name="dom_width"   value="0.015" />
+  <property name="dom_length"  value="0.06" />
+  <property name="dom_mass"    value="0.5" />
+  <property name="dom_mu"      value="25.0" />
+
+  <property name="dom_xInit" value="-.5" />
+  <property name="dom_yInit" value="-8" />
+  <property name="dom_zInit" value="${table_z+table_height+dom_height/2.0}" />
+  <property name="dom_space_y" value=".1" />     <!-- ${dom_width*1.25}" /> -->
+  <property name="dom_space_x" value="0.075" /> <!-- ${dom_length+dom_height/4.0}" /> -->
+  <property name="dom_thetaInit" value="0" />
+  <property name="dom_theta_forward" value="60" />
+  <property name="dom_theta_backward" value="-60" />
+  <property name="dom_rotInit" value="0" />
+
+  <link name="world"/>
+  <xacro:macro name="domino" params="dom_num line_num dom_x dom_y dom_z dom_rot dom_theta">
+    <joint name="dom_${line_num}_${dom_num}_joint" type="floating" >
+      <parent link="world" />
+      <child link="dom_${line_num}_${dom_num}" />
+      <dynamics damping="0.0" />
+    </joint>
+    <link name="dom_${line_num}_${dom_num}">
+      <origin xyz="${dom_x + dom_num*dom_space_x} ${dom_y + line_num*dom_space_y} ${dom_z}" rpy="0 0 0 " />
+      <inertial>
+	<mass value="${dom_mass/2.0}" />
+	<origin xyz="${dom_x + dom_num*dom_space_x} ${dom_y + line_num*dom_space_y} ${dom_z}" rpy="0 0 0 " />
+	<inertia ixx="${dom_mass/20.0}" ixy="0"  ixz="0"
+		 iyy="${dom_mass/20.0}" iyz="0"
+		 izz="${dom_mass/200.}" />
+      </inertial>
+      <visual>
+	<origin xyz="${dom_x + dom_num*dom_space_x} ${dom_y + line_num*dom_space_y} ${dom_z}" rpy="0 ${dom_theta} ${dom_rot}" />
+	<geometry>
+          <box size="${dom_width} ${dom_length} ${dom_height}" />
+	</geometry>
+      </visual>
+      <collision>
+	<origin xyz="${dom_x + dom_num*dom_space_x} ${dom_y + line_num*dom_space_y} ${dom_z}" rpy="0 ${dom_theta} ${dom_rot}" />
+	<geometry>
+          <box size="${dom_width} ${dom_length} ${dom_height}" />
+	</geometry>
+      </collision>
+    </link>
+    <gazebo reference="dom_${line_num}_${dom_num}">
+      <material>Gazebo/BumpyMetal</material>
+      <mu1>0.3</mu1>
+      <mu2>0.4</mu2>
+      <kp>100000000.0</kp>
+      <kd>1.0</kd>
+      <selfCollide>true</selfCollide>
+      <turnGravityOff>false</turnGravityOff>
+    </gazebo>
+    <gazebo>
+      <canonicalBody>dom_${line_num}_${dom_num}</canonicalBody>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="domino_line" params="line_num dom_x0 dom_y0 dom_z0 dom_theta0 dom_rot0 dom_theta1 dom_theta2">
+    <xacro:domino line_num="${line_num}" dom_num="0" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta1}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="1" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="2" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="3" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="4" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="5" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="6" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="7" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="8" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="9" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="10" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="11" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="12" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="13" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="14" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="15" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="16" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="17" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="18" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="19" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="20" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="21" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="22" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="23" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="24" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="25" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="26" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="27" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="28" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="29" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="30" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="31" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="32" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="33" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="34" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="35" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="36" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="37" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="38" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta0}" dom_rot="${dom_rot0}" />
+    <xacro:domino line_num="${line_num}" dom_num="39" dom_x="${dom_x0}" dom_y="${dom_y0}" dom_z="${dom_z0}" dom_theta="${dom_theta2}" dom_rot="${dom_rot0}" />
+  </xacro:macro>
+
+  <xacro:domino_line line_num="1" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="2" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="3" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="4" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="5" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="6" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+<!--    <xacro:domino_line line_num="7" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}" dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}"  />
+  <xacro:domino_line line_num="8" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="9" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"   dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="10" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="11" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="12" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="13" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="14" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="15" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="16" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="17" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="18" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="19" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="20" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="21" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="22" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="23" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="24" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="25" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="26" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="27" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="28" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="29" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="30" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="31" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="32" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="33" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="34" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="35" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="36" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="37" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="38" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />
+  <xacro:domino_line line_num="39" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_theta_forward}" dom_theta2="${dom_thetaInit}" />
+  <xacro:domino_line line_num="40" dom_x0="${dom_xInit}" dom_y0="${dom_yInit}" dom_z0="${dom_zInit}" dom_theta0="${dom_thetaInit}" dom_rot0="${dom_rotInit}"  dom_theta1="${dom_thetaInit}" dom_theta2="${dom_theta_backward}" />  -->
+
+</robot>

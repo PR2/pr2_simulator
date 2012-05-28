@@ -1,0 +1,311 @@
+<?xml version="1.0"?>
+
+<gazebo:world 
+  xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" 
+  xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" 
+  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" 
+  xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" 
+  xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" 
+  xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint" 
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" 
+  xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering" 
+  xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics" >
+
+  <verbosity>5</verbosity>
+
+  <!--
+  <physics:ode>
+    <stepTime>0.001</stepTime>
+    <gravity>0 0 -9.8</gravity>
+    <cfm>10e-2</cfm>
+    <erp>0.2</erp>
+  </physics:ode>
+  -->
+  <physics:ode>
+    <stepTime>0.001</stepTime>
+    <gravity>0 0 -9.8</gravity>
+    <cfm>0.0000000001</cfm>
+    <erp>0.2</erp>
+    <quickStep>true</quickStep>
+    <quickStepIters>50</quickStepIters>
+    <quickStepW>0.8</quickStepW>
+    <contactMaxCorrectingVel>1.0</contactMaxCorrectingVel>
+    <contactSurfaceLayer>0.001</contactSurfaceLayer>
+  </physics:ode>
+
+  <rendering:gui>
+    <type>fltk</type>
+    <imageSize>1024 800</imageSize>
+    <pos>0 0</pos>
+    <frames>
+      <row height="100%">
+        <camera width="100%">
+          <xyz>-3.0 0 0.5</xyz>
+          <rpy>0 0 0</rpy>
+        </camera>
+      </row>
+    </frames>
+  </rendering:gui>
+
+  <rendering:ogre>
+    <ambient>0.0 0.0 0.0 1.0</ambient>
+    <sky>
+      <material>Gazebo/CloudySky</material>
+    </sky>
+    <grid>true</grid>
+  </rendering:ogre>
+
+  <model:physical name="sphere1_model">
+    <xyz>1 0 0.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere1_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>0.001</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>0.001</iyy>
+      <iyz>0.0</iyz>
+      <izz>0.001</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:sphere name="sphere1_geom">
+        <size>0.5</size>
+        <mass>0.1</mass>
+
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+
+  <model:physical name="sphere2_model">
+    <xyz>1 0 1.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere2_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>0.001</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>0.001</iyy>
+      <iyz>0.0</iyz>
+      <izz>0.001</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:sphere name="sphere2_geom">
+        <size>0.5</size>
+        <mass>0.1</mass>
+
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+  </model:physical>
+
+  <model:physical name="sphere3_model">
+    <xyz>1 0 2.5</xyz>
+    <rpy>0.0 0.0 0.0</rpy>
+    <static>false</static>
+
+    <body:sphere name="sphere3_body">
+      <massMatrix>true</massMatrix> 
+      <mass>10000.0</mass>
+      <ixx>0.001</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>0.001</iyy>
+      <iyz>0.0</iyz>
+      <izz>0.001</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:sphere name="sphere3_geom">
+        <size>0.5</size>
+        <mass>0.1</mass>
+
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_sphere</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:sphere>
+    </body:sphere>
+ </model:physical>
+
+
+
+  <model:physical name="box1_model">
+    <xyz>1 1.5 0.5</xyz>
+    <canonicalBody>box1_body</canonicalBody>
+    <static>false</static>
+
+    <body:box name="box1_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>1.00</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>1.00</iyy>
+      <iyz>0.0</iyz>
+      <izz>1.00</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:box name="box1_geom1">
+        <size>1.0 1.0 1.0</size>
+
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_box</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:box>
+    </body:box>
+  </model:physical>
+
+  <model:physical name="box2_model">
+    <xyz>1 1.5 1.5</xyz>
+    <canonicalBody>box2_body</canonicalBody>
+    <static>false</static>
+
+    <body:box name="box2_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1.0</mass>
+      <ixx>1.00</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>1.00</iyy>
+      <iyz>0.0</iyz>
+      <izz>1.00</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:box name="box2_geom1">
+        <size>1.0 1.0 1.0</size>
+
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_box</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:box>
+    </body:box>
+  </model:physical>
+
+  <model:physical name="box3_model">
+    <xyz>1 1.5 2.5</xyz>
+    <canonicalBody>box3_body</canonicalBody>
+    <static>false</static>
+
+    <body:box name="box3_body">
+      <massMatrix>true</massMatrix> 
+      <mass>1000.0</mass>
+      <ixx>0.01</ixx>
+      <ixy>0.0</ixy>
+      <ixz>0.0</ixz>
+      <iyy>0.01</iyy>
+      <iyz>0.0</iyz>
+      <izz>0.01</izz>
+      <cx>0.0</cx>
+      <cy>0.0</cy>
+      <cz>0.0</cz>
+      <geom:box name="box3_geom1">
+        <size>1.0 1.0 1.0</size>
+
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>100000000.0</kp>
+        <kd>1000000.0</kd>
+
+        <visual>
+          <size>1.0 1.0 1.0</size>
+          <mesh>unit_box</mesh>
+          <material>Gazebo/Rocky</material>
+        </visual>
+      </geom:box>
+    </body:box>
+  </model:physical>
+
+
+
+
+
+
+
+
+
+   <!-- Ground Plane -->
+   <model:physical name="plane1_model">
+    <xyz>0 0 0</xyz>
+    <rpy>0 0 0</rpy>
+    <static>true</static>
+
+    <body:plane name="plane1_body">
+      <geom:plane name="plane1_geom">
+        <normal>0 0 1</normal>
+        <size>100 100</size>
+        <segments>10 10</segments>
+        <uvTile>100 100</uvTile>
+        <material>Gazebo/Rockwall</material>
+        <mu1>1000.0</mu1>
+        <mu2>1000.0</mu2>
+      </geom:plane>
+    </body:plane>
+  </model:physical>
+
+  <!-- White Point light -->
+  <model:renderable name="point_white">
+    <xyz>1 1 100</xyz>
+    <static>true</static>
+
+    <light>
+      <type>point</type>
+      <diffuseColor>0.9 0.9 0.9</diffuseColor>
+      <specularColor>0.9 0.9 0.9</specularColor>
+      <range>200</range>
+
+      <!-- Constant(0-1) Linear(0-1) Quadratic -->
+      <attenuation>0.8 0.001 0.0</attenuation>
+    </light>
+  </model:renderable>
+ 
+</gazebo:world>

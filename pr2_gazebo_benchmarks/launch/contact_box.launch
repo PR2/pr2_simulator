@@ -1,0 +1,18 @@
+<launch>
+
+  <!-- start world -->
+  <include file="$(find pr2_gazebo_benchmarks)/launch/contact_world.launch"/>
+
+  <!-- spawn robot -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/urdf/contact_box.urdf.xacro'" />
+  <node name="spawn_contact_box" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model box -z 0.3" respawn="false" output="screen" />
+
+<!-- make floating joint work with mechanism_controller?
+  <rosparam file="$(find pr2_gazebo_benchmarks)/config/basic_controllers.yaml" command="load"/>
+  <node name="spawn_effort_controller" pkg="pr2_controller_manager" type="spawner" args="effort_controller" respawn="false" output="screen" />
+  <node name="spawn_velocity_controller" pkg="pr2_controller_manager" type="spawner" args="velocity_controller" respawn="false" output="screen" />
+  <node name="spawn_position_controller" pkg="pr2_controller_manager" type="spawner" args="position_controller" respawn="false" output="screen" />
+-->
+
+</launch>
+

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot name="continuous_pendulum"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <!--
+     For Contact Joints,
+       erp = h * kp / (h * kp + kd)
+       cfm = 1.0 / (h * kp + kd)
+
+     For example,
+       h = erp = 0.001, cfm = 0 requires kd >> 1, kp = kd / (1 - h)
+       h = erp = 0.0, cfm = 0 requires kd >> 1, kp = 0
+  -->
+  <xacro:property name="moi" value="0.01"/>
+  <xacro:property name="mass" value="1.0"/>
+  <xacro:property name="kp" value="100000000000.0"/> <!-- erp of ~1e-2 -->
+  <xacro:property name="kd" value="1000000000.0"/> <!-- cfm of ~1e-10 -->
+
+  <link name="world"/>
+  <xacro:macro name="one_link" params="link_name parent *origin material">
+    <joint name="${link_name}_joint" type="floating" >
+      <insert_block name="origin"/>
+      <parent link="${parent}" />
+      <child link="${link_name}" />
+      <dynamics damping="0.0" />
+    </joint>
+    <link name="${link_name}">
+      <inertial >
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" />
+        <inertia  ixx="${moi}" ixy="0.0"  ixz="0.0"  iyy="${moi}"  iyz="0.0"  izz="${moi}" />
+      </inertial>
+      <visual >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </visual>
+      <collision >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="${link_name}">
+      <kp>${kp}</kp>
+      <kd>${kd}</kd>
+      <material>${material}</material>
+      <turnGravityOff>false</turnGravityOff>
+      <selfCollide>true</selfCollide>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="box_layer" params="height offset shift">
+    <xacro:one_link link_name="${offset}_link${height}0" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 0.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}1" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 1.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}2" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 2.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}3" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 3.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}4" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 4.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}5" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 5.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}6" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 6.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}7" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 7.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}8" parent="world" material="Gazebo/GrassFloor"> <origin xyz="${offset} 8.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+    <xacro:one_link link_name="${offset}_link${height}9" parent="world" material="Gazebo/LightWood">  <origin xyz="${offset} 9.${shift} ${height}" rpy="0 0 0"/> </xacro:one_link>
+  </xacro:macro>
+
+  <xacro:macro name="interlaced_wall" params="offset">
+    <xacro:box_layer offset="${offset}" height="0" shift="0" />
+    <xacro:box_layer offset="${offset}" height="1" shift="5" />
+    <xacro:box_layer offset="${offset}" height="2" shift="0" />
+    <xacro:box_layer offset="${offset}" height="3" shift="5" />
+    <xacro:box_layer offset="${offset}" height="4" shift="0" />
+    <xacro:box_layer offset="${offset}" height="5" shift="5" />
+  </xacro:macro>
+
+  <xacro:interlaced_wall offset="-1.25" />
+  <xacro:interlaced_wall offset="-2.5" />
+  <xacro:interlaced_wall offset="-3.75" />
+  <xacro:interlaced_wall offset="-5" />
+  <xacro:interlaced_wall offset="-6.25" />
+  <xacro:interlaced_wall offset="-7.5" />
+  <xacro:interlaced_wall offset="-8.75" />
+  <xacro:interlaced_wall offset="-10.0" />
+  <xacro:interlaced_wall offset="-11.25" />
+  <xacro:interlaced_wall offset="-12.5" />
+  <xacro:interlaced_wall offset="-13.75" />
+  <xacro:interlaced_wall offset="-15" />
+
+</robot>

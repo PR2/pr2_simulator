@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<robot name="continuous_pendulum"
+       xmlns:xi="http://www.w3.org/2001/XInclude"
+       xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+       xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+       xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics">
+
+  <!--
+     For Contact Joints,
+       erp = h * kp / (h * kp + kd)
+       cfm = 1.0 / (h * kp + kd)
+
+     For example,
+       h = erp = 0.001, cfm = 0 requires kd >> 1, kp = kd / (1 - h)
+       h = erp = 0.0, cfm = 0 requires kd >> 1, kp = 0
+  -->
+  <xacro:property name="moi" value="0.0001"/>
+  <xacro:property name="mass" value="1.0"/>
+  <xacro:property name="kp" value="100000000000.0"/> <!-- erp of ~1e-2 -->
+  <xacro:property name="kd" value="1000000000.0"/> <!-- cfm of ~1e-10 -->
+
+  <xacro:macro name="one_link" params="link_name parent *origin material">
+    <joint name="${link_name}_joint" type="floating" >
+      <insert_block name="origin"/>
+      <parent link="${parent}" />
+      <child link="${link_name}" />
+      <dynamics damping="0.0" />
+    </joint>
+    <link name="${link_name}">
+      <inertial >
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" /> 
+        <inertia  ixx="${moi}" ixy="0.0"  ixz="0.0"  iyy="${moi}"  iyz="0.0"  izz="${moi}" />
+      </inertial>
+      <visual >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </visual>
+      <collision >
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="1 1 1" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="${link_name}">
+      <kp>${kp}</kp>
+      <kd>${kd}</kd>
+      <material>${material}</material>
+      <turnGravityOff>false</turnGravityOff>
+      <selfCollide>true</selfCollide>
+    </gazebo>
+  </xacro:macro>
+
+  <link name="world"/>
+  <xacro:one_link link_name="link1" parent="world" material="Gazebo/GrassFloor">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link2" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link3" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 2" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link4" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 3" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link5" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 4" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link6" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 5" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link7" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 6" rpy="0 0 0"/>
+  </xacro:one_link>
+<!--
+  <xacro:one_link link_name="link8" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 7" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link9" parent="world" material="Gazebo/BumpyMetal">
+    <origin xyz="0 0 8" rpy="0 0 0"/>
+  </xacro:one_link>
+  <xacro:one_link link_name="link10" parent="world" material="Gazebo/LightWood">
+    <origin xyz="0 0 9" rpy="0 0 0"/>
+  </xacro:one_link>
+-->
+
+
+</robot>

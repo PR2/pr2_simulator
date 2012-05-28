@@ -33,7 +33,6 @@
 #include <vector>
 #include <map>
 
-#include "gazebo.h"
 #include "physics/World.hh"
 #include "physics/Model.hh"
 #include "physics/physics.h"

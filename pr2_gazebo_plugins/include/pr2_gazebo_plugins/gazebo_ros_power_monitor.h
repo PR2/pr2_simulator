@@ -34,7 +34,6 @@
 #include <vector>
 #include <boost/thread/mutex.hpp>
 
-#include "gazebo.h"
 #include "physics/World.hh"
 #include "physics/Model.hh"
 #include "physics/physics.h"

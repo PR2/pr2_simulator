@@ -1,0 +1,22 @@
+<launch>
+  
+  <!-- so ros know we're simming -->
+  <param name="/use_sim_time" value="true" />
+
+  <!-- start gazebo with an empty plane -->
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="$(find pr2_simulator_benchmarks)/worlds/pgs_iters10_cuda.world" respawn="false" output="screen"/>
+
+  <!-- send pr2 urdf to param server -->
+  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+
+  <!-- push robot_description to factory and -model robot in gazebo -->
+  <node name="pr2_11_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_11 -x 0 -y  0 -model pr2_11" respawn="false" output="screen" />
+  <node name="pr2_12_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_12 -x 0 -y  1 -model pr2_12" respawn="false" output="screen" />
+  <node name="pr2_13_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_13 -x 0 -y -1 -model pr2_13" respawn="false" output="screen" />
+  <node name="pr2_21_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_21 -x -1.5 -y  0 -model pr2_21" respawn="false" output="screen" />
+  <node name="pr2_22_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_22 -x -1.5 -y  1 -model pr2_22" respawn="false" output="screen" />
+  <node name="pr2_23_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_23 -x -1.5 -y -1 -model pr2_23" respawn="false" output="screen" />
+  <node name="pr2_31_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_31 -x 1.5 -y  0 -model pr2_31" respawn="false" output="screen" />
+  <node name="pr2_32_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_32 -x 1.5 -y  1 -model pr2_32" respawn="false" output="screen" />
+  <node name="pr2_33_spawn_model" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -n pr2_33 -x 1.5 -y -1 -model pr2_33" respawn="false" output="screen" />
+</launch>

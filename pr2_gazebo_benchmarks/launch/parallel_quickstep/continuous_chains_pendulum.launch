@@ -1,0 +1,18 @@
+<launch>
+
+  <!-- start gazebo with an empty plane -->
+  <param name="/use_sim_time" value="true" />
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="$(find pr2_gazebo_benchmarks)/worlds/parallel_quickstep/empty_chain_link_cpu.world" respawn="false" output="screen"/>
+
+  <!-- Spawn Robots in Simulation -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_gazebo_benchmarks)/urdf/parallel_quickstep/continuous_chains_pendulum.urdf.xacro'" />
+  <node name="spawn_continuous_chains_pendulum" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -model continuous_chains_pendulum" respawn="false" output="screen" />
+
+  <rosparam file="$(find pr2_gazebo_benchmarks)/config/double_pendulum_controllers.yaml" command="load"/>
+
+  <node name="spawn_effort_controller" pkg="pr2_controller_manager" type="spawner" args="--stopped link1_effort_controller link2_effort_controller" respawn="false" output="screen" />
+  <node name="spawn_velocity_controller" pkg="pr2_controller_manager" type="spawner" args="--stopped link1_velocity_controller link2_velocity_controller" respawn="false" output="screen" />
+  <node name="spawn_position_controller" pkg="pr2_controller_manager" type="spawner" args="--stopped link1_position_controller link2_position_controller" respawn="false" output="screen" />
+
+</launch>
+

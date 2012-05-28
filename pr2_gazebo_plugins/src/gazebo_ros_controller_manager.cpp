@@ -36,7 +36,6 @@
 
 //#include <gazebo/XMLConfig.hh>
 //#include "physics/physics.h"
-#include "gazebo.h"
 #include "physics/World.hh"
 #include "physics/HingeJoint.hh"
 #include "sensors/Sensor.hh"
