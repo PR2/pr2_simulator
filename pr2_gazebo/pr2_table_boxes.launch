@@ -24,8 +24,8 @@
    respawn="false" output="screen" />
 
   <node name="spawn_box1" pkg="gazebo" type="spawn_model" args="-urdf -file $(find gazebo_worlds)/objects/box.urdf -wait table_1 -model object_1 -x 0.7 -z 0.55" respawn="false" output="screen" />
-  <node name="spawn_box2" pkg="gazebo" type="spawn_model" args="-urdf -file $(find gazebo_worlds)/objects/box.urdf -wait table_1 -model object_2 -x 0.7 -z 0.65" respawn="false" output="screen" />
-  <node name="spawn_box3" pkg="gazebo" type="spawn_model" args="-urdf -file $(find gazebo_worlds)/objects/box.urdf -wait table_1 -model object_3 -x 0.7 -z 0.75" respawn="false" output="screen" />
+  <node name="spawn_box2" pkg="gazebo" type="spawn_model" args="-urdf -file $(find gazebo_worlds)/objects/box.urdf -wait object_1 -model object_2 -x 0.7 -z 0.65" respawn="false" output="screen" />
+  <node name="spawn_box3" pkg="gazebo" type="spawn_model" args="-urdf -file $(find gazebo_worlds)/objects/box.urdf -wait object_2 -model object_3 -x 0.7 -z 0.75" respawn="false" output="screen" />
 
   <!-- parameters that give you reasonable physics as well as good speed -->
   <!-- needed so that gripper joint stops on objects instead of oscillating forever -->
