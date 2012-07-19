@@ -10,7 +10,7 @@
 
 
   <!-- start empty world -->
-  <node name="empty_world_server" pkg="gazebo" type="gazebo" args="-u $(find gazebo_worlds)/worlds/wg_collada.world" respawn="false" output="screen"/>
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find gazebo_worlds)/worlds/wg_collada.world" respawn="false" output="screen"/>
 
   <!-- start gui -->
   <group if="$(arg gui)">
