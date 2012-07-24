@@ -5,14 +5,14 @@
   <param name="/use_sim_time" value="true" />
 
   <!-- start empty world -->
-  <node name="empty_world_server" pkg="gazebo" type="gazebo" args="-u $(find gazebo_worlds)/worlds/empty.world" respawn="false" output="screen"/>
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find gazebo_worlds)/worlds/empty.world" respawn="false" output="screen"/>
 
   <!-- start gui -->
   <group if="$(arg gui)">
     <node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/>
   </group>
 
-  <include file="$(find pr2_gazebo)/pr2.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2.launch"/>
 
   <!-- -J r_upper_arm_roll_joint -1.64 -J r_shoulder_pan_joint -2.135 -J r_shoulder_lift_joint -0.02 -J r_forearm_roll_joint -1.64 -J r_elbow_flex_joint -2.07 -J r_wrist_flex_joint -1.68 -J r_wrist_roll_joint 1.40 --> 
   <!--include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" /-->

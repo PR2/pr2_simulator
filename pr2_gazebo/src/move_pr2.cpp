@@ -185,13 +185,18 @@ public:
       bool finished_before_timeout = gripper_client_->waitForResult(ros::Duration(50.0));
 
       if (finished_before_timeout)
+      {
         ROS_INFO("The gripper opened.");
+        success = true;
+      }
       else
+      {
         ROS_WARN("The gripper failed to open [%s].",gripper_client_->getState().toString().c_str());
+      }
 
-      // final check if goal reached
-      success = (gripper_client_->getState() != actionlib::SimpleClientGoalState::SUCCEEDED);
-      ROS_ERROR("success %d",success);
+      // final check if goal reached (doesn't seem to work)
+      // success = (gripper_client_->getState() != actionlib::SimpleClientGoalState::SUCCEEDED);
+      // ROS_ERROR("state [%d] success [%d]", gripper_client_->getState().state_, success);
     }
   }
 
