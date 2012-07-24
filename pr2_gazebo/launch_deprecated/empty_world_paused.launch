@@ -1,5 +1,6 @@
 <launch>
 
+  <!-- DEPRECATED:  moved to gazebo_worlds -->
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
 
