@@ -45,8 +45,8 @@ import rospy, rostest
 from nav_msgs.msg import Odometry
 
 TEST_DURATION = 90.0
-TARGET_X = -6.0 + 25.65 #contains offset specified in P3D for base, alternatively, use the gripper roll ground truths
-TARGET_Y = 0.0 + 25.65 #contains offset specified in P3D for base, alternatively, use the gripper roll ground truths
+TARGET_X = -6.0  #contains offset specified in P3D for base, alternatively, use the gripper roll ground truths
+TARGET_Y = 0.0  #contains offset specified in P3D for base, alternatively, use the gripper roll ground truths
 TARGET_Z = 3.8
 TARGET_RAD = 4.5
 CUP_HEIGHT = 4.0
