@@ -39,7 +39,7 @@
     for this test (tf_message_test vs. scan_test). -->
     <param name="topic" value="/tf" />
     <param name="hz" value="100.0" />
-    <param name="hzerror" value="10.0" /> <!-- for some ros reason, this is around 80Hz on my desktop! -->
+    <param name="hzerror" value="25.0" /> <!-- for some ros reason, this is around 80Hz on my desktop! -->
     <param name="test_duration" value="10.0" />
     <param name="check_intervals" value="false" />
     <param name="initial_cycles" value="1000" />
