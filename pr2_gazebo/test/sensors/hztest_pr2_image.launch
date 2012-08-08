@@ -1,6 +1,6 @@
 <launch>
   <!-- load empty world -->
-  <include file="$(find pr2_gazebo)/pr2_empty_world.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch"/>
 
   <!-- Run hztest -->
   <!-- Test for publication of 'left narrow_stereo camera image publish rate' topic -->

@@ -3,7 +3,7 @@
 
   <include file="$(find pr2_gazebo)/test/senosrs/scan_world.launch" />
 
-  <include file="$(find pr2_gazebo)/pr2.launch" />
+  <include file="$(find pr2_gazebo)/launch/pr2.launch" />
 
   <test test-name="test_pr2_sensors_gazebo_test_scan_0" pkg="pr2_gazebo" type="test_scan.py" time-limit="50"/>
 

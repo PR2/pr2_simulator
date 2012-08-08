@@ -1,6 +1,6 @@
 <launch>
   <!-- Bring up the node we want to test. -->
-  <include file="$(find pr2_gazebo)/pr2_empty_world.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch"/>
 
   <!-- Run hztest -->
   <!-- Test for publication rate of 'stereo/cloud' topic -->

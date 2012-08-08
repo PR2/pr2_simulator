@@ -200,7 +200,7 @@
         <mu2>0.0</mu2>
         <mesh>default</mesh>
         <xyz>   1.25   -1.0   10.5</xyz>
-        <size> 2.5</size>
+        <size> 1.25</size>
         <mass> 1.0</mass>
         <visual>
           <size> 5.0 5.0 5.0</size>

@@ -1,6 +1,6 @@
 <launch>
   <!-- startup pr2 -->
-  <include file="$(find pr2_gazebo)/pr2_empty_world.launch" />
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" />
 
   <node name="tuckarm" pkg="pr2_tuckarm" type="tuck_arms.py" args="-l t -r t" />
 
