@@ -53,7 +53,7 @@ TARGET_VX       =  0.0
 TARGET_VY       =  0.5
 TARGET_VW       =  0.0
 TARGET_DURATION = 2.0
-TARGET_TOL      = 0.2
+TARGET_TOL      = 0.1
 
 from test_base import BaseTest, Q, E
 class Y_GT(BaseTest):
@@ -74,8 +74,14 @@ class Y_GT(BaseTest):
 
         # check total error
         total_error = abs(self.odom_x - self.p3d_x) + abs(self.odom_y - self.p3d_y) + abs(self.odom_t - self.p3d_t)
-        if total_error < TARGET_TOL:
+        total_dist  = math.sqrt(self.p3d_x*self.p3d_x + self.p3d_y*self.p3d_y + self.p3d_t*self.p3d_t)
+        if total_error/total_dist  < TARGET_TOL:
             self.success = True
+
+        if not self.success:
+          rospy.logerr("Testing pr2 base odometry control against simulated ground truth with target (vx,vy) = (0.5,0.5), but odom data does not match gound truth from simulation.  Total deviation in position is %f percent over a distance of %f meters."%(total_error/total_dist, total_dist));
+        else:
+          rospy.loginfo("Testing pr2 base odometry control against simulated ground truth with target (vx,vy) = (0.5,0.5), total deviation in position is %f percent over a distance of %f meters."%(total_error/total_dist, total_dist));
 
         self.assert_(self.success)
         
