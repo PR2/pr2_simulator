@@ -14,7 +14,7 @@
     to 0.0. -->
     <param name="hzerror" value="5.0" />
     <!-- Time to listen for [seconds] -->
-    <param name="test_duration" value="2.0" />    
+    <param name="test_duration" value="10.0" />    
     <!-- Whether each inter-message time interval should be checked against
     the expected publication rate and error bound [boolean].  If true, then
     the test will fail if the time elapsed between *any* two consecutive
@@ -30,7 +30,7 @@
     <param name="topic" value="/tilt_scan" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="5.0" />
-    <param name="test_duration" value="2.0" />
+    <param name="test_duration" value="10.0" />
     <param name="check_intervals" value="false" />
   </test>
 
