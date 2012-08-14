@@ -1,0 +1,8 @@
+<launch>
+  <!-- DEPRECATED:  use the one in gazebo_worlds -->
+  <include file="$(find gazebo_worlds)/launch/pr2_table_simple_shapes.launch"/>
+  <node name="warn_deprecated" pkg="pr2_gazebo" type="warn_deprecated.py">
+    <param name="warn_deprecated" value="please use pr2_gazebo/launch/pr2_table_simple_shapes.launch"/>
+  </node>
+</launch>
+
