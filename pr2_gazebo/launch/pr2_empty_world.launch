@@ -1,7 +1,10 @@
 <launch>
 
   <!-- start up empty world -->
-  <include file="$(find gazebo_worlds)/launch/empty_world_paused.launch"/>
+  <arg name="gui" default="true"/>
+  <include file="$(find gazebo_worlds)/launch/empty_world_paused.launch">
+    <arg name="gui" value="$(arg gui)" />
+  </include>
 
   <!-- start pr2 robot -->
   <include file="$(find pr2_gazebo)/launch/pr2.launch"/>
