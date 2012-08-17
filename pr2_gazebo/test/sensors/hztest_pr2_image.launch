@@ -27,7 +27,7 @@
   <test test-name="hztest_test_wide_stereo_left_image" pkg="pr2_gazebo" type="hztest" time-limit="500" name="wide_stereo_left_image_test">
     <param name="topic" value="/wide_stereo/left/image_raw" />
     <param name="hz" value="20.0" />
-    <param name="hzerror" value="5.0" />
+    <param name="hzerror" value="7.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />    
     <param name="initial_cycles" value="300" />
@@ -37,7 +37,7 @@
   <test test-name="hztest_test_wide_stereo_right_image" pkg="pr2_gazebo" type="hztest" time-limit="500" name="wide_stereo_right_image_test">
     <param name="topic" value="/wide_stereo/right/image_raw" />
     <param name="hz" value="20.0" />
-    <param name="hzerror" value="5.0" />
+    <param name="hzerror" value="7.0" />
     <param name="test_duration" value="2.0" />
     <param name="check_intervals" value="false" />    
     <param name="initial_cycles" value="300" />
