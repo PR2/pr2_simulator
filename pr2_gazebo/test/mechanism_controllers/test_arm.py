@@ -180,7 +180,7 @@ class ArmTest(unittest.TestCase):
         #self.printP3D(p3d) #for getting new valid data
 
         # has to reach target vw and maintain target vw for a duration of TARGET_DURATION seconds
-        if self.reached_target_palm:
+        if self.reached_target_palm: # tracking started
           print " palm duration: " + str(time.time() - self.duration_start_palm)
           if rot_error < ROT_TARGET_TOL and pos_error < POS_TARGET_TOL:
             if time.time() - self.duration_start_palm > TARGET_DURATION:
@@ -202,9 +202,15 @@ class ArmTest(unittest.TestCase):
         rospy.Subscriber("/l_gripper_l_finger_pose_ground_truth", Odometry, self.fngrP3dInput)
         rospy.init_node(NAME, anonymous=True)
         timeout_t = time.time() + TEST_TIMEOUT
+
         while not rospy.is_shutdown() and (not self.palm_success or not self.fngr_success) and time.time() < timeout_t:
             pub_gripper.publish(Float64(GRP_CMD_POS))
             time.sleep(1.0)
+
+        if not (self.palm_success and self.fngr_success):
+          rospy.logerr("finger and palm pose test failed, there could be a problem with the gazebo_ros_p3d controller, tuck position has changed, or the gripper controller failed to open the gripper to 3cm width.")
+
         self.assert_(self.palm_success and self.fngr_success)
+
 if __name__ == '__main__':
     rostest.run(PKG, sys.argv[0], ArmTest, sys.argv) #, text_mode=True)

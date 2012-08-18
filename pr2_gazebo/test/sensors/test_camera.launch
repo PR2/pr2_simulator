@@ -10,7 +10,7 @@
   <node name="spawn_pr2" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -x -3 -model pr2" respawn="false" output="screen" />
  
   <!-- default bringup script -->
-  <include file="$(find pr2_gazebo)/pr2_bringup.launch" />
+  <include file="$(find pr2_gazebo)/launch/pr2_bringup.launch" />
 
   <!-- Default Controllers -->
   <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />

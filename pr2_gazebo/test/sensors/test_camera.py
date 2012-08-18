@@ -47,6 +47,7 @@ roslib.load_manifest('pr2_controllers_msgs')
 import sys, unittest
 import os, os.path, threading, time
 import rospy, rostest, string
+from std_msgs.msg import Int32
 from sensor_msgs.msg import Image as image_msg
 from sensor_msgs.msg import CameraInfo as camerainfo_msg
 from PIL import Image      as pili
@@ -55,7 +56,8 @@ from geometry_msgs.msg import PointStamped, Point, Vector3
 from pr2_controllers_msgs.msg import PointHeadGoal, PointHeadAction
 import actionlib.action_client
 
-FRAME_TARGET = "cam_sen-0050.ppm"
+#FRAME_TARGET = "cam_sen-0050.ppm"
+FRAME_TARGET = "test_camera.valid.ppm"
 FRAME_DIR = "test_camera_frames"
 TOTAL_ERROR_TOL = 5
 TEST_DURATION   = 70
@@ -153,7 +155,7 @@ class TestCameras(unittest.TestCase):
         return
 
       print "  - load validation image from file test_camera.valid.ppm "
-      fname = roslib.packages.get_pkg_dir('test_pr2_sensors_gazebo') + '/test_camera.valid.ppm'
+      fname = roslib.packages.get_pkg_dir('pr2_gazebo') + '/test/sensors/test_camera.valid.ppm'
       if os.path.isfile(fname):
         im0 = pili.open(fname)
       else:
@@ -196,7 +198,10 @@ class TestCameras(unittest.TestCase):
             return head_action_client.send_goal(g)
         head_goal = PointHeadGoal()
         head_goal.target.header.frame_id = 'base_link'
-        head_goal.target.point = Point(10,0,0.6)
+        head_goal.target.point = Point(10,0,0.55)
+
+        projector_pub = rospy.Publisher("/projector_wg6802418_controller/projector", Int32, latch=True);
+        projector_pub.publish(Int32(0));
 
         print " subscribe stereo left image from ROS "
         rospy.Subscriber("/narrow_stereo/left/image_raw", image_msg, self.imageInput) # this is a camera mounted on PR2 head (left stereo camera)

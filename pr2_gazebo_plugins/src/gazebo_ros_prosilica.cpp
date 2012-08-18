@@ -136,10 +136,10 @@ void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image,
   common::Time sensor_update_time = this->parentSensor_->GetLastUpdateTime();
 
   // as long as ros is connected, parent is active
-  //ROS_ERROR("debug image count %d",this->imageConnectCount);
+  //ROS_ERROR("debug image count %d",this->image_connect_count_);
   if (!this->parentSensor->IsActive())
   {
-    if (this->imageConnectCount > 0)
+    if (this->image_connect_count_ > 0)
       // do this first so there's chance for sensor to run 1 frame after activate
       this->parentSensor->SetActive(true);
   }
@@ -149,9 +149,9 @@ void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image,
 
     if (this->mode_ == "streaming")
     {
-      if (this->imageConnectCount > 0)
+      if (this->image_connect_count_ > 0)
       {
-        common::Time cur_time = this->world->GetSimTime();
+        common::Time cur_time = this->world_->GetSimTime();
         if (cur_time - this->last_update_time_ >= this->update_period_)
         {
           this->PutCameraData(_image, sensor_update_time);
@@ -162,9 +162,9 @@ void GazeboRosProsilica::OnNewImageFrame(const unsigned char *_image,
 
   }
   /// publish CameraInfo
-  if (this->infoConnectCount > 0)
+  if (this->info_connect_count_ > 0)
   {
-    common::Time cur_time = this->world->GetSimTime();
+    common::Time cur_time = this->world_->GetSimTime();
     if (cur_time - this->last_info_update_time_ >= this->update_period_)
     {
       this->PublishCameraInfo(sensor_update_time);
@@ -213,7 +213,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
   ROS_ERROR("roidebug %d %d %d %d", req.roi.x_offset, req.roi.y_offset, req.roi.width, req.roi.height);
 
   // signal sensor to start update
-  this->imageConnectCount++;
+  this->image_connect_count_++;
 
   // wait until an image has been returned
   while(!src)
@@ -337,7 +337,7 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
     }
     usleep(100000);
   }
-  this->imageConnectCount--;
+  this->image_connect_count_--;
   rsp.success = true;
   return;
 }

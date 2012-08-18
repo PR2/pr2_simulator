@@ -37,7 +37,7 @@
 ##   checks to see if P3D returns corresponding ground truth within TARGET_TOL of TARGET_VW
 ##          for a duration of TARGET_DURATION seconds
 
-PKG = 'test_pr2_gazebo'
+PKG = 'pr2_gazebo'
 NAME = 'check_pose'
 
 import math
@@ -71,7 +71,7 @@ TARGET_BASE_QW     = 1.0
 
 class PoseTest(unittest.TestCase):
     def __init__(self, *args):
-        super(ArmTest, self).__init__(*args)
+        super(PoseTest, self).__init__(*args)
         self.base_success = False
         self.reached_target_base = False
         self.duration_start_base = 0
