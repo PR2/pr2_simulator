@@ -49,7 +49,6 @@
 #include <diagnostic_updater/diagnostic_updater.h>
 #include <sensor_msgs/RegionOfInterest.h>
 
-#include <cv_bridge/CvBridge.h>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
@@ -311,27 +310,24 @@ void GazeboRosProsilica::pollCallback(polled_camera::GetPolledImage::Request& re
           this->roiImageMsg->header.stamp.sec = roiLastRenderTime.sec;
           this->roiImageMsg->header.stamp.nsec = roiLastRenderTime.nsec;
 
-          //sensor_msgs::CvBridge img_bridge_(&this->image_msg_);
-          //IplImage* cv_image;
-          //img_bridge_.to_cv( &cv_image );
+          // convert image_msg_ to a CvImage using cv_bridge
+          boost::shared_ptr<cv_bridge::CvImage> img_bridge_;
+          img_bridge_ = cv_bridge::toCvCopy(this->image_msg_);
 
-          sensor_msgs::CvBridge img_bridge_;
-          img_bridge_.fromImage(this->image_msg_);
-
+          // for debug
           //cvNamedWindow("showme",CV_WINDOW_AUTOSIZE);
           //cvSetMouseCallback("showme", &GazeboRosProsilica::mouse_cb, this);
           //cvStartWindowThread();
-
           //cvShowImage("showme",img_bridge_.toIpl());
-          cvSetImageROI(img_bridge_.toIpl(),cvRect(req.roi.x_offset,req.roi.y_offset,req.roi.width,req.roi.height));
-          IplImage *roi = cvCreateImage(cvSize(req.roi.width,req.roi.height),
-                                       img_bridge_.toIpl()->depth,
-                                       img_bridge_.toIpl()->nChannels);
-          cvCopy(img_bridge_.toIpl(),roi);
 
-          img_bridge_.fromIpltoRosImage(roi,*this->roiImageMsg);
+          // crop image to roi
+          cv::Mat roi(img_bridge_->image,
+            cv::Rect(req.roi.x_offset, req.roi.y_offset,
+                     req.roi.width, req.roi.height));
+          img_bridge_->image = roi;
 
-          cvReleaseImage(&roi);
+          // copy roi'd image into roiImageMsg
+          img_bridge_->toImageMsg(*this->roiImageMsg);
         }
       }
     }

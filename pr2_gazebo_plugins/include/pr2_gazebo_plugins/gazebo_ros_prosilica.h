@@ -35,7 +35,7 @@
 #include "boost/thread/mutex.hpp"
 
 // image components
-#include "cv_bridge/CvBridge.h"
+#include "cv_bridge/cv_bridge.h"
 // used by polled_camera
 #include "sensor_msgs/RegionOfInterest.h"
 
