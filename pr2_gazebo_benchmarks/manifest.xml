@@ -10,7 +10,6 @@
   <depend package="pr2_controller_configuration_gazebo"/>
   <depend package="robot_mechanism_controllers"/>
   <depend package="pr2_mechanism_controllers"/>
-  <depend package="robot_state_publisher"/>
   <depend package="pr2_gazebo"/>
   <depend package="gazebo"/>
   <!--depend package="parallel_quickstep"/-->
