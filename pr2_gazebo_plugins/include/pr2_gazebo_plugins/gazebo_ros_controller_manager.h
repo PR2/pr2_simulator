@@ -35,7 +35,7 @@
 
 #include "physics/World.hh"
 #include "physics/Model.hh"
-#include "physics/physics.h"
+#include "physics/physics.hh"
 #include "common/Time.hh"
 #include "common/Plugin.hh"
 
