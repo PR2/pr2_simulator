@@ -160,7 +160,7 @@ void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr
 
 
   // load a controller manager
-  this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);
+  this->cm_ = new pr2_hardware::ControllerManager(&hw_,*this->rosnode_);
   this->hw_.current_time_ = ros::Time(this->world->GetSimTime().Double());
   if (this->hw_.current_time_ < ros::Time(0.001)) this->hw_.current_time_ == ros::Time(0.001); // hardcoded to minimum of 1ms on start up
 

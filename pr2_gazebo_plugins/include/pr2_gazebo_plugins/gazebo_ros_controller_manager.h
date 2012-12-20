@@ -40,7 +40,7 @@
 #include "common/Plugin.hh"
 
 #include "pr2_hardware_interface/hardware_interface.h"
-#include "pr2_controller_manager/controller_manager.h"
+#include "pr2_hardware/controller_manager.h"
 #include "pr2_gazebo_plugins/SetModelsJointsStates.h"
 #include "pr2_mechanism_model/robot.h"
 #include <tinyxml.h>
@@ -70,7 +70,7 @@ private:
 
   gazebo::physics::ModelPtr parent_model_;
   pr2_hardware_interface::HardwareInterface hw_;
-  pr2_controller_manager::ControllerManager *cm_;
+  pr2_hardware::ControllerManager *cm_;
 
   /// @todo The fake state helps Gazebo run the transmissions backwards, so
   ///       that it can figure out what its joints should do based on the

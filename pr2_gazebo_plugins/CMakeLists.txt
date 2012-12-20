@@ -35,7 +35,7 @@ endif (${simulator_gazebo_version} VERSION_GREATER "1.2.8")
 
 rosbuild_add_boost_directories()
 
-rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
+rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp include/pr2_gazebo_plugins/gazebo_ros_controller_manager.h)
 rosbuild_link_boost(gazebo_ros_controller_manager thread)
 rosbuild_add_library(gazebo_ros_power_monitor src/gazebo_ros_power_monitor.cpp)
 rosbuild_link_boost(gazebo_ros_power_monitor thread)

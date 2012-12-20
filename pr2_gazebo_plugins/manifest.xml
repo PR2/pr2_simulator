@@ -11,7 +11,7 @@
   <depend package="gazebo_tools"/>
   <depend package="opende"/>
   <depend package="roscpp"/>
-  <depend package="rospy"/>  
+  <depend package="rospy"/>
   <depend package="std_msgs" />
   <depend package="nav_msgs" />
   <depend package="sensor_msgs" />
@@ -24,7 +24,7 @@
   <depend package="diagnostic_msgs" />
   <depend package="angles" />
   <depend package="pr2_hardware_interface" />
-  <depend package="pr2_controller_manager" />
+  <depend package="pr2_hardware" />
   <depend package="pr2_mechanism_model" />
   <depend package="bullet" />
   <depend package="urdf" />
