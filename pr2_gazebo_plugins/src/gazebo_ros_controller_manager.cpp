@@ -237,7 +237,7 @@ void GazeboRosControllerManager::UpdateChild()
     {
       gazebo::physics::JointPtr hj = this->joints_[i];
       this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
-                    angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle(0).GetAsRadian());
+                    angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle(0).Radian());
       this->fake_state_->joint_states_[i].velocity_ = hj->GetVelocity(0);
       //if (this->joints_[i]->GetName() == "torso_lift_motor_screw_joint")
       //  ROS_WARN("joint[%s] [%f]",this->joints_[i]->GetName().c_str(), this->fake_state_->joint_states_[i].position_);
@@ -246,10 +246,10 @@ void GazeboRosControllerManager::UpdateChild()
     {
       gazebo::physics::JointPtr sj = this->joints_[i];
       {
-        this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).GetAsRadian();
+        this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).Radian();
         this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
       }
-      //ROS_ERROR("joint[%s] is a slider [%f]",this->joints_[i]->GetName().c_str(),sj->GetAngle(0).GetAsRadian());
+      //ROS_ERROR("joint[%s] is a slider [%f]",this->joints_[i]->GetName().c_str(),sj->GetAngle(0).Radian());
       //if (this->joints_[i]->GetName() == "torso_lift_joint")
       //  ROS_WARN("joint[%s] [%f]",this->joints_[i]->GetName().c_str(), this->fake_state_->joint_states_[i].position_);
     }
