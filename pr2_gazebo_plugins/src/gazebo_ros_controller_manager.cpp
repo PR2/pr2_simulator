@@ -171,7 +171,7 @@ void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr
   ReadPr2Xml();
 
   // Initializes the fake state (for running the transmissions backwards).
-  this->fake_state_ = new pr2_mechanism_model::RobotState(&this->cm_->model_);
+  this->fake_state_ = new pr2_mechanism_model::RobotState(this->cm_->model_);
 
   // The gazebo joints and mechanism joints should match up.
   if (this->cm_->state_ != NULL) // could be NULL if ReadPr2Xml is unsuccessful
