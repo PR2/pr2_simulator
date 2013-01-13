@@ -28,6 +28,5 @@
   <depend stack="ros_comm" /> <!-- std_msgs, rospy, roscpp -->
   <depend stack="simulator_gazebo" /> <!-- gazebo_tools, gazebo, gazebo_plugins, gazebo_worlds -->
   <depend stack="vision_opencv" /> <!-- opencv2, cv_bridge -->
-  <depend stack="visualization_common" /> <!-- ogre_tools -->
 
 </stack>
