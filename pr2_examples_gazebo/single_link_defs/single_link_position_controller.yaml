@@ -1,8 +1,0 @@
-test_controller:
-  type: robot_mechanism_controllers/JointPositionController
-  joint: link1_joint
-  pid:
-    p: 1.0
-    i: 0.0
-    d: 0.0
-    i_clamp: 1
