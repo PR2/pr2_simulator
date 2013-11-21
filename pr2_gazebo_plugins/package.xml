@@ -1,43 +1,90 @@
+<?xml version="1.0"?>
 <package>
-  <description brief="Gazebo Plugins for Personal Robots">
+  <version>2.0.0</version>
+  <name>pr2_gazebo_plugins</name>
+  <description>
     Gazebo Plugins for various PR2-specific sensors and actuators on the robot.
   </description>
-  <author>Sachin Chitta, Stu Glaser, John Hsu</author>
+
+  <maintainer email="hsu@osrfoundation.org">John Hsu</maintainer>
+
   <license>BSD</license>
-  <review status="Doc reviewed" notes="2010/01/21"/>
-  <url>http://ros.org/wiki/pr2_gazebo_plugins</url>
-  <depend package="gazebo"/>
-  <depend package="gazebo_plugins"/>
-  <depend package="gazebo_tools"/>
-  <depend package="opende"/>
-  <depend package="roscpp"/>
-  <depend package="rospy"/>  
-  <depend package="std_msgs" />
-  <depend package="nav_msgs" />
-  <depend package="sensor_msgs" />
-  <depend package="cv_bridge" />
-  <depend package="pr2_msgs" />
-  <depend package="geometry_msgs" />
-  <depend package="diagnostic_updater" />
-  <depend package="cv_bridge" />
-  <depend package="diagnostic_msgs" />
-  <depend package="angles" />
-  <depend package="pr2_hardware_interface" />
-  <depend package="pr2_controller_manager" />
-  <depend package="pr2_mechanism_model" />
-  <depend package="bullet" />
-  <depend package="urdf" />
-  <depend package="polled_camera" />
-  <depend package="image_transport" />
-  <depend package="dynamic_reconfigure" />
+
+  <url type="website">http://ros.org/wiki/pr2_gazebo_plugins</url>
+  <url type="repository">https://github.com/PR2/pr2_simulator</url>
+  <url type="bugtracker">https://github.com/PR2/pr2_simulator/issues</url>
+
+  <author>John Hsu</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>gazebo_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>pr2_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>diagnostic_updater</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>diagnostic_msgs</build_depend>
+  <build_depend>angles</build_depend>
+  <build_depend>pr2_hardware_interface</build_depend>
+  <build_depend>pr2_controller_manager</build_depend>
+  <build_depend>pr2_mechanism_model</build_depend>
+  <build_depend>urdf</build_depend>
+  <build_depend>driver_base</build_depend>
+  <build_depend>polled_camera</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>message_runtime</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <run_depend>gazebo</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>gazebo_plugins</run_depend>
+  <run_depend>gazebo_msgs</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>pr2_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>diagnostic_msgs</run_depend>
+  <run_depend>diagnostic_updater</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>angles</run_depend>
+  <run_depend>pr2_hardware_interface</run_depend>
+  <run_depend>pr2_controller_manager</run_depend>
+  <run_depend>pr2_mechanism_model</run_depend>
+  <run_depend>urdf</run_depend>
+  <run_depend>driver_base</run_depend>
+  <run_depend>polled_camera</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>message_generation</run_depend>
+
+  <!-- temporary hack for orocos kdl until it's packaged better upstream -->
+  <build_depend>orocos_kdl</build_depend>
+  <run_depend>orocos_kdl</run_depend>
+
+  <!--  not needed any more?
   <export>
-    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" />
     <gazebo plugin_path="${prefix}/lib" />
   </export>
-  <rosdep name="python-numpy"/>
-  <rosdep name="tinyxml" />
-  <rosdep name="opencv2" />
+  -->
+
+  <!-- system depends
+  <build_depend>python-numpy</build_depend>
+  <build_depend>tinyxml</build_depend>
+  <build_depend>opencv2</build_depend>
   <platform os="ubuntu" version="9.04"/>
   <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>
+  -->
+
 </package>

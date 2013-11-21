@@ -27,28 +27,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <pr2_gazebo_plugins/gazebo_ros_controller_manager.h>
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <unistd.h>
 #include <set>
 
-//#include <gazebo/XMLConfig.hh>
-//#include "physics/physics.h"
-#include "physics/World.hh"
-#include "physics/HingeJoint.hh"
-#include "sensors/Sensor.hh"
-#include "sdf/interface/SDF.hh"
-#include "sdf/interface/Param.hh"
-#include "common/Exception.hh"
-#include "physics/PhysicsTypes.hh"
-#include "physics/Base.hh"
-
+#include <map>
 
 #include <angles/angles.h>
 #include <urdf/model.h>
-#include <map>
+
+//#include <gazebo/XMLConfig.hh>
+//#include "physics/physics.h"
+#include <gazebo/physics/physics.hh>
+#include <gazebo/sensors/sensors.hh>
+#include <gazebo/common/common.hh>
+#include <sdf/sdf.hh>
+#include <sdf/Param.hh>
+
+#include "pr2_gazebo_plugins/gazebo_ros_controller_manager.h"
 
 namespace gazebo {
 
@@ -98,7 +96,7 @@ GazeboRosControllerManager::~GazeboRosControllerManager()
 void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
   // Get then name of the parent model
-  std::string modelName = _sdf->GetParent()->GetValueString("name");
+  std::string modelName = _sdf->GetParent()->Get<std::string>("name");
 
   // Get the world name.
   this->world = _parent->GetWorld();
@@ -138,11 +136,11 @@ void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr
   // get parameter name
   this->robotNamespace = "";
   if (_sdf->HasElement("robotNamespace"))
-    this->robotNamespace = _sdf->GetElement("robotNamespace")->GetValueString();
+    this->robotNamespace = _sdf->Get<std::string>("robotNamespace");
 
   this->robotParam = "robot_description";
   if (_sdf->HasElement("robotParam"))
-    this->robotParam = _sdf->GetElement("robotParam")->GetValueString();
+    this->robotParam = _sdf->Get<std::string>("robotParam");
 
   this->robotParam = this->robotNamespace+"/" + this->robotParam;
 

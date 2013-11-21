@@ -1,52 +1,144 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-set(ROS_BUILD_TYPE RelWithDebInfo)
-rosbuild_init()
-
-rosbuild_genmsg()
-rosbuild_gensrv()
+cmake_minimum_required(VERSION 2.8.3)
+project(pr2_gazebo_plugins)
 
 add_definitions(-fPIC)
 
+# catkin dependencies
+find_package(catkin
+  REQUIRED COMPONENTS 
+    message_generation 
+    gazebo_plugins
+    roscpp
+    rospy
+    std_msgs
+    std_srvs 
+    nav_msgs
+    sensor_msgs
+    pr2_msgs
+    geometry_msgs
+    diagnostic_msgs
+    gazebo_msgs
+    diagnostic_updater
+    cv_bridge
+    angles
+    pr2_hardware_interface
+    pr2_controller_manager
+    pr2_mechanism_model
+    urdf
+    polled_camera
+    image_transport
+)
 
-# 
-# if screw joint exists, remove hack for damping variable
-#
-execute_process(COMMAND rosrun opende ode-config --version OUTPUT_VARIABLE ode_version)
-if (${ode_version} VERSION_LESS "0.11.1.71")
-  MESSAGE(STATUS "OUTPUT_VARIABLE: ${ode_version} no screw joint")
-else (${ode_version} VERSION_LESS "0.11.1.71")
-  MESSAGE(STATUS "OUTPUT_VARIABLE: ${ode_version} screw joint exists, removing hack")
-  add_definitions(-DODE_SCREW_JOINT)
-endif (${ode_version} VERSION_LESS "0.11.1.71")
+# Generate msgs and srvs
+add_message_files(
+  DIRECTORY msg
+  FILES
+    PlugCommand.msg
+    ModelJointsState.msg
+)
 
+add_service_files(
+  DIRECTORY srv FILES
+    SetModelsJointsStates.srv
+)
 
+generate_messages(
+  DEPENDENCIES
+    std_msgs
+    nav_msgs
+    sensor_msgs
+    pr2_msgs
+    geometry_msgs
+    diagnostic_msgs
+)
 
+# declare catkin_package
+catkin_package(
+  INCLUDE_DIRS include
+  CATKIN_DEPENDS 
+    message_runtime
+    message_generation
+    roscpp 
+    rospy 
+    angles 
+    std_msgs
+    nav_msgs
+    sensor_msgs
+    pr2_msgs
+    geometry_msgs
+    diagnostic_msgs
+    gazebo_msgs
+    urdf 
+    tf 
+    driver_base 
+    image_transport 
+  DEPENDS 
+    gazebo 
+    SDF
+    orocos_kdl
+  LIBRARIES
+    gazebo_ros_controller_manager
+    gazebo_ros_power_monitor
+)
 
-# dynamic reconfigure for gazebo ros camera nodes
-# does not exist until simulator_gazebo 1.2.9
-execute_process(COMMAND rosversion simulator_gazebo OUTPUT_VARIABLE simulator_gazebo_version)
-if (${simulator_gazebo_version} VERSION_GREATER "1.2.8")
-  MESSAGE(STATUS "OUTPUT_VARIABLE: ${simulator_gazebo_version}Enabling gazebo ros camera dynamic reconfigure")
-  add_definitions(-DSIMULATOR_GAZEBO_GAZEBO_ROS_CAMERA_DYNAMIC_RECONFIGURE)
-else (${simulator_gazebo_version} VERSION_GREATER "1.2.8")
-  MESSAGE(STATUS "OUTPUT_VARIABLE: ${simulator_gazebo_version}Disabling gazebo ros camera dynamic reconfigure")
-endif (${simulator_gazebo_version} VERSION_GREATER "1.2.8")
+# system dependencies
+include (FindPkgConfig)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(XML libxml-2.0)
+  pkg_check_modules(OGRE OGRE)
+  pkg_check_modules(OGRE-Terrain OGRE-Terrain)
+else()
+  message(FATAL_ERROR "pkg-config is required; please install it")
+endif()
 
-rosbuild_add_boost_directories()
+# Depend on system install of Gazebo and SDFormat
+find_package(gazebo REQUIRED)
+find_package(PCL REQUIRED)
+find_package(Boost REQUIRED COMPONENTS thread)
+find_package(orocos_kdl)
 
-rosbuild_add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
-rosbuild_link_boost(gazebo_ros_controller_manager thread)
-rosbuild_add_library(gazebo_ros_power_monitor src/gazebo_ros_power_monitor.cpp)
-rosbuild_link_boost(gazebo_ros_power_monitor thread)
-rosbuild_add_library(gazebo_ros_prosilica src/gazebo_ros_prosilica.cpp)
-rosbuild_link_boost(gazebo_ros_prosilica thread)
-target_link_libraries(gazebo_ros_prosilica gazebo_ros_camera_utils DepthCameraPlugin)
+include_directories(include
+  ${Boost_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
+  ${OGRE_INCLUDE_DIRS}
+  ${OGRE-Terrain_INCLUDE_DIRS}
+)
 
+link_directories(
+  ${GAZEBO_LIBRARY_DIRS}
+  ${orocos_kdl_LIBRARY_DIRS}
+)
+
+# Gazebo ogre path setup
+execute_process(COMMAND
+  pkg-config --variable=plugindir OGRE
+  OUTPUT_VARIABLE OGRE_PLUGIN_PATH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# build libraries
+add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
+add_dependencies(gazebo_ros_controller_manager ${PROJECT_NAME}_gencfg)
+target_link_libraries(gazebo_ros_controller_manager ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_library(gazebo_ros_power_monitor src/gazebo_ros_power_monitor.cpp)
+add_dependencies(gazebo_ros_power_monitor ${PROJECT_NAME}_gencfg)
+target_link_libraries(gazebo_ros_power_monitor ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+# install libraries
+install(
+  TARGETS 
+    gazebo_ros_controller_manager
+    gazebo_ros_power_monitor
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
+# test for glx presence for testing
 exec_program("glxinfo" OUTPUT_VARIABLE glx_out RETURN_VALUE glx_val)
 if(${glx_val} EQUAL 0)
   message(STATUS "run test here")
 else(${glx_val} EQUAL 0)
   message(STATUS "no test here")
 endif(${glx_val} EQUAL 0)
-

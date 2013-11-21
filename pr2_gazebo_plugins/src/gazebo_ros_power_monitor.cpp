@@ -27,16 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "physics/World.hh"
-#include "sensors/Sensor.hh"
-#include "sdf/interface/SDF.hh"
-#include "sdf/interface/Param.hh"
-#include "common/Exception.hh"
-#include "physics/PhysicsTypes.hh"
-#include "physics/Base.hh"
+#include <gazebo/physics/physics.hh>
+#include <gazebo/sensors/sensors.hh>
+#include <gazebo/common/common.hh>
+#include <sdf/sdf.hh>
+#include <sdf/Param.hh>
 
-#include <pr2_gazebo_plugins/gazebo_ros_power_monitor.h>
 #include <diagnostic_updater/diagnostic_updater.h>
+
+#include "pr2_gazebo_plugins/gazebo_ros_power_monitor.h"
 
 using namespace std;
 
@@ -81,7 +80,7 @@ GazeboRosPowerMonitor::~GazeboRosPowerMonitor()
 void GazeboRosPowerMonitor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
   // Get then name of the parent model
-  std::string modelName = _sdf->GetParent()->GetValueString("name");
+  std::string modelName = _sdf->GetParent()->Get<std::string>("name");
 
   // Get the world name.
   this->world = _parent->GetWorld();

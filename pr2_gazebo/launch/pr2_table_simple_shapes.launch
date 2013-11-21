@@ -4,20 +4,27 @@
 	
   <param name="/use_sim_time" value="true" />
 
-  <!-- start empty world -->
-  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find gazebo_worlds)/worlds/empty.world" respawn="false" output="screen"/>
+  <!-- start up empty world -->
+  <arg name="gui" default="true"/>
+  <arg name="paused" default="true"/>
+  <!-- TODO: throttled not implemented in gazebo_ros/empty_world.launch
+  <arg name="throttled" default="false"/>
+  -->
 
-  <!-- start gui -->
-  <group if="$(arg gui)">
-    <node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/>
-  </group>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)" />
+    <!-- TODO: throttled not implemented in gazebo_ros/empty_world.launch
+    <arg name="throttled" value="$(arg throttled)" />
+    -->
+  </include>
 
   <include file="$(find pr2_gazebo)/launch/pr2.launch"/>
 
   <!-- -J r_upper_arm_roll_joint -1.64 -J r_shoulder_pan_joint -2.135 -J r_shoulder_lift_joint -0.02 -J r_forearm_roll_joint -1.64 -J r_elbow_flex_joint -2.07 -J r_wrist_flex_joint -1.68 -J r_wrist_roll_joint 1.40 --> 
   <!--include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" /-->
 
-  <!-- spawn table and tabletop object-->
+  <!-- spawn table and tabletop object
   <param name="table_description" 
    command="$(find xacro)/xacro.py '$(find gazebo_worlds)/objects/table.urdf.xacro'" />
   <node name="spawn_table" pkg="gazebo" type="spawn_model" args="-urdf -param table_description -model table_1" 
@@ -33,6 +40,7 @@
   <node name="spawn_cyl2" pkg="gazebo" type="spawn_model" args="-urdf -file $(find pr2_gazebo)/urdf/cylinder_blue.urdf -wait cylinder_red_1 -model cylinder_blue_1 -x 0.7 -y -0.05 -z 0.65" respawn="false" output="screen" />
   <node name="spawn_cyl3" pkg="gazebo" type="spawn_model" args="-urdf -file $(find pr2_gazebo)/urdf/cylinder_yellow.urdf -wait cylinder_blue_1 -model cylinder_yellow_1 -x 0.7 -y -0.05 -z 0.75" respawn="false" output="screen" />
   <node name="spawn_cyl4" pkg="gazebo" type="spawn_model" args="-urdf -file $(find pr2_gazebo)/urdf/cylinder_green.urdf -wait cylinder_yellow_1 -model cylinder_green_1 -x 0.7 -y -0.05 -z 0.85" respawn="false" output="screen" />
+  -->
 
   <!-- parameters that give you reasonable physics as well as good speed -->
   <!-- needed so that gripper joint stops on objects instead of oscillating forever
