@@ -13,7 +13,7 @@
   <include file="$(find pr2_gazebo)/launch/pr2_bringup.launch" />
 
   <!-- Default Controllers -->
-  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
+  <include file="$(find pr2_controller_configuration_gazebo)/launch/pr2_default_controllers.launch" />
 
   <!-- tuck arms -->
   <node name="tuckarms" pkg="pr2_tuckarm" type="tuck_arms.py" args="b" respawn="true"/>

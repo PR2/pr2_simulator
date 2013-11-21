@@ -1,25 +1,25 @@
 <launch>
 
   <!-- Base Control -->
-  <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_base_controller.yaml" command="load" />
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/config/pr2_base_controller.yaml" command="load" />
 
   <!-- Odometry -->
-  <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_odometry.yaml" command="load" />
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/config/pr2_odometry.yaml" command="load" />
 
   <!-- Head -->
-  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_head_controller.yaml" />
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/config/pr2_head_controller.yaml" />
   
   <!-- Arms -->
-  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_arm_controllers.yaml" />
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/config/pr2_arm_controllers.yaml" />
 
   <!-- Gripper -->
-  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_gripper_controllers.yaml" />
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/config/pr2_gripper_controllers.yaml" />
 
   <!-- Tilt Laser -->
-  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_laser_tilt_controller.yaml" />
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/config/pr2_laser_tilt_controller.yaml" />
 
   <!-- Torso -->
-  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/pr2_torso_controller.yaml" />
+  <rosparam command="load" file="$(find pr2_controller_configuration_gazebo)/config/pr2_torso_controller.yaml" />
 
   <!-- Controllers that come up started -->
   <node name="default_controllers_spawner"

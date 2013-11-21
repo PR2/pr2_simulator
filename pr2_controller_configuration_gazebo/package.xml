@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package>
+  <version>2.0.0</version>
+  <name>pr2_controller_configuration_gazebo</name>
+  <description>
+    A copy of the pr2_controller_configuration package, for use in 
+    the PR2 simulator.  We maintain two copies to allow for controller
+    gains to be set differently between hardware and simulation.
+  </description>
+
+  <author>Wim Meeussen, John Hsu</author>
+  <maintainer email="hsu@osrfoundation.org">John Hsu</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/pr2_controller_configuration_gazebo</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>pr2_controller_manager</run_depend>
+  <run_depend>single_joint_position_action</run_depend>
+  <run_depend>pr2_head_action</run_depend>
+  <run_depend>pr2_gripper_action</run_depend>
+</package>
+
+
