@@ -34,11 +34,11 @@
 #include <vector>
 #include <boost/thread/mutex.hpp>
 
-#include "physics/World.hh"
-#include "physics/Model.hh"
-#include "physics/physics.hh"
-#include "common/Time.hh"
-#include "common/Plugin.hh"
+#include <gazebo/physics/World.hh>
+#include <gazebo/physics/Model.hh>
+#include <gazebo/physics/physics.hh>
+#include <gazebo/common/Time.hh>
+#include <gazebo/common/Plugin.hh>
 
 #include <ros/ros.h>
 #include <pr2_msgs/PowerState.h>

@@ -33,24 +33,25 @@
 #include <vector>
 #include <map>
 
-#include "physics/World.hh"
-#include "physics/Model.hh"
-#include "physics/physics.hh"
-#include "common/Time.hh"
-#include "common/Plugin.hh"
-
-#include "pr2_hardware_interface/hardware_interface.h"
-#include "pr2_controller_manager/controller_manager.h"
-#include "pr2_gazebo_plugins/SetModelsJointsStates.h"
-#include "pr2_mechanism_model/robot.h"
 #include <tinyxml.h>
+#include <boost/thread/mutex.hpp>
+
 #include <ros/ros.h>
+#include <pr2_hardware_interface/hardware_interface.h>
+#include <pr2_controller_manager/controller_manager.h>
+#include <pr2_gazebo_plugins/SetModelsJointsStates.h>
+#include <pr2_mechanism_model/robot.h>
+
+#include <gazebo/physics/World.hh>
+#include <gazebo/physics/Model.hh>
+#include <gazebo/physics/physics.hh>
+#include <gazebo/common/Time.hh>
+#include <gazebo/common/Plugin.hh>
+
 #undef USE_CBQ
 #ifdef USE_CBQ
 #include <ros/callback_queue.h>
 #endif
-
-#include "boost/thread/mutex.hpp"
 
 namespace gazebo
 {

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<package>
+  <version>2.0.0</version>
+  <name>pr2_gazebo</name>
+  <description>
+    Launch scripts for simulating the PR2 in <a href="http://ros.org/wiki/gazebo">gazebo</a>.
+    The simulation equivalent of pr2.launch is found here.
+    pr2_fingertip_pressure_contact_translator produces the same ROS topics as fingertip_pressure package for simulated PR2.
+  </description>
+
+  <author>John Hsu</author>
+  <maintainer email="hsu@osrfoundation.org">John Hsu</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/pr2_gazebo</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>pr2_gazebo_plugins</build_depend>
+  <build_depend>gazebo_plugins</build_depend>
+  <build_depend>gazebo</build_depend>
+
+  <run_depend>pr2_gazebo_plugins</run_depend>
+  <run_depend>gazebo_plugins</run_depend>
+  <run_depend>gazebo</run_depend>
+  <run_depend>pr2_description</run_depend>
+  <run_depend>diagnostic_aggregator</run_depend>
+  <run_depend>pr2_dashboard_aggregator</run_depend>
+  <run_depend>pr2_controller_configuration_gazebo</run_depend>
+  <run_depend>robot_mechanism_controllers</run_depend>
+  <run_depend>pr2_mechanism_controllers</run_depend>
+  <run_depend>pr2_head_action</run_depend>
+  <run_depend>joint_trajectory_action</run_depend>
+  <run_depend>pr2_gripper_action</run_depend>
+  <run_depend>single_joint_position_action</run_depend>
+  <run_depend>stereo_image_proc</run_depend>
+  <run_depend>image_proc</run_depend>
+  <run_depend>robot_pose_ekf</run_depend>
+  <run_depend>tf2_ros</run_depend>
+  <run_depend>topic_tools</run_depend>
+  <run_depend>xacro</run_depend>
+
+  <!-- update
+  <run_depend>rostest</run_depend>
+  -->
+
+  <!-- added for fingertip_pressure simulation -->
+  <run_depend>pr2_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>fingertip_pressure</run_depend>
+
+  <!-- not needed
+  <export>
+    <gazebo gazebo_media_path="${prefix}/test" />
+  </export>
+  -->
+</package>

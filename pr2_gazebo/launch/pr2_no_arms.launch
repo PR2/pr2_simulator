@@ -49,7 +49,7 @@
 
   <!-- Default Controllers -->
   <!-- it tries to start arm controllers nevertheless, so some errors will be printed on startup -->
-  <include file="$(find pr2_controller_configuration_gazebo)/pr2_default_controllers.launch" />
+  <include file="$(find pr2_controller_configuration_gazebo)/launch/pr2_default_controllers.launch" />
 
 </launch>
 
