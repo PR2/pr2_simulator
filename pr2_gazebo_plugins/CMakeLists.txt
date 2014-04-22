@@ -6,27 +6,27 @@ add_definitions(-fPIC)
 # catkin dependencies
 find_package(catkin
   REQUIRED COMPONENTS 
-    message_generation 
+    angles
+    cv_bridge
+    diagnostic_msgs
+    diagnostic_updater
+    gazebo_msgs
     gazebo_plugins
+    geometry_msgs
+    image_transport
+    message_generation 
+    nav_msgs
+    polled_camera
+    pr2_controller_manager
+    pr2_hardware_interface
+    pr2_mechanism_model
+    pr2_msgs
     roscpp
     rospy
+    sensor_msgs
     std_msgs
     std_srvs 
-    nav_msgs
-    sensor_msgs
-    pr2_msgs
-    geometry_msgs
-    diagnostic_msgs
-    gazebo_msgs
-    diagnostic_updater
-    cv_bridge
-    angles
-    pr2_hardware_interface
-    pr2_controller_manager
-    pr2_mechanism_model
     urdf
-    polled_camera
-    image_transport
 )
 
 # Generate msgs and srvs

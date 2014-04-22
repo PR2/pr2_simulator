@@ -18,29 +18,31 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>gazebo_msgs</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>tf</build_depend>
-  <build_depend>std_srvs</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>nav_msgs</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>pr2_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>diagnostic_updater</build_depend>
+  <build_depend>angles</build_depend>
   <build_depend>cv_bridge</build_depend>
   <build_depend>diagnostic_msgs</build_depend>
-  <build_depend>angles</build_depend>
-  <build_depend>pr2_hardware_interface</build_depend>
-  <build_depend>pr2_controller_manager</build_depend>
-  <build_depend>pr2_mechanism_model</build_depend>
-  <build_depend>urdf</build_depend>
+  <build_depend>diagnostic_updater</build_depend>
   <build_depend>driver_base</build_depend>
-  <build_depend>polled_camera</build_depend>
+  <build_depend>gazebo</build_depend>
+  <build_depend>gazebo_msgs</build_depend>
+  <build_depend>gazebo_plugins</build_depend>
+  <build_depend>geometry_msgs</build_depend>
   <build_depend>image_transport</build_depend>
-  <build_depend>message_runtime</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>message_runtime</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>polled_camera</build_depend>
+  <build_depend>pr2_controller_manager</build_depend>
+  <build_depend>pr2_hardware_interface</build_depend>
+  <build_depend>pr2_mechanism_model</build_depend>
+  <build_depend>pr2_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>urdf</build_depend>
 
   <run_depend>gazebo</run_depend>
   <run_depend>gazebo_ros</run_depend>
@@ -71,20 +73,5 @@
   <!-- temporary hack for orocos kdl until it's packaged better upstream -->
   <build_depend>orocos_kdl</build_depend>
   <run_depend>orocos_kdl</run_depend>
-
-  <!--  not needed any more?
-  <export>
-    <gazebo plugin_path="${prefix}/lib" />
-  </export>
-  -->
-
-  <!-- system depends
-  <build_depend>python-numpy</build_depend>
-  <build_depend>tinyxml</build_depend>
-  <build_depend>opencv2</build_depend>
-  <platform os="ubuntu" version="9.04"/>
-  <platform os="ubuntu" version="9.10"/>
-  <platform os="ubuntu" version="10.04"/>
-  -->
 
 </package>
