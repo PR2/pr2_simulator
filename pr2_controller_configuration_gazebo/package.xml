@@ -21,5 +21,3 @@
   <run_depend>pr2_head_action</run_depend>
   <run_depend>pr2_gripper_action</run_depend>
 </package>
-
-
