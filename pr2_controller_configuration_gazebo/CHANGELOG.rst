@@ -2,6 +2,9 @@
 Changelog for package pr2_controller_configuration_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.0.3 (2014-10-07)
 ------------------
 * Changelogs
