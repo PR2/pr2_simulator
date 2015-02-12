@@ -27,6 +27,8 @@ find_package(catkin
     std_msgs
     std_srvs 
     urdf
+  #  pcl_ros
+  #  pcl_conversions
 )
 
 # Generate msgs and srvs
@@ -93,7 +95,7 @@ endif()
 
 # Depend on system install of Gazebo and SDFormat
 find_package(gazebo REQUIRED)
-find_package(PCL REQUIRED)
+#find_package(PCL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(orocos_kdl)
 
