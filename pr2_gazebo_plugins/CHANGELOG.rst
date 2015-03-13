@@ -2,6 +2,11 @@
 Changelog for package pr2_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed dependency on PCL for pr2_Gazebo_plugins
+* Contributors: TheDash
+
 2.0.4 (2015-02-11)
 ------------------
 
