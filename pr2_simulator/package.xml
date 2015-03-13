@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>pr2_simulator</name>
-  <version>2.0.4</version>
+  <version>2.0.5</version>
   <description>The pr2_simulator package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
