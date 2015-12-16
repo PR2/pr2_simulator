@@ -124,12 +124,14 @@ add_library(gazebo_ros_controller_manager src/gazebo_ros_controller_manager.cpp)
 add_dependencies(gazebo_ros_controller_manager
   ${PROJECT_NAME}_gencfg
   ${PROJECT_NAME}_generate_messages_cpp)
+set_target_properties(gazebo_ros_controller_manager PROPERTIES COMPILE_FLAGS ${GAZEBO_CXX_FLAGS})
 target_link_libraries(gazebo_ros_controller_manager ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(gazebo_ros_power_monitor src/gazebo_ros_power_monitor.cpp)
 add_dependencies(gazebo_ros_power_monitor
   ${PROJECT_NAME}_gencfg
   ${PROJECT_NAME}_generate_messages_cpp)
+set_target_properties(gazebo_ros_power_monitor PROPERTIES COMPILE_FLAGS ${GAZEBO_CXX_FLAGS})
 target_link_libraries(gazebo_ros_power_monitor ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # install libraries
