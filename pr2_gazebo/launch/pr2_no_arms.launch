@@ -4,7 +4,7 @@
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_description)/robots/pr2_no_arms.urdf.xacro'" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="spawn_pr2_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model pr2" respawn="false" output="screen" />
+  <node name="spawn_pr2_model" pkg="gazebo_ros" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model pr2" respawn="false" output="screen" />
  
   <!-- Controller Manager -->
   <include file="$(find pr2_controller_manager)/controller_manager.launch" />
