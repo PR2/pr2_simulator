@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.12)
 project(pr2_gazebo_plugins)
 
 add_definitions(-fPIC)
@@ -106,6 +106,8 @@ include_directories(include
   ${OGRE_INCLUDE_DIRS}
   ${OGRE-Terrain_INCLUDE_DIRS}
 )
+
+add_compile_options(${GAZEBO_CXX_FLAGS})
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
