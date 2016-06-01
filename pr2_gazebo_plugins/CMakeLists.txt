@@ -95,6 +95,8 @@ endif()
 
 # Depend on system install of Gazebo and SDFormat
 find_package(gazebo REQUIRED)
+# needed for Gazebo 7.0+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 #find_package(PCL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(orocos_kdl)
