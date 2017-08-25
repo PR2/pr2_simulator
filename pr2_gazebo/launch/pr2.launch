@@ -1,7 +1,9 @@
 <launch>
-  
+  <arg name="KINECT1" default="$(optenv KINECT1 false)" />
+  <arg name="KINECT2" default="$(optenv KINECT2 false)" />
+
   <!-- Startup PR2 without any mechanism controllers -->
-  <include file="$(find pr2_gazebo)/launch/pr2_no_controllers.launch" />
+  <include file="$(find pr2_gazebo)/launch/pr2_no_controllers.launch" pass_all_args="true"/>
 
   <!-- Load and Start Default Controllers -->
   <include file="$(find pr2_controller_configuration_gazebo)/launch/pr2_default_controllers.launch" />
