@@ -1,7 +1,9 @@
 <launch>
-  
+  <arg name="KINECT1" default="$(optenv KINECT1 false)" />
+  <arg name="KINECT2" default="$(optenv KINECT2 false)" />
+
   <!-- send pr2 urdf to param server -->
-  <include file="$(find pr2_description)/robots/upload_pr2.launch" />
+  <include file="$(find pr2_description)/robots/upload_pr2.launch" pass_all_args="true" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="spawn_pr2_model" pkg="gazebo_ros" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model pr2 -ros_namespace /gazebo" respawn="false" output="screen" />
