@@ -3,6 +3,23 @@ project(pr2_gazebo_plugins)
 
 add_definitions(-fPIC)
 
+# system dependencies
+include (FindPkgConfig)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(XML libxml-2.0)
+  pkg_check_modules(OGRE OGRE)
+  pkg_check_modules(OGRE-Terrain OGRE-Terrain)
+else()
+  message(FATAL_ERROR "pkg-config is required; please install it")
+endif()
+
+# Depend on system install of Gazebo and SDFormat
+find_package(gazebo REQUIRED)
+pkg_check_modules(SDF sdformat REQUIRED)
+#find_package(PCL REQUIRED)
+find_package(Boost REQUIRED COMPONENTS thread)
+find_package(orocos_kdl)
+
 # catkin dependencies
 find_package(catkin
   REQUIRED COMPONENTS 
@@ -74,29 +91,13 @@ catkin_package(
     tf 
     image_transport 
   DEPENDS 
-    gazebo 
+    GAZEBO
     SDF
     orocos_kdl
   LIBRARIES
     gazebo_ros_controller_manager
     gazebo_ros_power_monitor
 )
-
-# system dependencies
-include (FindPkgConfig)
-if (PKG_CONFIG_FOUND)
-  pkg_check_modules(XML libxml-2.0)
-  pkg_check_modules(OGRE OGRE)
-  pkg_check_modules(OGRE-Terrain OGRE-Terrain)
-else()
-  message(FATAL_ERROR "pkg-config is required; please install it")
-endif()
-
-# Depend on system install of Gazebo and SDFormat
-find_package(gazebo REQUIRED)
-#find_package(PCL REQUIRED)
-find_package(Boost REQUIRED COMPONENTS thread)
-find_package(orocos_kdl)
 
 include_directories(include
   ${Boost_INCLUDE_DIRS}
