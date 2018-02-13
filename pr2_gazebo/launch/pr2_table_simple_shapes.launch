@@ -9,6 +9,9 @@
   <arg name="throttled" default="false"/>
   -->
 
+  <arg name="KINECT1" default="$(optenv KINECT1 false)" />
+  <arg name="KINECT2" default="$(optenv KINECT2 false)" />
+
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)" />
@@ -17,7 +20,10 @@
     -->
   </include>
 
-  <include file="$(find pr2_gazebo)/launch/pr2.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2.launch">
+    <arg name="KINECT1" value="$(arg KINECT1)" />
+    <arg name="KINECT2" value="$(arg KINECT2)" />
+  </include>
 
   <!-- -J r_upper_arm_roll_joint -1.64 -J r_shoulder_pan_joint -2.135 -J r_shoulder_lift_joint -0.02 -J r_forearm_roll_joint -1.64 -J r_elbow_flex_joint -2.07 -J r_wrist_flex_joint -1.68 -J r_wrist_roll_joint 1.40 --> 
   <!--include file="$(find pr2_controller_configuration_gazebo)/launch/pr2_default_controllers.launch" /-->
