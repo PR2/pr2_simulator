@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(pr2_controller_configuration_gazebo)
 
 find_package(gazebo REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SDF sdformat REQUIRED)
 
 find_package(catkin REQUIRED)
 
