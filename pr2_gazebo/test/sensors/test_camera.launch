@@ -7,7 +7,7 @@
   <include file="$(find pr2_description)/robots/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="spawn_pr2" pkg="gazebo" type="spawn_model" args="-urdf -param robot_description -x -3 -model pr2" respawn="false" output="screen" />
+  <node name="spawn_pr2" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -x -3 -model pr2" respawn="false" output="screen" />
  
   <!-- default bringup script -->
   <include file="$(find pr2_gazebo)/launch/pr2_bringup.launch" />

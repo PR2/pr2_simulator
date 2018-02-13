@@ -5,7 +5,7 @@
   <include file="$(find pr2_description)/robots/upload_pr2.launch" />
 
   <!-- push robot_description to factory and spawn robot in gazebo with a high starting position for the slide entry -->
-  <node name="spawn_pr2_model" pkg="gazebo" type="spawn_model" args="-unpause -urdf -param robot_description -y 6 -z 17 -P -1.3090 -Y 1.5708 -model pr2" respawn="false" output="screen" />
+  <node name="spawn_pr2_model" pkg="gazebo_ros" type="spawn_model" args="-unpause -urdf -param robot_description -y 6 -z 17 -P -1.3090 -Y 1.5708 -model pr2" respawn="false" output="screen" />
 
   <!-- default bringup script -->
   <include file="$(find pr2_gazebo)/launch/pr2_bringup.launch" />
