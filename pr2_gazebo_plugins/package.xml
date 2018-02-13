@@ -22,7 +22,6 @@
   <build_depend>cv_bridge</build_depend>
   <build_depend>diagnostic_msgs</build_depend>
   <build_depend>diagnostic_updater</build_depend>
-  <build_depend>driver_base</build_depend>
   <build_depend>gazebo</build_depend>
   <build_depend>gazebo_msgs</build_depend>
   <build_depend>gazebo_plugins</build_depend>
@@ -68,7 +67,6 @@
   <run_depend>pr2_controller_manager</run_depend>
   <run_depend>pr2_mechanism_model</run_depend>
   <run_depend>urdf</run_depend>
-  <run_depend>driver_base</run_depend>
   <run_depend>polled_camera</run_depend>
   <run_depend>image_transport</run_depend>
   <run_depend>message_runtime</run_depend>

@@ -72,7 +72,6 @@ catkin_package(
     gazebo_msgs
     urdf 
     tf 
-    driver_base 
     image_transport 
   DEPENDS 
     gazebo 
