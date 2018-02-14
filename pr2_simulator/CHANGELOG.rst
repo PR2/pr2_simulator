@@ -2,6 +2,16 @@
 Changelog for package pr2_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#129 <https://github.com/pr2/pr2_simulator/issues/129>`_ from k-okada/license
+  set license from TODO to BSD
+* Merge pull request `#128 <https://github.com/pr2/pr2_simulator/issues/128>`_ from k-okada/maintainer
+  change maintainer to ROS orphaned package maintainer
+* set license from TODO to BSD
+* change maintainer to ROS orphaned package maintainer
+* Contributors: Kei Okada
+
 2.0.5 (2015-03-13)
 ------------------
 
