@@ -2,8 +2,8 @@
 Changelog for package pr2_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.8 (2018-02-14)
+------------------
 * Merge pull request `#135 <https://github.com/pr2/pr2_simulator/issues/135>`_ from k-okada/kinetic-devel
   fix more cmake warnings
 * fix compile error on catkin_package() DEPENDS on 'SDF' but neither 'SDF_INCLUDE_DIRS' nor...

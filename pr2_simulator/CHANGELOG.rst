@@ -2,8 +2,8 @@
 Changelog for package pr2_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.8 (2018-02-14)
+------------------
 * Merge pull request `#129 <https://github.com/pr2/pr2_simulator/issues/129>`_ from k-okada/license
   set license from TODO to BSD
 * Merge pull request `#128 <https://github.com/pr2/pr2_simulator/issues/128>`_ from k-okada/maintainer
