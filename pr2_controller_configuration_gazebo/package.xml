@@ -17,8 +17,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>gazebo</build_depend>
-
   <run_depend>gazebo</run_depend>
   <run_depend>pr2_controller_manager</run_depend>
   <run_depend>single_joint_position_action</run_depend>
