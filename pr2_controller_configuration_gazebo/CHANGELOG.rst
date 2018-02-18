@@ -2,8 +2,8 @@
 Changelog for package pr2_controller_configuration_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.9 (2018-02-18)
+------------------
 * Merge pull request `#137 <https://github.com/pr2/pr2_simulator/issues/137>`_ from v4hn/config-build-depends
   Config build depends
 * remove build-dependencies on gazebo from configuration package
