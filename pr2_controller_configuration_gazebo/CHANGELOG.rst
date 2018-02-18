@@ -2,6 +2,17 @@
 Changelog for package pr2_controller_configuration_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#137 <https://github.com/pr2/pr2_simulator/issues/137>`_ from v4hn/config-build-depends
+  Config build depends
+* remove build-dependencies on gazebo from configuration package
+  The CMakeLists.txt does not build anything.
+  It should not find-package things it does not need during build.
+* add build and run depend to gazebo
+  (note that pr2_gazebo  depend on pr2_controller_configuration_gazebo)
+* Contributors: Kei Okada, v4hn
+
 2.0.8 (2018-02-14)
 ------------------
 * Merge pull request `#135 <https://github.com/pr2/pr2_simulator/issues/135>`_ from k-okada/kinetic-devel
