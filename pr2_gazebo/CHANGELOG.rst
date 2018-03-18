@@ -2,6 +2,13 @@
 Changelog for package pr2_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request (`#139 <https://github.com/pr2/pr2_simulator/issues/139>`_)
+  remove find_package(gazebo), to solve -pthread linking errors
+* remove find_package(gazebo), to sovle -pthread linking errors
+* Contributors: Kei Okada
+
 2.0.9 (2018-02-18)
 ------------------
 
