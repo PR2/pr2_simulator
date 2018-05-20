@@ -43,8 +43,8 @@ import roslib
 roslib.load_manifest('pr2_gazebo')
 import rospy
 import time
-from gazebo.msg import *
-from gazebo.srv import *
+from gazebo_msgs.msg import *
+from gazebo_msgs.srv import *
 
 if __name__ == '__main__':
   rospy.init_node('pr2_simulate_torso_spring')
