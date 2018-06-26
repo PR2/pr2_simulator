@@ -41,6 +41,8 @@
 #include <gazebo/common/Plugin.hh>
 
 #include <ros/ros.h>
+#include <ros/advertise_options.h>
+#include <ros/callback_queue.h>
 #include <pr2_msgs/PowerState.h>
 #include <pr2_gazebo_plugins/PlugCommand.h>
 
@@ -60,6 +62,10 @@ protected:
 
 private:
     /// \brief listen to ROS to see if we are charging
+    virtual void LoadThread();
+    virtual void ConnectCb();
+    virtual void DisconnectCb();
+    virtual void QueueThread();
     void SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg);
 
 private:
@@ -106,17 +112,25 @@ private:
     //ParamT<double>* discharge_voltage_param_;
     double discharge_voltage_;
 
-    /// \brief charge state (Ah)
-    double charge_;
+    // ros
+    boost::thread deferred_load_thread_;
+    boost::thread callback_queue_thread_;
+    ros::CallbackQueue queue_;
+    int connect_count_;
 
     /// \brief charge rate (W)
     double charge_rate_;
+    // gazebo
+    event::ConnectionPtr update_connection_;
+    sdf::ElementPtr sdf_;
 
+    /// \brief charge state (Ah)
+    double charge_;
     /// \brief voltage (V)
     double voltage_;
 
   // Pointer to the model
-  private: physics::WorldPtr world;
+  private: physics::WorldPtr world_;
 
   // Pointer to the update event connection
   private: event::ConnectionPtr updateConnection;
