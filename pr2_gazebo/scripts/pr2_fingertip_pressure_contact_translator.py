@@ -46,7 +46,7 @@ import rospy
 import tf
 from pr2_msgs.msg import PressureState
 from geometry_msgs.msg import PointStamped, Vector3Stamped
-from gazebo_plugins.msg import ContactState, ContactsState
+from gazebo_msgs.msg import ContactState, ContactsState
 
 import numpy
 import math
