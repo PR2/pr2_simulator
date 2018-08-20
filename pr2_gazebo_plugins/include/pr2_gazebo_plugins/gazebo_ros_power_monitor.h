@@ -41,6 +41,8 @@
 #include <gazebo/common/Plugin.hh>
 
 #include <ros/ros.h>
+#include <ros/advertise_options.h>
+#include <ros/callback_queue.h>
 #include <pr2_msgs/PowerState.h>
 #include <pr2_gazebo_plugins/PlugCommand.h>
 
@@ -55,77 +57,59 @@ public:
 protected:
     // Inherited from Controller
     void Load( physics::ModelPtr _parent, sdf::ElementPtr _sdf );
-    virtual void InitChild();
     virtual void UpdateChild();
 
 private:
-    /// \brief listen to ROS to see if we are charging
+    virtual void LoadThread();
+    virtual void ConnectCb();
+    virtual void DisconnectCb();
+    virtual void QueueThread();
     void SetPlug(const pr2_gazebo_plugins::PlugCommandConstPtr& plug_msg);
 
 private:
-    gazebo::physics::ModelPtr parent_model_;
-    double curr_time_;
-    double last_time_;
-
-    //ParamT<std::string>* robot_namespace_param_;
-    //ParamT<std::string>* power_state_topic_param_;
+    // parameters
+    /// \brief namespace of robot in ROS system
     std::string robot_namespace_;
+    /// \brief name of published topic
     std::string power_state_topic_;
-
-    ros::NodeHandle* rosnode_;
-    ros::Subscriber  plugged_in_sub_;
-    ros::Publisher   power_state_pub_;
-
-    /// \brief lock access to fields that are used in message callbacks
-    boost::mutex lock_;
-
-    pr2_msgs::PowerState power_state_;
-
     /// \brief rate to broadcast power state message
-    //ParamT<double>* power_state_rate_param_;
     double power_state_rate_;
-
-    /// \brief internal variables for keeping track of simulated battery
-
     /// \brief full capacity of battery (Ah)
-    //ParamT<double>* full_capacity_param_;
     double full_capacity_;
-
-    /// \brief charge rate when plugged in (W)
-    //ParamT<double>* charge_rate_param_;
-
     /// \brief discharge rate when not plugged in (W)
-    //ParamT<double>* discharge_rate_param_;
     double discharge_rate_;
-
-    /// \brief charge voltage when plugged in (V)
-    //ParamT<double>* charge_voltage_param_;
-    double charge_voltage_;
-
-    /// \brief discharge voltage when plugged in (V)
-    //ParamT<double>* discharge_voltage_param_;
-    double discharge_voltage_;
-
-    /// \brief charge state (Ah)
-    double charge_;
-
     /// \brief charge rate (W)
     double charge_rate_;
+    /// \brief discharge voltage when plugged in (V)
+    double discharge_voltage_;
+    /// \brief charge voltage when plugged in (V)
+    double charge_voltage_;
 
+    // ros
+    ros::NodeHandle* rosnode_;
+    ros::Publisher   power_state_pub_;
+    ros::Subscriber  plugged_in_sub_;
+    boost::thread deferred_load_thread_;
+    boost::thread callback_queue_thread_;
+    ros::CallbackQueue queue_;
+    int connect_count_;
+
+    // gazebo
+    event::ConnectionPtr update_connection_;
+    physics::WorldPtr world_;
+    sdf::ElementPtr sdf_;
+
+    // internal variables
+    /// \brief latest time on callback is called
+    double last_time_;
+    /// \brief charge state (Ah)
+    double charge_;
     /// \brief voltage (V)
     double voltage_;
-
-  // Pointer to the model
-  private: physics::WorldPtr world;
-
-  // Pointer to the update event connection
-  private: event::ConnectionPtr updateConnection;
-
-  // subscribe to world stats
-  private: transport::NodePtr node;
-  private: transport::SubscriberPtr statsSub;
-  private: common::Time simTime;
-
+    /// \brief published messages
+    pr2_msgs::PowerState power_state_;
+    /// \brief lock access to fields that are used in message callbacks
+    boost::mutex lock_;
 };
 
 }
