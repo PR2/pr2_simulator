@@ -2,6 +2,14 @@
 Changelog for package pr2_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#140 <https://github.com/PR2/pr2_simulator/issues/140>`_ from furushchev/fix-power-monitor
+  fix gazebo_ros_power_monitor plugin
+* cleanup pr2_power_monitor plugin codes
+* fix to work gazebo_ros_power_monitor plugin
+* Contributors: Furushchev, Kei Okada
+
 2.0.10 (2018-03-18)
 -------------------
 
