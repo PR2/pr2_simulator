@@ -2,8 +2,8 @@
 Changelog for package pr2_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.11 (2018-08-20)
+-------------------
 * Merge pull request `#142 <https://github.com/PR2/pr2_simulator/issues/142>`_ from pushkalkatara/kinetic-devel
   Issue `#141 <https://github.com/PR2/pr2_simulator/issues/141>`_
 * Issue `#141 <https://github.com/PR2/pr2_simulator/issues/141>`_
