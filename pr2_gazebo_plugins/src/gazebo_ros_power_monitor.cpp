@@ -155,7 +155,11 @@ void GazeboRosPowerMonitor::LoadThread()
   charge_      = this->full_capacity_;
   charge_rate_ = this->discharge_rate_;
   voltage_     = this->discharge_voltage_;
+#if GAZEBO_MAJOR_VERSION >= 8
+  last_time_ = this->world_->SimTime().Double();
+#else
   last_time_ = this->world_->GetSimTime().Double();
+#endif
 
   // Listen to the update event. This event is broadcast every
   // simulation iteration.
@@ -185,7 +189,11 @@ void GazeboRosPowerMonitor::QueueThread()
 void GazeboRosPowerMonitor::UpdateChild()
 {
   // Update time
+#if GAZEBO_MAJOR_VERSION >= 8
+  double curr_time_ = this->world_->SimTime().Double();
+#else
   double curr_time_ = this->world_->GetSimTime().Double();
+#endif
   double dt = curr_time_ - last_time_;
 
   if (dt < this->power_state_rate_)

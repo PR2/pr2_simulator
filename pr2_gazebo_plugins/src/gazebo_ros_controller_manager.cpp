@@ -119,8 +119,13 @@ void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr
 
   if (getenv("CHECK_SPEEDUP"))
   {
+#if GAZEBO_MAJOR_VERSION >= 8
+    wall_start_ = this->world->RealTime().Double();
+    sim_start_  = this->world->SimTime().Double();
+#else
     wall_start_ = this->world->GetRealTime().Double();
     sim_start_  = this->world->GetSimTime().Double();
+#endif
   }
 
   // check update rate against world physics update rate
@@ -159,7 +164,11 @@ void GazeboRosControllerManager::Load(physics::ModelPtr _parent, sdf::ElementPtr
 
   // load a controller manager
   this->cm_ = new pr2_controller_manager::ControllerManager(&hw_,*this->rosnode_);
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->hw_.current_time_ = ros::Time(this->world->SimTime().Double());
+#else
   this->hw_.current_time_ = ros::Time(this->world->GetSimTime().Double());
+#endif
   if (this->hw_.current_time_ < ros::Time(0.001)) this->hw_.current_time_ == ros::Time(0.001); // hardcoded to minimum of 1ms on start up
 
   this->rosnode_->param("gazebo/start_robot_calibrated",this->fake_calibration_,true);
@@ -209,8 +218,13 @@ void GazeboRosControllerManager::UpdateChild()
 
   if (getenv("CHECK_SPEEDUP"))
   {
+#if GAZEBO_MAJOR_VERSION >= 8
+    double wall_elapsed = this->world->RealTime().Double() - wall_start_;
+    double sim_elapsed  = this->world->SimTime().Double()  - sim_start_;
+#else
     double wall_elapsed = this->world->GetRealTime().Double() - wall_start_;
     double sim_elapsed  = this->world->GetSimTime().Double()  - sim_start_;
+#endif
     std::cout << " real time: " <<  wall_elapsed
               << "  sim time: " <<  sim_elapsed
               << "  speed up: " <<  sim_elapsed / wall_elapsed
@@ -234,8 +248,13 @@ void GazeboRosControllerManager::UpdateChild()
     if (this->joints_[i]->HasType(gazebo::physics::Base::HINGE_JOINT))
     {
       gazebo::physics::JointPtr hj = this->joints_[i];
+#if GAZEBO_MAJOR_VERSION >= 8
+      this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
+                    angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->Position(0));
+#else
       this->fake_state_->joint_states_[i].position_ = this->fake_state_->joint_states_[i].position_ +
                     angles::shortest_angular_distance(this->fake_state_->joint_states_[i].position_,hj->GetAngle(0).Radian());
+#endif
       this->fake_state_->joint_states_[i].velocity_ = hj->GetVelocity(0);
       //if (this->joints_[i]->GetName() == "torso_lift_motor_screw_joint")
       //  ROS_WARN("joint[%s] [%f]",this->joints_[i]->GetName().c_str(), this->fake_state_->joint_states_[i].position_);
@@ -244,7 +263,11 @@ void GazeboRosControllerManager::UpdateChild()
     {
       gazebo::physics::JointPtr sj = this->joints_[i];
       {
+#if GAZEBO_MAJOR_VERSION >= 8
+        this->fake_state_->joint_states_[i].position_ = sj->Position(0);
+#else
         this->fake_state_->joint_states_[i].position_ = sj->GetAngle(0).Radian();
+#endif
         this->fake_state_->joint_states_[i].velocity_ = sj->GetVelocity(0);
       }
       //ROS_ERROR("joint[%s] is a slider [%f]",this->joints_[i]->GetName().c_str(),sj->GetAngle(0).Radian());
@@ -271,7 +294,11 @@ void GazeboRosControllerManager::UpdateChild()
   //--------------------------------------------------
   //  Runs Mechanism Control
   //--------------------------------------------------
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->hw_.current_time_ = ros::Time(this->world->SimTime().Double());
+#else
   this->hw_.current_time_ = ros::Time(this->world->GetSimTime().Double());
+#endif
   try
   {
     if (this->cm_->state_ != NULL) // could be NULL if ReadPr2Xml is unsuccessful
