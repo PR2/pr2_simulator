@@ -2,8 +2,8 @@
 Changelog for package pr2_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.12 (2019-04-08)
+-------------------
 * update travis.yml (`#144 <https://github.com/PR2/pr2_simulator/issues/144>`_)
 * use GAZEBO_MAJOR_VERSION to switch 7(kinetic)/9(melodic)
 * fixes for compile with gazebo 9 (`#143 <https://github.com/PR2/pr2_simulator/issues/143>`_)
