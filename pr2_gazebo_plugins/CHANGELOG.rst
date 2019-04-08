@@ -2,6 +2,13 @@
 Changelog for package pr2_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update travis.yml (`#144 <https://github.com/PR2/pr2_simulator/issues/144>`_)
+* use GAZEBO_MAJOR_VERSION to switch 7(kinetic)/9(melodic)
+* fixes for compile with gazebo 9 (`#143 <https://github.com/PR2/pr2_simulator/issues/143>`_)
+* Contributors: Dave Feil-Seifer, Kei Okada
+
 2.0.11 (2018-08-20)
 -------------------
 * Merge pull request `#140 <https://github.com/PR2/pr2_simulator/issues/140>`_ from furushchev/fix-power-monitor
