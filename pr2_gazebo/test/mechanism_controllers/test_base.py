@@ -157,9 +157,9 @@ class BaseTest(unittest.TestCase):
         print "P3D rate translan: " + "x: " + str(p3d.twist.twist.linear.x)
         print "                   " + "y: " + str(p3d.twist.twist.linear.y)
         print "                   " + "z: " + str(p3d.twist.twist.linear.z)
-        print "P3D rate rotation: " + "x: " + str(p3d.twist.twist.angular.vx)
-        print "                   " + "y: " + str(p3d.twist.twist.angular.vy)
-        print "                   " + "z: " + str(p3d.twist.twist.angular.vz)
+        print "P3D rate rotation: " + "x: " + str(p3d.twist.twist.angular.x)
+        print "                   " + "y: " + str(p3d.twist.twist.angular.y)
+        print "                   " + "z: " + str(p3d.twist.twist.angular.z)
 
     def odomInput(self, odom):
         self.printBaseOdom(odom)
