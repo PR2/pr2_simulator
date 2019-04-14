@@ -51,7 +51,7 @@ TEST_DURATION   = 10.0
 
 TARGET_VX       =  0.0
 TARGET_VY       =  0.0
-TARGET_VW       =  0.5
+TARGET_VW       =  0.25
 TARGET_DURATION = 2.0
 TARGET_TOL      = 0.2
 

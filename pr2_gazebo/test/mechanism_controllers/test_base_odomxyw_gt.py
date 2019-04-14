@@ -50,9 +50,9 @@ from nav_msgs.msg import Odometry
 
 TEST_DURATION   = 10.0
 
-TARGET_VX       =  0.5
-TARGET_VY       =  0.5
-TARGET_VW       =  0.5
+TARGET_VX       =  0.25
+TARGET_VY       =  0.25
+TARGET_VW       =  0.25
 TARGET_DURATION = 2.0
 TARGET_TOL      = 0.15
 
@@ -88,9 +88,9 @@ class XYW_GT(BaseTest):
             self.success = True
 
         if not self.success:
-          rospy.logerr("Testing pr2 base odometry control against simulated ground truth with target (vx,vy) = (0.5,0.5), but odom data does not match gound truth from simulation.  Total deviation in position is %f percent over a distance of %f meters."%(total_error/total_dist, total_dist));
+          rospy.logerr("Testing pr2 base odometry control against simulated ground truth with target (vx,vy) = (0.25,0.25), but odom data does not match gound truth from simulation.  Total deviation in position is %f percent over a distance of %f meters."%(total_error/total_dist, total_dist));
         else:
-          rospy.loginfo("Testing pr2 base odometry control against simulated ground truth with target (vx,vy) = (0.5,0.5), total deviation in position is %f percent over a distance of %f meters."%(total_error/total_dist, total_dist));
+          rospy.loginfo("Testing pr2 base odometry control against simulated ground truth with target (vx,vy) = (0.25,0.25), total deviation in position is %f percent over a distance of %f meters."%(total_error/total_dist, total_dist));
         
         self.assert_(self.success)
         

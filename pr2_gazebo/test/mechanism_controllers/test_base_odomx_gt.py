@@ -50,7 +50,7 @@ from nav_msgs.msg import Odometry
 
 TEST_DURATION   = 10.0
 
-TARGET_VX       =  0.5
+TARGET_VX       =  0.25
 TARGET_VY       =  0.0
 TARGET_VW       =  0.0
 TARGET_DURATION = 2.0
