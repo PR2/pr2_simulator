@@ -1,9 +1,13 @@
 <launch>
+  <arg name="gui" default="false" />
+  <arg name="headless" default="true"/>
 
   <!-- start gazebo with an camera world -->
   <param name="/use_sim_time" value="true" />
 
-  <node name="gazebo" pkg="gazebo_ros" type="gazebo" args="$(find pr2_gazebo)/test/sensors/camera.world" respawn="false" output="screen"/>
-  <node name="gazebo_gui" pkg="gazebo_ros" type="gui" respawn="false" output="screen"/>
-
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="headless" value="$(arg headless)" />
+    <arg name="world_name" value="$(find pr2_gazebo)/test/sensors/camera.world" />
+  </include>
 </launch>

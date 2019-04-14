@@ -1,6 +1,12 @@
 <launch>
+  <arg name="gui" default="false" />
+  <arg name="headless" default="true"/>
+
   <!-- load empty world -->
-  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" >
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="headless" default="$(arg headless)"/>
+  </include>
 
   <!-- Run hztest -->
   <!-- Test for publication of 'left narrow_stereo camera image publish rate' topic -->

@@ -1,6 +1,10 @@
 <launch>
+  <arg name="gui" default="false" />
+
   <!-- Bring up the node we want to test. -->
-  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch">
+    <arg name="gui" value="$(arg gui)" />
+  </include>
 
   <!-- Test for publication of 'odom' topic. -->
   <test test-name="hztest_test_odom" pkg="pr2_gazebo" type="hztest" time-limit="500" name="odom_test">

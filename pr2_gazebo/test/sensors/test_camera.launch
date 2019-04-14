@@ -1,7 +1,13 @@
 <launch>
+  <arg name="gui" default="false" />
+  <arg name="headless" default="true"/>
+
   <include file="$(find pr2_machine)/sim.machine" />
 
-  <include file="$(find pr2_gazebo)/test/sensors/camera_world.launch" />
+  <include file="$(find pr2_gazebo)/test/sensors/camera_world.launch" >
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="headless" default="$(arg headless)"/>
+  </include>
 
   <!-- send pr2 urdf to param server -->
   <include file="$(find pr2_description)/robots/upload_pr2.launch" />
