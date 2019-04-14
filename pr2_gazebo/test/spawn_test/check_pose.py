@@ -96,7 +96,7 @@ class PoseTest(unittest.TestCase):
         i = 0
         pos_error = abs(p3d.pose.pose.position.x - TARGET_BASE_TX) + \
                     abs(p3d.pose.pose.position.y - TARGET_BASE_TY) + \
-                    abs(p3d.pose.pose.position.z - TARGET_BASE_TZ)
+                    abs(p3d.pose.pose.position.z - TARGET_BASE_TZ) * 0 # ignore BASE_Z
 
         #target pose rotation matrix
         target_q = [TARGET_BASE_QX  \
