@@ -32,3 +32,25 @@ install(
     urdf/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
 )
+
+# testing
+if(CATKIN_ENABLE_TESTING)
+  find_package(catkin REQUIRED COMPONENTS rostest roslaunch)
+  roslaunch_add_file_check(launch/pr2_empty_world.launch)
+
+  add_rostest(test/collisions/test_slide.launch)
+
+  add_rostest(test/mechanism_controllers/test_base.launch)
+  add_rostest(test/mechanism_controllers/test_arm.launch)
+  add_rostest(test/mechanism_controllers/hztest_pr2_mechanism.launch)
+  add_rostest(test/mechanism_controllers/hztest_rostime.launch)
+  add_rostest(test/mechanism_controllers/hztest_pr2_odom.launch)
+
+  add_rostest(test/sensors/test_scan.launch)
+  add_rostest(test/sensors/test_camera.launch)
+  add_rostest(test/sensors/hztest_pr2_scan.launch)
+  add_rostest(test/sensors/hztest_pr2_image.launch)
+  add_rostest(test/sensors/hztest_pr2_stereo.launch)
+
+  add_rostest(test/spawn_test/test_pr2_spawn_with_offset.launch)
+endif()
