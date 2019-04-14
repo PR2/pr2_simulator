@@ -59,6 +59,7 @@
 
   <test_depend>rostest</test_depend>
   <test_depend>pr2_tuckarm</test_depend>
+  <test_depend>pr2_machine</test_depend>
 
   <export>
     <gazebo_ros gazebo_model_path="${prefix}/test" />
