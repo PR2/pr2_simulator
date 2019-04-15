@@ -5,7 +5,9 @@
 # https://github.com/ros-infrastructure/ros_buildfarm/blob/master/doc/jobs/prerelease_jobs.rst
 # while this doesn't require sudo we don't want to run within a Docker container
 sudo: true
-dist: trusty
+dist: xenial
+services:
+  - xvfb
 language: python
 python:
   - "3.4"
