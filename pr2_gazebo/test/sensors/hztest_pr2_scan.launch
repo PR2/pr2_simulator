@@ -10,7 +10,7 @@
 
   <!-- Run hztest -->
   <!-- Test for publication of 'base_scan' topic -->
-  <test test-name="hztest_test_scan" pkg="pr2_gazebo" type="hztest" time-limit="500" name="base_scan_test">
+  <test test-name="hztest_test_scan" pkg="rostest" type="hztest" time-limit="500" name="base_scan_test">
     <!-- The topic to listen for -->
     <param name="topic" value="/base_scan" />
     <!-- The expected publication rate [Hz].  Set to 0.0 to only check that
@@ -30,7 +30,7 @@
   </test>
 
   <!-- Test for publication of 'tilt_scan' topic. -->
-  <test test-name="hztest_test_tilt_scan" pkg="pr2_gazebo" type="hztest" time-limit="500" name="tilt_scan_test">
+  <test test-name="hztest_test_tilt_scan" pkg="rostest" type="hztest" time-limit="500" name="tilt_scan_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (tilt_scan_test vs. scan_test). -->
     <param name="topic" value="/tilt_scan" />

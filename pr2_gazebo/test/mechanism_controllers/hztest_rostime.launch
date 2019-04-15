@@ -7,7 +7,7 @@
   </include>
 
   <!-- Test for publication of 'odom' topic. -->
-  <test test-name="hztest_test_rostime" pkg="pr2_gazebo" type="hztest" time-limit="500" name="rostime_test">
+  <test test-name="hztest_test_rostime" pkg="rostest" type="hztest" time-limit="500" name="rostime_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (odom_test vs. scan_test). -->
     <param name="topic" value="/clock" />
