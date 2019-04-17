@@ -42,7 +42,7 @@ install:
   - cd $JOB_PATH; sh ./prerelease.sh -y
 script:
   # get summary of test results
-  - /tmp/catkin/bin/catkin_test_results $JOB_PATH/ws/test_results --all
+  - /tmp/catkin/bin/catkin_test_results $JOB_PATH/ws/test_results --all --verbose
 notifications:
   email: false
 
