@@ -65,7 +65,7 @@ class TestSlide(unittest.TestCase):
     def positionInput(self, p3d):
         if not self.print_header: 
           self.print_header = True
-          print "runs   hits   x   y   z    dx    dy    dz    dr   r_tol"
+          rospy.loginfo("runs   hits   x   y   z    dx    dy    dz    dr   r_tol")
 
         self.runs = self.runs + 1
         #if (pos.frame == 1):
@@ -74,14 +74,14 @@ class TestSlide(unittest.TestCase):
         dz = p3d.pose.pose.position.z - TARGET_Z
         d = math.sqrt((dx * dx) + (dy * dy)) #+ (dz * dz))
 
-        print self.runs, self.hits, \
-              p3d.pose.pose.position.x , p3d.pose.pose.position.y , p3d.pose.pose.position.z, \
-              dx , dy , dz , d, TARGET_RAD
+        rospy.loginfo("self.runs, self.hits, "\
+              "p3d.pose.pose.position.x , p3d.pose.pose.position.y , p3d.pose.pose.position.z, "\
+              "dx , dy , dz , d, TARGET_RAD")
 
         if (d < TARGET_RAD and abs(dz) < CUP_HEIGHT):
             self.hits = self.hits + 1
             if (self.runs > 10 and self.runs < 50):
-                print "Got to goal too quickly! (",self.runs,")"
+                rospy.logwarn("Got to goal too quickly! (",self.runs,")")
                 self.success = False
                 self.fail = True
 
