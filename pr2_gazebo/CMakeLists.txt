@@ -55,10 +55,13 @@ if(CATKIN_ENABLE_TESTING)
   add_rostest(test/mechanism_controllers/hztest_pr2_odom.launch)
 
   add_rostest(test/sensors/test_scan.launch)
-  add_rostest(test/sensors/test_camera.launch)
   add_rostest(test/sensors/hztest_pr2_scan.launch)
-  add_rostest(test/sensors/hztest_pr2_image.launch)
-  add_rostest(test/sensors/hztest_pr2_stereo.launch)
+
+  if("$ENV{ROS_DISTRO}" STRGREATER "lunar") # indigo,kinetic,lunar does could not run image test on travis
+    add_rostest(test/sensors/test_camera.launch)
+    add_rostest(test/sensors/hztest_pr2_image.launch)
+    add_rostest(test/sensors/hztest_pr2_stereo.launch)
+  endif()
 
   add_rostest(test/spawn_test/test_pr2_spawn_with_offset.launch)
 endif()
