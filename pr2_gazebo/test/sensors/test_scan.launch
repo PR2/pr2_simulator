@@ -2,6 +2,8 @@
   <arg name="gui" default="false" />
   <arg name="headless" default="true"/>
 
+  <env name="DISPLAY" value="" unless="$(arg gui)" /> <!-- set DISPLAY="" closes  Assertion `bAttached && "A new DepthBuffer for a RenderTarget was created, but after creation" "it says it's incompatible with that RT"' error -->
+
   <include file="$(find pr2_machine)/sim.machine" />
 
   <include file="$(find pr2_gazebo)/test/sensors/scan_world.launch" >
