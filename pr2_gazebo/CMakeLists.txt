@@ -49,7 +49,9 @@ if(CATKIN_ENABLE_TESTING)
   add_rostest(test/collisions/test_slide.launch)
 
   add_rostest(test/mechanism_controllers/test_base.launch)
-  add_rostest(test/mechanism_controllers/test_arm.launch)
+  if("$ENV{ROS_DISTRO}" STRGREATER "indigo") # indigo does not have tuck_arms_main.py in deb package
+    add_rostest(test/mechanism_controllers/test_arm.launch)
+  endif()
   add_rostest(test/mechanism_controllers/hztest_pr2_mechanism.launch)
   add_rostest(test/mechanism_controllers/hztest_rostime.launch)
   add_rostest(test/mechanism_controllers/hztest_pr2_odom.launch)
