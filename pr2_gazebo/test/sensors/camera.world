@@ -1,41 +1,30 @@
 <?xml version="1.0"?>
 
-<gazebo:world 
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" 
-  xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" 
-  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" 
-  xmlns:window="http://playerstage.sourceforge.net/gazebo/xmlschema/#window" 
-  xmlns:param="http://playerstage.sourceforge.net/gazebo/xmlschema/#param" 
-  xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" 
-  xmlns:geo="http://willowgarage.com/xmlschema/#geo" 
-  xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" 
-  xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint" 
-  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" 
-  xmlns:ui="http://playerstage.sourceforge.net/gazebo/xmlschema/#ui"
-  xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering" 
-  xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable" 
-  xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
-  xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics" >
+<sdf version="1.5">
+  <world name="camera_world">
 
-  <verbosity>5</verbosity>
-
-  <physics:ode>
-    <stepTime>0.001</stepTime>
+  <physics type="ode">
+    <!-- <stepTime>0.001</stepTime> -->
     <gravity>0 0 -9.8</gravity>
-    <cfm>0.0000000001</cfm>
-    <erp>0.2</erp>
-    <quickStep>true</quickStep>
-    <quickStepIters>3</quickStepIters>
-    <quickStepW>1.3</quickStepW>
-    <contactMaxCorrectingVel>100.0</contactMaxCorrectingVel>
-    <contactSurfaceLayer>0.001</contactSurfaceLayer>
-  </physics:ode>
+    <ode>
+      <solver>
+        <type>quick</type>
+        <iters>3</iters>
+        <sor>1.3</sor>
+      </solver>
+      <constraints>
+        <cfm>0.0000000001</cfm>
+        <erp>0.2</erp>
+        <contact_max_correcting_vel>100.0</contact_max_correcting_vel>
+        <contact_surface_layer>0.001</contact_surface_layer>
+      </constraints>
+    </ode>
+  </physics>
 
-  <rendering:gui>
-    <type>fltk</type>
-    <size>480 320</size>
-    <pos>0 0</pos>
+  <gui>
+    <!-- <type>fltk</type> -->
+    <!-- <size>480 320</size> -->
+    <!-- <pos>0 0</pos> -->
     <!--
     <frames>
       <row height="100%">
@@ -48,117 +37,180 @@
       </camera>
     </frames>
     -->
-  </rendering:gui>
+  </gui>
 
-  <rendering:ogre>
+  <scene>
     <ambient>1.0 1.0 1.0 1.0</ambient>
     <grid>false</grid>
-    <maxUpdateRate>100</maxUpdateRate>
-  </rendering:ogre>
+    <!-- <maxUpdateRate>100</maxUpdateRate> -->
+  </scene>
 
-  <model:physical name="gplane">
-    <xyz>0 0 0</xyz>	
-    <rpy>0 0 0</rpy>
+  <model name="gplane">
+    <pose>0 0 0 0 0 0</pose>
     <static>true</static>
 
-    <body:plane name="plane">
-      <geom:plane name="plane">
-        <kp>1000000.0</kp>
-        <kd>1.0</kd>
-        <normal>0 0 1</normal>
-        <size>51.3 51.3</size>
-        <!-- map3.png -->
-        <material>Gazebo/Rocky</material>
-      </geom:plane>
-    </body:plane>
-  </model:physical>
+    <link name="plane">
+      <pose>-1.5 0 -0.05 0 0 0</pose>
+      <collision name="plane_collision">
+        <surface>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>
+              <kd>1.0</kd>
+            </ode>
+          </contact>
+        </surface>
+        <geometry>
+          <box>
+            <size>5.13 5.13 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="plane_visual">
+        <geometry>
+          <box>
+            <size>5.13 5.13 0.1</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Rocky</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
 
 
   <!-- The small cuboidal "cup" -->
-  <model:physical name="box1_model">
-    <xyz>   0.78   1.0    0.5</xyz>
-    <rpy>   0.0    0.0    0.0</rpy>
+  <model name="box1_model">
+    <pose>   0.78   1.0    0.5   0.0    0.0    0.0</pose>
     <static>true</static>
-    <body:box name="box1_body">
-      <geom:box name="box1_geom">
-        <mesh>default</mesh>
-        <size>0.2 0.2 1.0</size>
-        <mass> 0.5</mass>
-        <cfm>0.000001</cfm>
-        <erp>0.8</erp>
-        <visual>
-          <size>0.2 0.2 1.0</size>
-          <material>Gazebo/Blue</material>
-          <mesh>unit_box</mesh>
-        </visual>
-      </geom:box>
-    </body:box>
-  </model:physical>
+    <link name="box1_body">
+      <collision name="box1_geom_collision">
+        <geometry>
+          <box>
+            <size>0.2 0.2 1.0</size>
+          </box>
+        </geometry>
+        <!-- <mass> 0.5</mass> -->
+        <!-- <cfm>0.000001</cfm> -->
+        <!-- <erp>0.8</erp> -->
+      </collision>
+      <visual name="box1_geom_visual">
+        <geometry>
+          <box>
+            <size>0.2 0.2 1.0</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Blue</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
 
   <!-- The small cylindrical "cup" -->
-  <model:physical name="cylinder1_model">
-    <xyz>   0.78   0.0    0.5</xyz>
-    <rpy>   0.0    0.0    0.0</rpy>
+  <model name="cylinder1_model">
+    <pose>   0.78   0.0    0.5   0.0    0.0    0.0</pose>
     <static>true</static>
-    <body:cylinder name="cylinder1_body">
-      <geom:cylinder name="cylinder1_geom">
-        <mesh>default</mesh>
-        <size>0.2 1.0</size>
-        <mass> 0.5</mass>
-        <cfm>0.000001</cfm>
-        <erp>0.8</erp>
-        <visual>
-          <size>0.2 0.2 1.0</size>
-          <material>Gazebo/Green</material>
-          <mesh>unit_cylinder</mesh>
-        </visual>
-      </geom:cylinder>
-    </body:cylinder>
-  </model:physical>
+    <link name="cylinder1_body">
+      <collision name="cylinder1_geom_collision">
+        <!-- <mesh>default</mesh> -->
+        <!-- <size>0.2 1.0</size> -->
+        <!-- <mass> 0.5</mass> -->
+        <!-- <cfm>0.000001</cfm> -->
+        <!-- <erp>0.8</erp> -->
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>1.0</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="cylinder1_geom_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>1.0</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Green</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
 
   <!-- The trimesh cup -->
-  <model:physical name="cup1_model">
-    <xyz> 0.78  -1.0    0.0</xyz>
-    <rpy>-90.0   0.0    90.0</rpy>
+  <model name="cup1_model">
+    <pose> 0.78  -1.0    0.0 1.5708   0.0    1.5708</pose>
     <static>true</static>
-    <body:trimesh name="cup1_body">
-      <static>true</static>
-      <massMatrix>true</massMatrix> 
-      <mass>10.0</mass>
-      <ixx>1.0</ixx>
-      <ixy>0.0</ixy>
-      <ixz>0.0</ixz>
-      <iyy>1.0</iyy>
-      <iyz>0.0</iyz>
-      <izz>1.0</izz>
-      <cx>0.0</cx>
-      <cy>0.0</cy>
-      <cz>0.0</cz>
-      <geom:trimesh name="cup1_geom">
-        <static>true</static>
-        <kp>1000000000.0</kp>
-        <kd>1.0</kd>
-        <scale>0.2 1.0 0.2</scale>
-        <mesh>cup.stl</mesh>
-        <visual>
-          <scale>0.2 1.0 0.2</scale>
-          <material>Gazebo/Red</material>
-          <mesh>cup.stl</mesh>
-        </visual>
-      </geom:trimesh>
-    </body:trimesh>
-  </model:physical>
+    <link name="cup1_body">
+      <!-- <static>true</static> -->
+      <!-- <massMatrix>true</massMatrix>  -->
+      <!-- <mass>10.0</mass> -->
+      <!-- <ixx>1.0</ixx> -->
+      <!-- <ixy>0.0</ixy> -->
+      <!-- <ixz>0.0</ixz> -->
+      <!-- <iyy>1.0</iyy> -->
+      <!-- <iyz>0.0</iyz> -->
+      <!-- <izz>1.0</izz> -->
+      <!-- <cx>0.0</cx> -->
+      <!-- <cy>0.0</cy> -->
+      <!-- <cz>0.0</cz> -->
+      <collision name="cup1_geom_collision">
+        <!-- <static>true</static> -->
+        <surface>
+          <contact>
+            <ode>
+              <kp>1000000000.0</kp>
+              <kd>1.0</kd>
+            </ode>
+          </contact>
+        </surface>
+        <geometry>
+          <mesh>
+            <scale>0.2 1.0 0.2</scale>
+            <uri>model://Media/models/cup.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="cup1_geom_collision">
+        <geometry>
+          <mesh>
+            <scale>0.2 1.0 0.2</scale>
+            <uri>model://Media/models/cup.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Red</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
 
   <!-- White Directional light -->
-  <model:renderable name="directional_white">
-    <light>
-      <type>directional</type>
-      <direction>0 -0.5 -0.5</direction>
-      <diffuseColor>0.4 0.4 0.4</diffuseColor>
-      <specularColor>0.0 0.0 0.0</specularColor>
-      <attenuation>1 0.0 1.0 0.4</attenuation>
-      <range>20</range>
-    </light>
-  </model:renderable>
+  <!-- <model:renderable name="directional_white"> -->
+  <!--   <light> -->
+  <!--     <type>directional</type> -->
+  <!--     <direction>0 -0.5 -0.5</direction> -->
+  <!--     <diffuseColor>0.4 0.4 0.4</diffuseColor> -->
+  <!--     <specularColor>0.0 0.0 0.0</specularColor> -->
+  <!--     <attenuation>1 0.0 1.0 0.4</attenuation> -->
+  <!--     <range>20</range> -->
+  <!--   </light> -->
+  <!-- </model:renderable> -->
   
-</gazebo:world>
+  </world>
+</sdf>

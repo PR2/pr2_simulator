@@ -1,10 +1,17 @@
 <launch>
+  <arg name="gui" value="false" />
+
+  <env name="DISPLAY" value="" unless="$(arg gui)" /> <!-- set DISPLAY="" closes  Assertion `bAttached && "A new DepthBuffer for a RenderTarget was created, but after creation" "it says it's incompatible with that RT"' error -->
+
   <!-- Bring up the node we want to test. -->
-  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch">
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="world_name" value="$(find pr2_gazebo)/test/Media/worlds/empty.world" /> <!-- set empty.world for test, which does not require downloading models -->
+  </include>
 
   <!-- Run hztest -->
   <!-- Test for publication of 'base_pose_ground_truth' topic. -->
-  <test test-name="hztest_test_base_pose_ground_truth" pkg="pr2_gazebo" type="hztest" time-limit="500" name="base_pose_ground_truth_test">
+  <test test-name="hztest_test_base_pose_ground_truth" pkg="rostest" type="hztest" time-limit="500" name="base_pose_ground_truth_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (base_pose_ground_truth_test vs. scan_test). -->
     <param name="topic" value="/base_pose_ground_truth" />
@@ -14,7 +21,7 @@
     <param name="check_intervals" value="false" />
   </test>
   <!-- Test for publication of 'mechanism_state' topic. -->
-  <test test-name="hztest_test_mechanism_state" pkg="pr2_gazebo" type="hztest" time-limit="500" name="mechanism_state_test">
+  <test test-name="hztest_test_mechanism_state" pkg="rostest" type="hztest" time-limit="500" name="mechanism_state_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (mechanism_state_test vs. scan_test). -->
     <param name="topic" value="/mechanism_statistics" />
@@ -24,7 +31,7 @@
     <param name="check_intervals" value="false" />
   </test>
   <!-- Test for publication of 'mechanism_state' topic. -->
-  <test test-name="hztest_test_joint_state" pkg="pr2_gazebo" type="hztest" time-limit="500" name="joint_state_test">
+  <test test-name="hztest_test_joint_state" pkg="rostest" type="hztest" time-limit="500" name="joint_state_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (mechanism_state_test vs. scan_test). -->
     <param name="topic" value="/joint_states" />
@@ -34,12 +41,12 @@
     <param name="check_intervals" value="false" />
   </test>
   <!-- Test for publication of '/tf' topic. -->
-  <test test-name="hztest_test_tf_message" pkg="pr2_gazebo" type="hztest" time-limit="500" name="tf_message_test">
+  <test test-name="hztest_test_tf_message" pkg="rostest" type="hztest" time-limit="500" name="tf_message_test">
     <!-- Note how we use a different parameter namespace and node name
     for this test (tf_message_test vs. scan_test). -->
     <param name="topic" value="/tf" />
     <param name="hz" value="100.0" />
-    <param name="hzerror" value="25.0" /> <!-- for some ros reason, this is around 80Hz on my desktop! -->
+    <param name="hzerror" value="50.0" /> <!-- for some ros reason, this is around 75Hz on my desktop! -->
     <param name="test_duration" value="10.0" />
     <param name="check_intervals" value="false" />
     <param name="initial_cycles" value="1000" />

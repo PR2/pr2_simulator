@@ -92,18 +92,18 @@ class ArmTest(unittest.TestCase):
     def printP3D(self, p3d):
         print "pose ground truth received"
         print "P3D pose translan: " + "x: " + str(p3d.pose.pose.position.x)
-        print "                   " + "y: " + str(p3d.pos.position.y)
+        print "                   " + "y: " + str(p3d.pose.pose.position.y)
         print "                   " + "z: " + str(p3d.pose.pose.position.z)
         print "P3D pose rotation: " + "x: " + str(p3d.pose.pose.orientation.x)
         print "                   " + "y: " + str(p3d.pose.pose.orientation.y)
         print "                   " + "z: " + str(p3d.pose.pose.orientation.z)
         print "                   " + "w: " + str(p3d.pose.pose.orientation.w)
-        print "P3D rate translan: " + "x: " + str(p3d.vel.vel.vx)
-        print "                   " + "y: " + str(p3d.vel.vel.vy)
-        print "                   " + "z: " + str(p3d.vel.vel.vz)
-        print "P3D rate rotation: " + "x: " + str(p3d.vel.ang_vel.vx)
-        print "                   " + "y: " + str(p3d.vel.ang_vel.vy)
-        print "                   " + "z: " + str(p3d.vel.ang_vel.vz)
+        print "P3D rate translan: " + "x: " + str(p3d.twist.twist.linear.x)
+        print "                   " + "y: " + str(p3d.twist.twist.linear.y)
+        print "                   " + "z: " + str(p3d.twist.twist.linear.z)
+        print "P3D rate rotation: " + "x: " + str(p3d.twist.twist.angular.x)
+        print "                   " + "y: " + str(p3d.twist.twist.angular.y)
+        print "                   " + "z: " + str(p3d.twist.twist.angular.z)
 
     def fngrP3dInput(self, p3d):
         i = 0

@@ -1,10 +1,17 @@
 <launch>
-  <!-- startup pr2 -->
-  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" />
+  <arg name="gui" default="false" />
 
+  <env name="DISPLAY" value="" unless="$(arg gui)" /> <!-- set DISPLAY="" closes  Assertion `bAttached && "A new DepthBuffer for a RenderTarget was created, but after creation" "it says it's incompatible with that RT"' error -->
+
+  <!-- startup pr2 -->
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" >
+    <arg name="gui" value="$(arg gui)" />
+  </include>
+
+  <node name="tuckarm_server" pkg="pr2_tuck_arms_action" type="tuck_arms_main.py" />
   <node name="tuckarm" pkg="pr2_tuckarm" type="tuck_arms.py" args="-l t -r t" />
 
-  <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_joint_position_controllers.yaml" command="load" />
+  <rosparam file="$(find pr2_controller_configuration_gazebo)/config/pr2_joint_position_controllers.yaml" command="load" />
   <node name="spawn_position_controller" pkg="pr2_controller_manager" type="spawner" args="l_gripper_position_controller" output="screen"/>
   <test test-name="test_pr2_mechanism_gazebo_test_arm" pkg="pr2_gazebo" type="test_arm.py" time-limit="110" />
 </launch>

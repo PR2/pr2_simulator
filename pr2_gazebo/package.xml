@@ -40,6 +40,11 @@
   <run_depend>tf2_ros</run_depend>
   <run_depend>topic_tools</run_depend>
   <run_depend>xacro</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>robot_pose_ekf</run_depend>
+  <run_depend>pr2_controller_manager</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>rostopic</run_depend>
 
   <!-- update
   <run_depend>rostest</run_depend>
@@ -52,9 +57,12 @@
   <run_depend>std_msgs</run_depend>
   <run_depend>fingertip_pressure</run_depend>
 
-  <!-- not needed
+  <test_depend>rostest</test_depend>
+  <test_depend>pr2_tuckarm</test_depend>
+  <test_depend>pr2_machine</test_depend>
+
   <export>
-    <gazebo gazebo_media_path="${prefix}/test" />
+    <gazebo_ros gazebo_model_path="${prefix}/test" />
   </export>
-  -->
+
 </package>

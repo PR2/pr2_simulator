@@ -1,5 +1,11 @@
 <launch>
-  <include file="$(find pr2_gazebo)/test/collisions/slide_world.launch" />
+  <arg name="gui" default="false" />
+
+  <env name="DISPLAY" value="" unless="$(arg gui)" /> <!-- set DISPLAY="" closes  Assertion `bAttached && "A new DepthBuffer for a RenderTarget was created, but after creation" "it says it's incompatible with that RT"' error -->
+
+  <include file="$(find pr2_gazebo)/test/collisions/slide_world.launch" >
+    <arg name="gui" value="$(arg gui)" />
+  </include>
 
   <!-- send pr2 urdf to param server -->
   <include file="$(find pr2_description)/robots/upload_pr2.launch" />

@@ -1,84 +1,99 @@
 <launch>
+  <arg name="gui" default="false" />
+  <arg name="headless" default="true"/>
+
   <!-- load empty world -->
-  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" >
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="headless" default="$(arg headless)"/>
+    <arg name="world_name" value="$(find pr2_gazebo)/test/Media/worlds/empty.world" /> <!-- set empty.world for test, which does not require downloading models -->
+  </include>
 
   <!-- Run hztest -->
   <!-- Test for publication of 'left narrow_stereo camera image publish rate' topic -->
-  <test test-name="hztest_test_narrow_stereo_left_image" pkg="pr2_gazebo" type="hztest" time-limit="500" name="narrow_stereo_left_image_test">
+  <test test-name="hztest_test_narrow_stereo_left_image" pkg="rostest" type="hztest" time-limit="500" name="narrow_stereo_left_image_test">
     <param name="topic" value="/narrow_stereo/left/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="5.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />    
     <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of 'right narrow_stereo camera image publish rate' topic -->
-  <test test-name="hztest_test_narrow_stereo_right_image" pkg="pr2_gazebo" type="hztest" time-limit="500" name="narrow_stereo_right_image_test">
+  <test test-name="hztest_test_narrow_stereo_right_image" pkg="rostest" type="hztest" time-limit="500" name="narrow_stereo_right_image_test">
     <param name="topic" value="/narrow_stereo/right/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="5.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />    
     <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of 'left wide_stereo camera image publish rate' topic -->
-  <test test-name="hztest_test_wide_stereo_left_image" pkg="pr2_gazebo" type="hztest" time-limit="500" name="wide_stereo_left_image_test">
+  <test test-name="hztest_test_wide_stereo_left_image" pkg="rostest" type="hztest" time-limit="500" name="wide_stereo_left_image_test">
     <param name="topic" value="/wide_stereo/left/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="7.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />    
     <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of 'right wide_stereo camera image publish rate' topic -->
-  <test test-name="hztest_test_wide_stereo_right_image" pkg="pr2_gazebo" type="hztest" time-limit="500" name="wide_stereo_right_image_test">
+  <test test-name="hztest_test_wide_stereo_right_image" pkg="rostest" type="hztest" time-limit="500" name="wide_stereo_right_image_test">
     <param name="topic" value="/wide_stereo/right/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="7.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />    
     <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of left forearm camera 'image_raw' topic. -->
-  <test test-name="hztest_test_l_forearm_cam_raw" pkg="pr2_gazebo" type="hztest" time-limit="500" name="l_forearm_cam_raw_test">
+  <test test-name="hztest_test_l_forearm_cam_raw" pkg="rostest" type="hztest" time-limit="500" name="l_forearm_cam_raw_test">
     <param name="topic" value="/l_forearm_cam/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="5.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />
     <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of right forearm camera 'image_raw' topic. -->
-  <test test-name="hztest_test_r_forearm_cam_raw" pkg="pr2_gazebo" type="hztest" time-limit="500" name="r_forearm_cam_raw_test">
+  <test test-name="hztest_test_r_forearm_cam_raw" pkg="rostest" type="hztest" time-limit="500" name="r_forearm_cam_raw_test">
     <param name="topic" value="/r_forearm_cam/image_raw" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="5.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />
     <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of left forearm camera 'camera_info' topic. -->
-  <test test-name="hztest_test_l_forearm_cam_info" pkg="pr2_gazebo" type="hztest" time-limit="500" name="l_forearm_cam_info_test">
+  <test test-name="hztest_test_l_forearm_cam_info" pkg="rostest" type="hztest" time-limit="500" name="l_forearm_cam_info_test">
     <param name="topic" value="/l_forearm_cam/camera_info" />
-    <param name="hz" value="25.0" />
+    <param name="hz" value="20.0" />
     <param name="hzerror" value="5.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />
     <param name="initial_cycles" value="300" />
   </test>
 
   <!-- Test for publication of right forearm camera 'camera_info' topic. -->
-  <test test-name="hztest_test_r_forearm_cam_info" pkg="pr2_gazebo" type="hztest" time-limit="500" name="r_forearm_cam_info_test">
+  <test test-name="hztest_test_r_forearm_cam_info" pkg="rostest" type="hztest" time-limit="500" name="r_forearm_cam_info_test">
     <param name="topic" value="/r_forearm_cam/camera_info" />
-    <param name="hz" value="25.0" />
+    <param name="hz" value="20.0" />
     <param name="hzerror" value="5.0" />
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />
     <param name="initial_cycles" value="300" />
   </test>

@@ -52,7 +52,7 @@ from nav_msgs.msg import Odometry
 
 TEST_DURATION   = 60.0
 
-TARGET_VW       =  0.5
+TARGET_VW       =  0.25
 TARGET_DURATION = 2.0
 #TARGET_TOL      = 0.15 #empirical test result john - 20090420
 TARGET_TOL      = 0.18 #empirical test result john - 20120810 - slight regression

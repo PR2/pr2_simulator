@@ -1,18 +1,27 @@
 <launch>
+  <arg name="gui" default="false" />
+  <arg name="headless" default="true"/>
+
   <!-- Bring up the node we want to test. -->
-  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch"/>
+  <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" >
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="headless" default="$(arg headless)"/>
+    <arg name="world_name" value="$(find pr2_gazebo)/test/Media/worlds/empty.world" /> <!-- set empty.world for test, which does not require downloading models -->
+  </include>
 
   <!-- Run hztest -->
   <!-- Test for publication rate of 'stereo/cloud' topic -->
-  <test test-name="hztest_test_narrow_stereo_cloud" pkg="pr2_gazebo" type="hztest" time-limit="500" name="narrow_stereo_cloud_test">
+  <test test-name="hztest_test_narrow_stereo_cloud" pkg="rostest" type="hztest" time-limit="500" name="narrow_stereo_cloud_test">
     <!-- The topic to listen for -->
-    <param name="topic" value="/narrow_stereo/points" />
+    <param name="topic" value="/narrow_stereo/points2" />
     <!-- The expected publication rate [Hz].  Set to 0.0 to only check that at least one message is received. -->
     <param name="hz" value="20.0" />
     <!-- Acceptable error in the publication rate [Hz].  Ignored if hz is set to 0.0. -->
     <param name="hzerror" value="15.0" />  <!-- 8Hz on Hudson, not sure why so slow -->
     <!-- Time to listen for [seconds] -->
     <param name="test_duration" value="2.0" />
+    <!-- Time to wait before [seconds] -->
+    <param name="wait_time" value="10.0" />
     <!-- Whether each inter-message time interval should be checked against
     the expected publication rate and error bound [boolean].  If true, then
     the test will fail if the time elapsed between *any* two consecutive
@@ -22,11 +31,12 @@
   </test>
 
   <!-- Run hztest -->
-  <test test-name="hztest_test_wide_stereo_cloud" pkg="pr2_gazebo" type="hztest" time-limit="500" name="wide_stereo_cloud_test">
-    <param name="topic" value="/wide_stereo/points" />
+  <test test-name="hztest_test_wide_stereo_cloud" pkg="rostest" type="hztest" time-limit="500" name="wide_stereo_cloud_test">
+    <param name="topic" value="/wide_stereo/points2" />
     <param name="hz" value="20.0" />
     <param name="hzerror" value="15.0" />  <!-- 12Hz on my desktop, seems to pass on hudson -->
     <param name="test_duration" value="2.0" />
+    <param name="wait_time" value="10.0" />
     <param name="check_intervals" value="false" />    
   </test>
 
