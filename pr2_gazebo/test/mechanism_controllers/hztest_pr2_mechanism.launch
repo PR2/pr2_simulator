@@ -1,6 +1,8 @@
 <launch>
   <arg name="gui" value="false" />
 
+  <env name="DISPLAY" value="" unless="$(arg gui)" /> <!-- set DISPLAY="" closes  Assertion `bAttached && "A new DepthBuffer for a RenderTarget was created, but after creation" "it says it's incompatible with that RT"' error -->
+
   <!-- Bring up the node we want to test. -->
   <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch">
     <arg name="gui" value="$(arg gui)" />

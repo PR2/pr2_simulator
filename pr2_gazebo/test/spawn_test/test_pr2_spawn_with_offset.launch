@@ -1,6 +1,8 @@
 <launch>
   <arg name="gui" default="false" />
 
+  <env name="DISPLAY" value="" unless="$(arg gui)" /> <!-- set DISPLAY="" closes  Assertion `bAttached && "A new DepthBuffer for a RenderTarget was created, but after creation" "it says it's incompatible with that RT"' error -->
+
   <!-- start gazebo with an empty plane -->
   <param name="/use_sim_time" value="true" />
 
