@@ -215,6 +215,10 @@ TARGET_INTENSITIES = [
 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ]
 
+# indigo gazebo(2) uses 10.0 for inf data
+if os.environ['ROS_DISTRO'] <= 'indigo':
+    TARGET_RANGES = map(lambda x: x if x != inf else 10.0, TARGET_RANGES)
+
 class PointCloudTest(unittest.TestCase):
     def __init__(self, *args):
         super(PointCloudTest, self).__init__(*args)
