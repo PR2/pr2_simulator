@@ -2,8 +2,8 @@
 Changelog for package pr2_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.13 (2019-04-24)
+-------------------
 * enable test code in pr2_simulator (`#145 <https://github.com/PR2/pr2_simulator/issues/145>`_)
 * pr2_no_controllers.launch: remove deprecated --ros_namespace /gazebo. This is not used long time, but using argparse cache this error. https://github.com/ros-simulation/gazebo_ros_pkgs/commit/46ac000ea34d006d9f37a2392c2146bbd9e6d1be
 * package.xml: add more run_depend and test_depend, also export gazebo_model_path
