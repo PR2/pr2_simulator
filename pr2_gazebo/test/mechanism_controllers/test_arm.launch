@@ -6,6 +6,7 @@
   <!-- startup pr2 -->
   <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch" >
     <arg name="gui" value="$(arg gui)" />
+    <arg name="world_name" value="$(find pr2_gazebo)/test/Media/worlds/empty.world" /> <!-- set empty.world for test, which does not require downloading models -->
   </include>
 
   <node name="tuckarm_server" pkg="pr2_tuck_arms_action" type="tuck_arms_main.py" />
