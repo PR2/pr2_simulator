@@ -6,6 +6,7 @@
   <!-- Bring up the node we want to test. -->
   <include file="$(find pr2_gazebo)/launch/pr2_empty_world.launch">
     <arg name="gui" value="$(arg gui)" />
+    <arg name="world_name" value="$(find pr2_gazebo)/test/Media/worlds/empty.world" /> <!-- set empty.world for test, which does not require downloading models -->
   </include>
 
   <test test-name="test_pr2_mechanism_gazebo_test_base_vw1"      pkg="pr2_gazebo" type="test_base_vw_gt.py" />
