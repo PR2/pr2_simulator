@@ -2,8 +2,8 @@
 Changelog for package pr2_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.14 (2019-04-29)
+-------------------
 * Merge pull request `#146 <https://github.com/PR2/pr2_simulator/issues/146>`_ from k-okada/fix_stretch
   remove gazebo depends
 * use custom empty.world which does not require downloading models
