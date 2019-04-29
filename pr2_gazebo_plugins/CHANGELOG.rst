@@ -2,6 +2,14 @@
 Changelog for package pr2_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#146 <https://github.com/PR2/pr2_simulator/issues/146>`_ from k-okada/fix_stretch
+  remove gazebo depends
+* remove gazebo depends
+  since gazebo_plugins already depend on gazebo via gazebo_dev and this solves build farm error on stretch http://build.ros.org/job/Mbin_dsv8_dSv8__pr2_gazebo_plugins__debian_stretch_arm64__binary/
+* Contributors: Kei Okada
+
 2.0.13 (2019-04-24)
 -------------------
 
