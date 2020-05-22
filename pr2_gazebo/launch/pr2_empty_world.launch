@@ -12,6 +12,7 @@
 
   <arg name="KINECT1" default="$(optenv KINECT1 false)" />
   <arg name="KINECT2" default="$(optenv KINECT2 false)" />
+  <arg name="ROBOT_INITIAL_POSE" default="$(optenv ROBOT_INITIAL_POSE)" />
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="gui" value="$(arg gui)" />
@@ -29,6 +30,7 @@
   <include file="$(find pr2_gazebo)/launch/pr2.launch">
     <arg name="KINECT1" value="$(arg KINECT1)" />
     <arg name="KINECT2" value="$(arg KINECT2)" />
+    <arg name="ROBOT_INITIAL_POSE" value="$(arg ROBOT_INITIAL_POSE)" />
   </include>
 
 </launch>
