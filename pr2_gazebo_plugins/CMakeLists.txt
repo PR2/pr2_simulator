@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(pr2_gazebo_plugins)
 
+set(CXXFLAGS -std=c++17)
 add_definitions(-fPIC)
 
 # system dependencies
@@ -13,12 +14,14 @@ else()
   message(FATAL_ERROR "pkg-config is required; please install it")
 endif()
 
+
+
 # Depend on system install of Gazebo and SDFormat
 find_package(gazebo REQUIRED)
-pkg_check_modules(SDF sdformat REQUIRED)
+pkg_check_modules(SDF sdformat9 REQUIRED)
 #find_package(PCL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
-find_package(orocos_kdl)
+find_package(orocos_kdl HINTS "/usr/share/pkgconfig")
 
 # catkin dependencies
 find_package(catkin
