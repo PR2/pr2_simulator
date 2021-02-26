@@ -3,7 +3,7 @@
 
 analyzers:
   motors:
-    type: GenericAnalyzer
+    type: diagnostic_aggregator/GenericAnalyzer
     path: Motors
     startswith: [
       'EtherCAT Device']
@@ -28,7 +28,7 @@ analyzers:
       'EtherCAT Device (torso_lift_motor)']
 
   joints:
-    type: GenericAnalyzer
+    type: diagnostic_aggregator/GenericAnalyzer
     path: Joints
     startswith: [
       'Joint']
@@ -51,7 +51,7 @@ analyzers:
       'Joint (torso_lift_joint)']
 
   controllers:
-    type: GenericAnalyzer
+    type: diagnostic_aggregator/GenericAnalyzer
     path: 'Realtime Controllers'
     expected: [ 
       'Realtime Control Loop',
@@ -68,12 +68,12 @@ analyzers:
     path: Cameras
     analyzes:
       forearm_l:
-        type: GenericAnalyzer
+        type: diagnostic_aggregator/GenericAnalyzer
         path: Forearm (Left)
         find_and_remove_prefix: l_forearm_cam
         num_items: 0
       forearm_r:
-        type: GenericAnalyzer
+        type: diagnostic_aggregator/GenericAnalyzer
         path: Forearm (Right)
         find_and_remove_prefix: r_forearm_cam
         num_items: 0
