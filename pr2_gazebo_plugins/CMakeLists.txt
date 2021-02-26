@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(pr2_gazebo_plugins)
 
-set(CXXFLAGS -std=c++17)
+set(CMAKE_CXX_STANDARD 17)
 add_definitions(-fPIC)
 
 # system dependencies
