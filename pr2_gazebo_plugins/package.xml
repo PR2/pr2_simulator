@@ -71,5 +71,7 @@
   <run_depend>message_generation</run_depend>
 
   <!-- temporary hack for orocos kdl until it's packaged better upstream -->
+  <build_depend>liborocos-kdl-dev</build_depend>
+  <run_depend>liborocos-kdl-dev</run_depend>
 
 </package>
