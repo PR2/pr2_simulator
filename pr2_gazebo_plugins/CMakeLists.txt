@@ -21,7 +21,7 @@ find_package(gazebo REQUIRED)
 pkg_check_modules(SDF sdformat9 REQUIRED)
 #find_package(PCL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
-#find_package(orocos_kdl HINTS "/usr/share/pkgconfig")
+find_package(orocos_kdl)
 
 # catkin dependencies
 find_package(catkin
