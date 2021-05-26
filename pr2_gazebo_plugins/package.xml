@@ -41,6 +41,8 @@
   <build_depend>std_srvs</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>urdf</build_depend>
+  <build_depend>liborocos-kdl-dev</build_depend>
+ 
  <!-- <build_depend>pcl_ros</build_depend>
   <build_depend>pcl_conversions</build_depend> -->
 
@@ -65,6 +67,7 @@
   <run_depend>pr2_controller_manager</run_depend>
   <run_depend>pr2_mechanism_model</run_depend>
   <run_depend>urdf</run_depend>
+  <run_depend>liborocos-kdl-dev</run_depend>
   <run_depend>polled_camera</run_depend>
   <run_depend>image_transport</run_depend>
   <run_depend>message_runtime</run_depend>

@@ -58,6 +58,6 @@ if __name__ == '__main__':
   try:
     resp1 = apply_joint_effort(joint_name, effort, start_time, duration)
   except rospy.ServiceException, e:
-    print "Service did not process request: %s"%str(e)
+    print("Service did not process request: %s"%str(e))
 
 
