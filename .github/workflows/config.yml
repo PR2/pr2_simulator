@@ -75,6 +75,9 @@ jobs:
       - name: Chcekout
         uses: actions/checkout@v2
 
+      - name: Run headless test
+        uses: GabrielBB/xvfb-action@v1
+
       - name: Test
         run: |
           export ROS_DISTRO_NAME=${{ matrix.ROS_DISTRO_NAME }}
