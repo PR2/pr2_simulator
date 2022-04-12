@@ -90,20 +90,20 @@ class ArmTest(unittest.TestCase):
 
 
     def printP3D(self, p3d):
-        print "pose ground truth received"
-        print "P3D pose translan: " + "x: " + str(p3d.pose.pose.position.x)
-        print "                   " + "y: " + str(p3d.pose.pose.position.y)
-        print "                   " + "z: " + str(p3d.pose.pose.position.z)
-        print "P3D pose rotation: " + "x: " + str(p3d.pose.pose.orientation.x)
-        print "                   " + "y: " + str(p3d.pose.pose.orientation.y)
-        print "                   " + "z: " + str(p3d.pose.pose.orientation.z)
-        print "                   " + "w: " + str(p3d.pose.pose.orientation.w)
-        print "P3D rate translan: " + "x: " + str(p3d.twist.twist.linear.x)
-        print "                   " + "y: " + str(p3d.twist.twist.linear.y)
-        print "                   " + "z: " + str(p3d.twist.twist.linear.z)
-        print "P3D rate rotation: " + "x: " + str(p3d.twist.twist.angular.x)
-        print "                   " + "y: " + str(p3d.twist.twist.angular.y)
-        print "                   " + "z: " + str(p3d.twist.twist.angular.z)
+        print("pose ground truth received")
+        print("P3D pose translan: " + "x: " + str(p3d.pose.pose.position.x))
+        print("                   " + "y: " + str(p3d.pose.pose.position.y))
+        print("                   " + "z: " + str(p3d.pose.pose.position.z))
+        print("P3D pose rotation: " + "x: " + str(p3d.pose.pose.orientation.x))
+        print("                   " + "y: " + str(p3d.pose.pose.orientation.y))
+        print("                   " + "z: " + str(p3d.pose.pose.orientation.z))
+        print("                   " + "w: " + str(p3d.pose.pose.orientation.w))
+        print("P3D rate translan: " + "x: " + str(p3d.twist.twist.linear.x))
+        print("                   " + "y: " + str(p3d.twist.twist.linear.y))
+        print("                   " + "z: " + str(p3d.twist.twist.linear.z))
+        print("P3D rate rotation: " + "x: " + str(p3d.twist.twist.angular.x))
+        print("                   " + "y: " + str(p3d.twist.twist.angular.y))
+        print("                   " + "z: " + str(p3d.twist.twist.angular.z))
 
     def fngrP3dInput(self, p3d):
         i = 0
@@ -130,13 +130,13 @@ class ArmTest(unittest.TestCase):
                     abs( rot_euler[1] ) + \
                     abs( rot_euler[2] )
 
-        print " fngr Error pos: " + str(pos_error) + " rot: " + str(rot_error)
+        print(" fngr Error pos: " + str(pos_error) + " rot: " + str(rot_error))
 
         #self.printP3D(p3d) #for getting new valid data
 
         # has to reach target vw and maintain target vw for a duration of TARGET_DURATION seconds
         if self.reached_target_fngr:
-          print " fngr duration: " + str(time.time() - self.duration_start_fngr)
+          print(" fngr duration: " + str(time.time() - self.duration_start_fngr))
           if rot_error < ROT_TARGET_TOL and pos_error < POS_TARGET_TOL:
             if time.time() - self.duration_start_fngr > TARGET_DURATION:
               self.fngr_success = True
@@ -146,7 +146,7 @@ class ArmTest(unittest.TestCase):
             self.reached_target_fngr = False
         else:
           if rot_error < ROT_TARGET_TOL and pos_error < POS_TARGET_TOL:
-            print 'success finger'
+            print('success finger')
             self.reached_target_fngr = True
             self.duration_start_fngr = time.time()
 
@@ -175,13 +175,13 @@ class ArmTest(unittest.TestCase):
                     abs( rot_euler[1] ) + \
                     abs( rot_euler[2] )
 
-        print " palm Error pos: " + str(pos_error) + " rot: " + str(rot_error)
+        print(" palm Error pos: " + str(pos_error) + " rot: " + str(rot_error))
 
         #self.printP3D(p3d) #for getting new valid data
 
         # has to reach target vw and maintain target vw for a duration of TARGET_DURATION seconds
         if self.reached_target_palm: # tracking started
-          print " palm duration: " + str(time.time() - self.duration_start_palm)
+          print(" palm duration: " + str(time.time() - self.duration_start_palm))
           if rot_error < ROT_TARGET_TOL and pos_error < POS_TARGET_TOL:
             if time.time() - self.duration_start_palm > TARGET_DURATION:
               self.palm_success = True
@@ -191,12 +191,12 @@ class ArmTest(unittest.TestCase):
             self.reached_target_palm = False
         else:
           if rot_error < ROT_TARGET_TOL and pos_error < POS_TARGET_TOL:
-            print 'success palm'
+            print('success palm')
             self.reached_target_palm = True
             self.duration_start_palm = time.time()
     
     def test_arm(self):
-        print "LNK\n"
+        print("LNK\n")
         pub_gripper = rospy.Publisher("/l_gripper_position_controller/command", Float64)
         rospy.Subscriber("/l_gripper_palm_pose_ground_truth", Odometry, self.palmP3dInput)
         rospy.Subscriber("/l_gripper_l_finger_pose_ground_truth", Odometry, self.fngrP3dInput)

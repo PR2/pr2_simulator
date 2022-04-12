@@ -92,7 +92,7 @@ class TestSlide(unittest.TestCase):
         
     
     def test_slide(self):
-        print "LINK\n"
+        print("LINK\n")
         rospy.Subscriber("/base_pose_ground_truth", Odometry, self.positionInput)
         rospy.init_node(NAME, anonymous=True)
         timeout_t = time.time() + TEST_DURATION

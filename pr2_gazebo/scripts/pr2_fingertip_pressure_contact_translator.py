@@ -180,8 +180,8 @@ class contactArraySimulator:
         self.lock.release()
 
         if DEBUG:
-            print whichtip, "positions:\n", pplistlist(self.contact_positions[whichtip])
-            print whichtip, "normals:\n", pplistlist(self.contact_normals[whichtip])
+            print(whichtip, "positions:\n", pplistlist(self.contact_positions[whichtip]))
+            print(whichtip, "normals:\n", pplistlist(self.contact_normals[whichtip]))
                                                    
 
 
@@ -254,17 +254,17 @@ class contactArraySimulator:
                         nearest_array_element = arrayelem
                 
                 if DEBUG:
-                    print "tip:", tip
-                    print "dists:", pplist(dists)
-                    print "anglediffs:", pplist(anglediffs)
-                    print "weighteddists:", pplist(weighteddists)
+                    print("tip:", tip)
+                    print("dists:", pplist(dists))
+                    print("anglediffs:", pplist(anglediffs))
+                    print("weighteddists:", pplist(weighteddists))
 
                 #update that sensor element's depth if this depth is greater
                 #(the maximum readings around 10000?)
                 if nearest_array_element != 'not found':
                     if DEBUG:
-                        print "nearest_array_element:", nearest_array_element
-                        print "nearest_array_weighted_dist: %0.3f"%nearest_array_weighted_dist
+                        print("nearest_array_element:", nearest_array_element)
+                        print("nearest_array_weighted_dist: %0.3f"%nearest_array_weighted_dist)
                     newreading = self.contact_depths[tip][contactnum] * \
                         self.sensor_array_info[tip].force_per_unit[nearest_array_element] * 5000.
                     if newreading > 10000:
@@ -280,8 +280,8 @@ class contactArraySimulator:
         self.lock.release()
 
         if DEBUG:
-            print "left tip readings:", pplist(finger_tip_readings['l'])
-            print "right tip readings:", pplist(finger_tip_readings['r'])
+            print("left tip readings:", pplist(finger_tip_readings['l']))
+            print("right tip readings:", pplist(finger_tip_readings['r']))
 
         #fill in the message and publish it
         ps = PressureState()
@@ -303,7 +303,7 @@ if __name__ == '__main__':
     s1 = contactArraySimulator('r')
     s2 = contactArraySimulator('l')
         
-    print "done initializing, starting to publish"
+    print("done initializing, starting to publish")
 
     while not rospy.is_shutdown():
         rospy.sleep(0.01)
