@@ -2,6 +2,19 @@
 Changelog for package pr2_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Support Noetic (`#150 <https://github.com/pr2/pr2_simulator/issues/150>`_)
+  test/sensors/test_camera.py: noetic does not need to str(image.data) and rotate()
+  use bigger cup
+  relax hztest in hztest_pr2_scan.launch
+  fix for python3: 2to3 -w -f except .
+  fix for python3: 2to3 -w -f print .
+  remove rosdep update from CMakeLists.txt
+  hztest_pr2_image.launch: relax hzerror for caemra test
+  add robot_state_publisher to pr2_gazebo/package.xml
+* Contributors: Kei Okada
+
 2.0.14 (2019-04-29)
 -------------------
 * Merge pull request `#146 <https://github.com/PR2/pr2_simulator/issues/146>`_ from k-okada/fix_stretch
