@@ -166,8 +166,11 @@ class TestCameras(unittest.TestCase):
       print("  - load image from ROS ")
       size = self.camerainfo_width,self.camerainfo_height
       im1 = pili.new("L",size)
-      im1 = pili.frombuffer("L",size,str(image.data));
-      im1 = im1.transpose(pili.FLIP_LEFT_RIGHT).rotate(180);
+      if os.environ['ROS_DISTRO'] == 'noetic':
+          im1 = pili.frombuffer("L",size,image.data, "raw", "L", 0, 1);
+      else:
+          im1 = pili.frombuffer("L",size,str(image.data));
+          im1 = im1.transpose(pili.FLIP_LEFT_RIGHT).rotate(180);
       imc = pilic.difference(im0,im1)
 
 
