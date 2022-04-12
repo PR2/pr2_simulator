@@ -2,8 +2,8 @@
 Changelog for package pr2_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2022-04-12)
+------------------
 * Support Noetic (`#150 <https://github.com/pr2/pr2_simulator/issues/150>`_)
   test/sensors/test_camera.py: noetic does not need to str(image.data) and rotate()
   use bigger cup

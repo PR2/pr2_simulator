@@ -2,8 +2,8 @@
 Changelog for package pr2_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2022-04-12)
+------------------
 * Support Noetic (`#150 <https://github.com/pr2/pr2_simulator/issues/150>`_) from k-okada/ga
   use catkin_dev to use default veresion of Gazebo, see https://github.com/ros-simulation/gazebo_ros_pkgs/pull/571 for more info
   package.xml: use liborocos-kdl for ROS_PYTHON_VERSION=3
