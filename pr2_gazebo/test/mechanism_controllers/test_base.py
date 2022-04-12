@@ -137,29 +137,29 @@ class BaseTest(unittest.TestCase):
         orientation = odom.pose.pose.orientation
         q = Q(orientation.x, orientation.y, orientation.z, orientation.w)
         q.normalize()
-        print "odom received"
-        print "odom pos " + "x: " + str(odom.pose.pose.position.x)
-        print "odom pos " + "y: " + str(odom.pose.pose.position.y)
-        print "odom pos " + "t: " + str(q.getEuler().z)
-        print "odom vel " + "x: " + str(odom.twist.twist.linear.x)
-        print "odom vel " + "y: " + str(odom.twist.twist.linear.y)
-        print "odom vel " + "t: " + str(odom.twist.twist.angular.z)
+        print("odom received")
+        print("odom pos " + "x: " + str(odom.pose.pose.position.x))
+        print("odom pos " + "y: " + str(odom.pose.pose.position.y))
+        print("odom pos " + "t: " + str(q.getEuler().z))
+        print("odom vel " + "x: " + str(odom.twist.twist.linear.x))
+        print("odom vel " + "y: " + str(odom.twist.twist.linear.y))
+        print("odom vel " + "t: " + str(odom.twist.twist.angular.z))
 
     def printBaseP3D(self, p3d):
-        print "base pose ground truth received"
-        print "P3D pose translan: " + "x: " + str(p3d.pose.pose.position.x)
-        print "                   " + "y: " + str(p3d.pose.pose.position.y)
-        print "                   " + "z: " + str(p3d.pose.pose.position.z)
-        print "P3D pose rotation: " + "x: " + str(p3d.pose.pose.orientation.x)
-        print "                   " + "y: " + str(p3d.pose.pose.orientation.y)
-        print "                   " + "z: " + str(p3d.pose.pose.orientation.z)
-        print "                   " + "w: " + str(p3d.pose.pose.orientation.w)
-        print "P3D rate translan: " + "x: " + str(p3d.twist.twist.linear.x)
-        print "                   " + "y: " + str(p3d.twist.twist.linear.y)
-        print "                   " + "z: " + str(p3d.twist.twist.linear.z)
-        print "P3D rate rotation: " + "x: " + str(p3d.twist.twist.angular.x)
-        print "                   " + "y: " + str(p3d.twist.twist.angular.y)
-        print "                   " + "z: " + str(p3d.twist.twist.angular.z)
+        print("base pose ground truth received")
+        print("P3D pose translan: " + "x: " + str(p3d.pose.pose.position.x))
+        print("                   " + "y: " + str(p3d.pose.pose.position.y))
+        print("                   " + "z: " + str(p3d.pose.pose.position.z))
+        print("P3D pose rotation: " + "x: " + str(p3d.pose.pose.orientation.x))
+        print("                   " + "y: " + str(p3d.pose.pose.orientation.y))
+        print("                   " + "z: " + str(p3d.pose.pose.orientation.z))
+        print("                   " + "w: " + str(p3d.pose.pose.orientation.w))
+        print("P3D rate translan: " + "x: " + str(p3d.twist.twist.linear.x))
+        print("                   " + "y: " + str(p3d.twist.twist.linear.y))
+        print("                   " + "z: " + str(p3d.twist.twist.linear.z))
+        print("P3D rate rotation: " + "x: " + str(p3d.twist.twist.angular.x))
+        print("                   " + "y: " + str(p3d.twist.twist.angular.y))
+        print("                   " + "z: " + str(p3d.twist.twist.angular.z))
 
     def odomInput(self, odom):
         self.printBaseOdom(odom)
@@ -196,18 +196,18 @@ class BaseTest(unittest.TestCase):
 
     def debug_e(self):
         # display what odom thinks
-        print " odom    " + " x: " + str(self.odom_e.x) + " y: " + str(self.odom_e.y) + " t: " + str(self.odom_e.t)
+        print(" odom    " + " x: " + str(self.odom_e.x) + " y: " + str(self.odom_e.y) + " t: " + str(self.odom_e.t))
         # display what ground truth is
-        print " p3d     " + " x: " + str(self.p3d_e.x)  + " y: " + str(self.p3d_e.y)  + " t: " + str(self.p3d_e.t)
+        print(" p3d     " + " x: " + str(self.p3d_e.x)  + " y: " + str(self.p3d_e.y)  + " t: " + str(self.p3d_e.t))
 
     def debug_pos(self):
         # display what odom thinks
-        print " odom    " + " x: " + str(self.odom_x) + " y: " + str(self.odom_y) + " t: " + str(self.odom_t)
+        print(" odom    " + " x: " + str(self.odom_x) + " y: " + str(self.odom_y) + " t: " + str(self.odom_t))
         # display what ground truth is
-        print " p3d     " + " x: " + str(self.p3d_x)  + " y: " + str(self.p3d_y)  + " t: " + str(self.p3d_t)
+        print(" p3d     " + " x: " + str(self.p3d_x)  + " y: " + str(self.p3d_y)  + " t: " + str(self.p3d_t))
 
     def init_ros(self, name):
-        print "LNK\n"
+        print("LNK\n")
         self.pub = rospy.Publisher("/base_controller/command", Twist)
         rospy.Subscriber("/base_pose_ground_truth", Odometry, self.p3dInput)
         rospy.Subscriber("/base_odometry/odom",     Odometry, self.odomInput)

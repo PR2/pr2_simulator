@@ -22,16 +22,16 @@ import tf.transformations as tft
 from numpy import float64
 
 def positionState(state):
-  print "set_point : ",state.set_point
-  print "process_value : ",state.process_value
-  print "command : ",state.command
-  print "error : ",state.error
+  print("set_point : ",state.set_point)
+  print("process_value : ",state.process_value)
+  print("command : ",state.command)
+  print("error : ",state.error)
 
 def gripperState(state):
-  print "set_point : ",state.set_point
-  print "process_value : ",state.process_value
-  print "command : ",state.command
-  print "error : ",state.error
+  print("set_point : ",state.set_point)
+  print("process_value : ",state.process_value)
+  print("command : ",state.command)
+  print("error : ",state.error)
 
 if __name__ == '__main__':
 

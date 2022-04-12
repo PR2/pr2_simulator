@@ -226,35 +226,35 @@ class PointCloudTest(unittest.TestCase):
 
 
     def printPointCloud(self, cloud):
-        print "["
+        print("[")
         i = 0
         for pt in cloud.ranges:
             sys.stdout.write(str(pt) + ", ")
             i = i + 1
             if ((i % 7) == 0):
-                print "" #newline
-        print "]"
+                print("") #newline
+        print("]")
 
-        print "["
+        print("[")
         i = 0
         for pt in cloud.intensities:
             sys.stdout.write(str(pt) + ", ")
             i = i + 1
             if ((i % 7) == 0):
-                print "" #newline
-        print "]"
+                print("") #newline
+        print("]")
 
 
     def pointInput(self, cloud):
         i = 0
         range_fail_count = 0
-        print "Input laser scan received"
+        print("Input laser scan received")
         self.printPointCloud(cloud)  #uncomment to capture new data
         while (i < len(cloud.ranges) and i < len(TARGET_RANGES)):
             d = cloud.ranges[i] - TARGET_RANGES[i]
             if ((d < - ERROR_TOL) or (d > ERROR_TOL)):
                 range_fail_count += 1
-                print "range_fail_count:" + str(range_fail_count) + " failed. error:" + str(d) + " exceeded tolerance:" + str(ERROR_TOL)
+                print("range_fail_count:" + str(range_fail_count) + " failed. error:" + str(d) + " exceeded tolerance:" + str(ERROR_TOL))
             i = i + 1
 
         i = 0
@@ -265,25 +265,25 @@ class PointCloudTest(unittest.TestCase):
                 d = d/cloud.intensities[i]
             if cloud.intensities[i] < 0:
                 intensity_fail_count += 1
-                print "intensity_fail_count:" + str(intensity_fail_count) + " failed. intensity <0:" + str(cloud.intensiteis[i])
+                print("intensity_fail_count:" + str(intensity_fail_count) + " failed. intensity <0:" + str(cloud.intensiteis[i]))
             else:
                 if ((d < - ERROR_TOL) or (d > ERROR_TOL)):
                     intensity_fail_count += 1
-                    print "intensity_fail_count:" + str(intensity_fail_count) + " failed. error:" + str(d) + " exceeded tolerance:" + str(ERROR_TOL)
+                    print("intensity_fail_count:" + str(intensity_fail_count) + " failed. error:" + str(d) + " exceeded tolerance:" + str(ERROR_TOL))
             i = i + 1
 
         if range_fail_count > FAIL_COUNT_TOL:
-            print "Range fail count too large (" + str(range_fail_count) + "), failing scan"
+            print("Range fail count too large (" + str(range_fail_count) + "), failing scan")
             return
 
         if intensity_fail_count > FAIL_COUNT_TOL:
-            print "Intensity fail count too large (" + str(intensity_fail_count) + "), failing scan"
+            print("Intensity fail count too large (" + str(intensity_fail_count) + "), failing scan")
             return
 
         self.success = True
     
     def test_scan(self):
-        print "LNK\n"
+        print("LNK\n")
         rospy.Subscriber("/base_scan", LaserScan, self.pointInput)
         rospy.init_node(NAME, anonymous=True)
         timeout_t = time.time() + TEST_DURATION

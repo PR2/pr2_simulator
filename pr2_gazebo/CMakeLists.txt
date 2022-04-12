@@ -38,14 +38,6 @@ if(CATKIN_ENABLE_TESTING)
   find_package(catkin REQUIRED COMPONENTS rostest roslaunch)
   roslaunch_add_file_check(launch/pr2_empty_world.launch)
 
-  set(ENV{ROSDEP_SOURCE_PATH} /tmp/)
-  execute_process(COMMAND rosdep resolve rostest RESULT_VARIABLE rosdep_result)
-  if(rosdep_result)
-    message(STATUS "rosdep is not initialized, run rosdep init and update, please wait for a moment...")
-    execute_process(COMMAND rosdep init)
-    execute_process(COMMAND rosdep update)
-  endif()
-
   add_rostest(test/collisions/test_slide.launch)
 
   add_rostest(test/mechanism_controllers/test_base.launch)
