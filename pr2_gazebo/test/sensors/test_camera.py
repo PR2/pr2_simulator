@@ -101,7 +101,7 @@ class TestCameras(unittest.TestCase):
         rospy.signal_shutdown('test done')
 
     def images_are_the_same(self,i0,i1):
-        print "comparing images... "
+        print("comparing images... ")
         error_count = 0
         error_total = 0
         pixel_tol = 0
@@ -121,9 +121,9 @@ class TestCameras(unittest.TestCase):
 
         # assert len(i0)==len(i1)
         if len(i0d) != len(i1d):
-          print "lengths not equal ",len(i0d), len(i1d)
+          print("lengths not equal ",len(i0d), len(i1d))
           return False
-        print "thumbnail lengths ",len(i0d), len(i1d)
+        print("thumbnail lengths ",len(i0d), len(i1d))
 
         #compare pixel by pixel for thumbnails
         for i in range(len(i0d)):
@@ -133,8 +133,8 @@ class TestCameras(unittest.TestCase):
             error_count = error_count + 1
             error_total = error_total + abs(p0-p1)
         error_avg = float(error_total)/float(len(i0d))
-        print "total error count:",error_count
-        print "average error:    ",error_avg
+        print("total error count:",error_count)
+        print("average error:    ",error_avg)
         if error_avg > TOTAL_ERROR_TOL:
           return False
         else:
@@ -144,34 +144,37 @@ class TestCameras(unittest.TestCase):
       self.got_camerainfo = True
       self.camerainfo_width = camerainfo.width
       self.camerainfo_height = camerainfo.height
-      print " got cam info (",camerainfo.width,"X",camerainfo.height,")"
+      print(" got cam info (",camerainfo.width,"X",camerainfo.height,")")
 
     def imageInput(self,image):
 
       if (self.got_camerainfo):
-        print " got image and camerainfo from ROS, begin comparing images."
+        print(" got image and camerainfo from ROS, begin comparing images.")
       else:
-        print " got image but no camerainfo."
+        print(" got image but no camerainfo.")
         return
 
-      print "  - load validation image from file test_camera.valid.ppm "
+      print("  - load validation image from file test_camera.valid.ppm ")
       fname = roslib.packages.get_pkg_dir('pr2_gazebo') + '/test/sensors/test_camera.valid.ppm'
       if os.path.isfile(fname):
         im0 = pili.open(fname)
       else:
-        print "cannot find validation file: test_camera.valid.ppm"
+        print("cannot find validation file: test_camera.valid.ppm")
         self.success = False
         return
 
-      print "  - load image from ROS "
+      print("  - load image from ROS ")
       size = self.camerainfo_width,self.camerainfo_height
       im1 = pili.new("L",size)
-      im1 = pili.frombuffer("L",size,str(image.data));
-      im1 = im1.transpose(pili.FLIP_LEFT_RIGHT).rotate(180);
+      if os.environ['ROS_DISTRO'] == 'noetic':
+          im1 = pili.frombuffer("L",size,image.data, "raw", "L", 0, 1);
+      else:
+          im1 = pili.frombuffer("L",size,str(image.data));
+          im1 = im1.transpose(pili.FLIP_LEFT_RIGHT).rotate(180);
       imc = pilic.difference(im0,im1)
 
 
-      print "  - comparing images "
+      print("  - comparing images ")
       im1.save("test_1.ppm") # uncomment this line to capture a new valid frame when things change
       im0.save("test_0.ppm")
       imc.save("test_d.ppm")
@@ -179,14 +182,14 @@ class TestCameras(unittest.TestCase):
       #im0.show()
       #imc.show()
       comp_result = self.images_are_the_same(im0,im1)
-      print "test comparison ", comp_result
+      print("test comparison ", comp_result)
       #print "proofcomparison ", self.images_are_the_same(im1.getdata(),im1.getdata())
       if (self.success == False): # test if we have not succeeded
         if (comp_result == True):
-          print "  - images are the Same "
+          print("  - images are the Same ")
           self.success = True
         else:
-          print "  - images differ "
+          print("  - images differ ")
           self.success = False
 
 
@@ -203,7 +206,7 @@ class TestCameras(unittest.TestCase):
         projector_pub = rospy.Publisher("/projector_wg6802418_controller/projector", Int32, latch=True);
         projector_pub.publish(Int32(0));
 
-        print " subscribe stereo left image from ROS "
+        print(" subscribe stereo left image from ROS ")
         rospy.Subscriber("/narrow_stereo/left/image_raw", image_msg, self.imageInput) # this is a camera mounted on PR2 head (left stereo camera)
         rospy.Subscriber("/narrow_stereo/left/camera_info", camerainfo_msg, self.camerainfoInput) # this is a camera mounted on PR2 head (left stereo camera)
         timeout_t = time.time() + TEST_DURATION
@@ -220,7 +223,7 @@ if __name__ == '__main__':
     #    print "Old test case still alive."
     #    time.sleep(1)
     
-    print " starting test "
+    print(" starting test ")
     rostest.run(PKG, sys.argv[0], TestCameras, sys.argv)
 
 

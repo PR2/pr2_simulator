@@ -1,0 +1,120 @@
+on:
+  push:
+    branches:
+      - master
+      - ga
+  pull_request:
+
+jobs:
+  check_python2:
+    runs-on: ubuntu-latest
+    name: check_python2
+
+    container: ubuntu:20.04
+
+    steps:
+      - name: Chcekout
+        uses: actions/checkout@v2
+      - name: Check Python2
+        run: |
+          apt update -q && apt install -y -q python2
+          python2 -m compileall .
+
+
+  check_python3:
+    runs-on: ubuntu-latest
+    name: check_python3
+
+    container: ubuntu:20.04
+
+    steps:
+      - name: Install latest git to download .git directory in actions/checkout@v2, git diff requries .git directory ( use sudo for ros-ubuntu )
+        run: apt-get update && apt-get install -y software-properties-common && apt-get update && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get install -y git
+      - name: Chcekout
+        uses: actions/checkout@v2
+      - name: Check Python3
+        run: |
+          apt update -q && apt install -y -q python3 git 2to3
+          bash -c "ret=0; trap 'ret=1' ERR; python3 -m compileall .; 2to3 -w -f except -f execfile -f has_key -f raw_input -f zip .; find . -type f -exec grep -Iq . {} \; -a -not -regex '.*/node_scripts/[^/]*py' -exec 2to3 -w -f import {} \; ; git diff --exit-code . > /dev/null; echo Exitting with \$ret; exit \$ret"
+
+
+  ros:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      matrix:
+        include:
+          # - ROS_DISTRO: indigo
+          #   ROS_DISTRO_NAME: indigo
+          #   OS_NAME: ubuntu
+          #   OS_CODE_NAME: trusty
+          #   ARCH: amd64
+          #   INDEX_URL: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/6a93d17/index.yaml
+          # - ROS_DISTRO: kinetic
+          #   ROS_DISTRO_NAME: kinetic
+          #   OS_NAME: ubuntu
+          #   OS_CODE_NAME: xenial
+          #   ARCH: amd64
+          #   INDEX_URL: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/6a93d17/index.yaml
+          - ROS_DISTRO: melodic
+            ROS_DISTRO_NAME: melodic
+            OS_NAME: ubuntu
+            OS_CODE_NAME: bionic
+            ARCH: amd64
+            INDEX_URL: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+            experimental: false
+          - ROS_DISTRO: noetic
+            ROS_DISTRO_NAME: noetic
+            OS_NAME: ubuntu
+            OS_CODE_NAME: focal
+            ARCH: amd64
+            INDEX_URL: https://raw.githubusercontent.com/ros-infrastructure/ros_buildfarm_config/production/index.yaml
+            experimental: true
+
+    steps:
+      - name: Chcekout
+        uses: actions/checkout@v2
+
+      - name: Start X server
+        run: |
+          echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections # set non interactive tzdata https://stackoverflow.com/questions/8671308/non-interactive-method-for-dpkg-reconfigure-tzdata
+          sudo apt-get -y -qq install mesa-utils x11-xserver-utils xserver-xorg-video-dummy wget
+          export DISPLAY=:0
+          wget https://raw.githubusercontent.com/jsk-ros-pkg/jsk_travis/master/dummy.xorg.conf -O /tmp/dummy.xorg.conf
+          sudo Xorg -noreset +extension GLX +extension RANDR +extension RENDER -logfile /tmp/xorg.log -config /tmp/dummy.xorg.conf $DISPLAY &
+          sleep 3 # wait x server up
+          export QT_X11_NO_MITSHM=1 # http://wiki.ros.org/docker/Tutorials/GUI
+          xhost +local:root
+
+
+      - name: Test
+        run: |
+          export ROS_DISTRO_NAME=${{ matrix.ROS_DISTRO_NAME }}
+          export OS_NAME=${{ matrix.OS_NAME }}
+          export OS_CODE_NAME=${{ matrix.OS_CODE_NAME }}
+          export ARCH=${{ matrix.ARCH }}
+          export INDEX_URL=${{ matrix.INDEX_URL }}
+          export JOB_PATH=/tmp/devel_job
+          export ABORT_ON_TEST_FAILURE=1
+          export DISPLAY=:0
+          export QT_X11_NO_MITSHM=1 # http://wiki.ros.org/docker/Tutorials/GUI
+          set -x
+          # either install the latest released version of ros_buildfarm
+          # pip install ros_buildfarm
+          # or checkout a specific branch
+          git clone -b master https://github.com/k-okada/ros_buildfarm /tmp/ros_buildfarm
+          pip install /tmp/ros_buildfarm
+          # checkout catkin for catkin_test_results script
+          git clone https://github.com/ros/catkin /tmp/catkin
+          # run devel job for a ROS repository with the same name as this repo
+          export REPOSITORY_NAME=$(basename $PWD)
+          # use the code already checked out by Travis
+          mkdir -p $JOB_PATH/ws/src
+          cp -R ../ $JOB_PATH/ws/src/
+          # generate the script to run a pre-release job for that target and repo
+          generate_prerelease_script.py $INDEX_URL $ROS_DISTRO_NAME default $OS_NAME $OS_CODE_NAME $ARCH  --output-dir $JOB_PATH
+          # run the actual job which involves Docker
+          mkdir -p ~/.ccache
+          cd $JOB_PATH; sh ./prerelease.sh -y
+          # get summary of test results
+          /tmp/catkin/bin/catkin_test_results $JOB_PATH/ws/test_results --all --verbose

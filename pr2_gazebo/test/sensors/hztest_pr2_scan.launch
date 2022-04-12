@@ -18,10 +18,10 @@
     <param name="topic" value="/base_scan" />
     <!-- The expected publication rate [Hz].  Set to 0.0 to only check that
     at least one message is received. -->
-    <param name="hz" value="20.0" />
+    <param name="hz" value="25.0" />
     <!-- Acceptable error in the publication rate [Hz].  Ignored if hz is set
     to 0.0. -->
-    <param name="hzerror" value="6.0" />
+    <param name="hzerror" value="20.0" />
     <!-- Time to listen for [seconds] -->
     <param name="test_duration" value="10.0" />    
     <!-- Whether each inter-message time interval should be checked against
@@ -37,8 +37,8 @@
     <!-- Note how we use a different parameter namespace and node name
     for this test (tilt_scan_test vs. scan_test). -->
     <param name="topic" value="/tilt_scan" />
-    <param name="hz" value="20.0" />
-    <param name="hzerror" value="6.0" />
+    <param name="hz" value="25.0" />
+    <param name="hzerror" value="20.0" />
     <param name="test_duration" value="10.0" />
     <param name="check_intervals" value="false" />
   </test>

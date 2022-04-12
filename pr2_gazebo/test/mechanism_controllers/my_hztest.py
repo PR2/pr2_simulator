@@ -71,18 +71,18 @@ class MyHzTest(unittest.TestCase):
 
         if not self.started:
           self.start_time = rospy.get_rostime().to_sec()
-          print " got first message at: ",self.start_time, " sec"
+          print(" got first message at: ",self.start_time, " sec")
           self.started = True
 
         if self.count >= MIN_MSGS:
           self.end_time = rospy.get_rostime().to_sec()
-          print " passed minimum ",self.count," messages at ",self.count / (self.end_time - self.start_time), " Hz"
+          print(" passed minimum ",self.count," messages at ",self.count / (self.end_time - self.start_time), " Hz")
           self.success = True
         #else:
           #print " got ",self.count," messages at ",self.count / (rospy.get_rostime().to_sec() - self.start_time), " Hz"
 
     def test_hz(self):
-        print "LNK\n"
+        print("LNK\n")
         #rospy.Subscriber("/tf", tfMessage, self.Input)
         rospy.Subscriber("/mechanism_state", MechanismState, self.Input)
         rospy.init_node(NAME, anonymous=True)

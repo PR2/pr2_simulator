@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="3">
   <version>2.0.14</version>
   <name>pr2_gazebo_plugins</name>
   <description>
@@ -44,34 +44,39 @@
  <!-- <build_depend>pcl_ros</build_depend>
   <build_depend>pcl_conversions</build_depend> -->
 
- <!-- <run_depend>pcl_conversions</run_depend>
-  <run_depend>pcl_ros</run_depend> -->
-  <run_depend>gazebo_ros</run_depend>
-  <run_depend>gazebo_plugins</run_depend>
-  <run_depend>gazebo_msgs</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>nav_msgs</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>pr2_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>diagnostic_msgs</run_depend>
-  <run_depend>diagnostic_updater</run_depend>
-  <run_depend>cv_bridge</run_depend>
-  <run_depend>angles</run_depend>
-  <run_depend>pr2_hardware_interface</run_depend>
-  <run_depend>pr2_controller_manager</run_depend>
-  <run_depend>pr2_mechanism_model</run_depend>
-  <run_depend>urdf</run_depend>
-  <run_depend>polled_camera</run_depend>
-  <run_depend>image_transport</run_depend>
-  <run_depend>message_runtime</run_depend>
-  <run_depend>message_generation</run_depend>
+ <!-- <exec_depend>pcl_conversions</exec_depend>
+  <exec_depend>pcl_ros</exec_depend> -->
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>gazebo_msgs</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>pr2_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend>
+  <exec_depend>diagnostic_updater</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>angles</exec_depend>
+  <exec_depend>pr2_hardware_interface</exec_depend>
+  <exec_depend>pr2_controller_manager</exec_depend>
+  <exec_depend>pr2_mechanism_model</exec_depend>
+  <exec_depend>urdf</exec_depend>
+  <exec_depend>polled_camera</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>message_generation</exec_depend>
 
   <!-- temporary hack for orocos kdl until it's packaged better upstream -->
-  <build_depend>orocos_kdl</build_depend>
-  <run_depend>orocos_kdl</run_depend>
+
+  <build_depend condition="$ROS_PYTHON_VERSION == 2">orocos_kdl</build_depend>
+  <build_depend condition="$ROS_PYTHON_VERSION == 3">liborocos-kdl</build_depend>
+  <build_depend condition="$ROS_PYTHON_VERSION == 3">liborocos-kdl-dev</build_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">orocos_kdl</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 3">liborocos-kdl</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">liborocos-kdl-dev</exec_depend>
 
 </package>

@@ -57,7 +57,7 @@ if __name__ == '__main__':
   duration = rospy.Duration.from_sec(-1)
   try:
     resp1 = apply_joint_effort(joint_name, effort, start_time, duration)
-  except rospy.ServiceException, e:
-    print "Service did not process request: %s"%str(e)
+  except rospy.ServiceException as e:
+    print("Service did not process request: %s"%str(e))
 
 

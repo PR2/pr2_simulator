@@ -74,14 +74,14 @@ class W_GT(BaseTest):
             # display what the odom error is
             error = E(0,0,0)
             error.shortest_euler_distance(self.p3d_e,self.odom_e)
-            print " error   " +      " x:" + str(self.odom_x - self.p3d_x) \
+            print(" error   " +      " x:" + str(self.odom_x - self.p3d_x) \
                               +      " y:" + str(self.odom_y - self.p3d_y) \
                               +      " e:" + str(error.x) + "," + str(error.y) + "," + str(error.z) \
-                              + " t_odom:" + str(self.odom_e.z) + " t_p3d:" + str(self.p3d_e.z)
+                              + " t_odom:" + str(self.odom_e.z) + " t_p3d:" + str(self.p3d_e.z))
 
         # check total error
         total_error = abs(self.odom_x - self.p3d_x) + abs(self.odom_y - self.p3d_y) + abs(error.x) + abs(error.y) + abs(error.z)
-        print "total error:" + str(total_error) + " tol:" + str(TARGET_TOL)
+        print("total error:" + str(total_error) + " tol:" + str(TARGET_TOL))
         if total_error < TARGET_TOL:
             self.success = True
 

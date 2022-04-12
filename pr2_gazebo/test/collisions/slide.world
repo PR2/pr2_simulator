@@ -135,10 +135,10 @@
     <static>true</static>
     <link name="endbin_body">
       <collision name="endbin_body_collision">
-        <pose>   -6.0    0.0     2.6  -1.5708    0.0    1.5708</pose>
+        <pose>   -6.0    0.0     1.6  -1.5708    0.0    1.5708</pose>
         <geometry>
           <mesh>
-            <scale>4 2 4</scale>
+            <scale>5 2 5</scale>
             <uri>model://Media/models/slide_endbin.stl</uri>
           </mesh>
         </geometry>
@@ -158,10 +158,10 @@
         </surface>
       </collision>
       <visual name="endbin_body_visual">
-        <pose>   -6.0    0.0     2.6  -1.5708    0.0    1.5708</pose>
+        <pose>   -6.0    0.0     1.6  -1.5708    0.0    1.5708</pose>
         <geometry>
           <mesh>
-            <scale>4 2 4</scale>
+            <scale>5 2 5</scale>
             <uri>model://Media/models/slide_endbin.stl</uri>
           </mesh>
         </geometry>

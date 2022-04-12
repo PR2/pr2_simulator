@@ -14,8 +14,6 @@ else()
 endif()
 
 # Depend on system install of Gazebo and SDFormat
-find_package(gazebo REQUIRED)
-pkg_check_modules(SDF sdformat REQUIRED)
 #find_package(PCL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(orocos_kdl)
@@ -27,6 +25,7 @@ find_package(catkin
     cv_bridge
     diagnostic_msgs
     diagnostic_updater
+    gazebo_dev
     gazebo_msgs
     gazebo_plugins
     geometry_msgs
@@ -76,7 +75,6 @@ catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS 
     message_runtime
-    message_generation
     roscpp 
     rospy 
     angles 
@@ -91,8 +89,6 @@ catkin_package(
     tf 
     image_transport 
   DEPENDS 
-    GAZEBO
-    SDF
     orocos_kdl
   LIBRARIES
     gazebo_ros_controller_manager
@@ -102,15 +98,12 @@ catkin_package(
 include_directories(include
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
   ${OGRE_INCLUDE_DIRS}
   ${OGRE-Terrain_INCLUDE_DIRS}
 )
 
-add_compile_options(${GAZEBO_CXX_FLAGS})
-
 link_directories(
-  ${GAZEBO_LIBRARY_DIRS}
+  ${catkin_LIBRARY_DIRS}
   ${orocos_kdl_LIBRARY_DIRS}
 )
 

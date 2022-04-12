@@ -74,7 +74,7 @@ class VW_GT(BaseTest):
         i = 0
         #self.printBaseP3D(p3d)
         error = abs(p3d.twist.twist.angular.z - TARGET_VW)
-        print " Error: " + str(error) + " Duration: " + str(time.time() - self.duration_start)
+        print(" Error: " + str(error) + " Duration: " + str(time.time() - self.duration_start))
         # has to reach target vw and maintain target vw for a duration of TARGET_DURATION seconds
         if self.reached_target_vw:
           if error < TARGET_TOL:
