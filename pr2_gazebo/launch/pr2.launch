@@ -1,6 +1,7 @@
 <launch>
   <arg name="KINECT1" default="$(optenv KINECT1 false)" />
   <arg name="KINECT2" default="$(optenv KINECT2 false)" />
+  <arg name="ROBOT_INITIAL_POSE" default="$(optenv ROBOT_INITIAL_POSE)" />
 
   <!-- Startup PR2 without any mechanism controllers -->
   <include file="$(find pr2_gazebo)/launch/pr2_no_controllers.launch" pass_all_args="true"/>
